@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body {margin:0;padding:0;}
+      .page-wide {margin: 0; padding: 0;}
+      .content {max-width:700px; margin:0 auto; padding: 4pt;}
       .header {background: #333;}
-      .header header {max-width:700px; margin:0 auto; padding: 4pt;}
       .header h1 {color: #999;}
     #text-box {font-size:1rem; padding:4pt; width:75%;}
     #text-processed {font-family:Consolas; font-size: 1.5rem; margin: 8pt 0; width:100%;}
@@ -17,14 +18,18 @@
   </head>
   <body>
   <div class="page-wide header">
-    <header>
+    <header class="content">
       <h1>White Space and UTF Characters Highlighter</h1>
     </header>
   </div>
-    <input type="text" id="text-box" palecholder="Text" />
-    <div id="text-processed"></div>
-    <dic id="text-len"></div>
-    <p><a href="/">Home</a></p>
+  <div class="page-wide">
+    <div class="content">
+      <p><a href="/">Home</a></p>
+      <input type="text" id="text-box" palecholder="Text" />
+      <div id="text-processed"></div>
+      <div id="text-len"></div>
+    </div>
+  </div>
   </body>
   <script>
     (function(){
