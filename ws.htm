@@ -41,12 +41,16 @@
 
       var sourceElement = document.getElementById ("text-box"),
         targetElement = document.getElementById ("text-processed"),
-        lenElement = document.getElementById ("text-len");
+        lenElement = document.getElementById ("text-len"),
+        text = decodeURIComponent (GetUrlText ());
       
       sourceElement.onchange = textChanged;
       sourceElement.onkeyup = textChanged;
       
-      sourceElement.value = decodeURIComponent (GetUrlText ());
+      if (text) {
+        sourceElement.value = text;
+        textChanged ();
+      }
 
       function textChanged () {
 
@@ -70,8 +74,7 @@
       function GetUrlText () {
 
         var url = new URL(window.location.href);
-        var text = url.searchParams.get(URL_PARAM);
-        return text? text : "";
+        return url.searchParams.get(URL_PARAM);
 
       }
     })();
