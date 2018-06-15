@@ -47,7 +47,7 @@
       sourceElement.onchange = textChanged;
       sourceElement.onkeyup = textChanged;
       
-      if (text) {
+      if (textParamRaw) {
         sourceElement.value = decodeURIComponent (textParamRaw);
         textChanged ();
       }
