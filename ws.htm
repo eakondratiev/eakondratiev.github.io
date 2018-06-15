@@ -43,6 +43,8 @@
       
       sourceElement.onchange = textChanged;
       sourceElement.onkeyup = textChanged;
+      
+      sourceElement.value = decodeURIComponent (GetUrlText ());
 
       function textChanged () {
 
@@ -61,6 +63,14 @@
         return source.replace (reNonAscii, "<b>$1</b>")
                      .replace (reTab, "<i>&rarr;</i>")
                      .replace (reWhiteSpace, "<i>.</i>");
+      }
+
+      function GetUrlText () {
+
+        var query = window.location.search.substring(1);
+        var url = new URL(query);
+        var text = url.searchParams.get("q");
+
       }
     })();
   </script>
