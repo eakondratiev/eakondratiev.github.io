@@ -37,6 +37,8 @@
   <script>
     (function(){
 
+      const URL_PARAM = "q";
+
       var sourceElement = document.getElementById ("text-box"),
         targetElement = document.getElementById ("text-processed"),
         lenElement = document.getElementById ("text-len");
@@ -51,8 +53,8 @@
         targetElement.innerHTML = processText (sourceElement.value);
         lenElement.innerHTML = "String lenght: <b>" + sourceElement.value.length + "</b>";
         
-        window.history.pushState('ws.htm', 'Title', '/ws.htm?q=' +
-          encodeURIComponent (sourceElement.value));
+        window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
+          URL_PARAM + '=' + encodeURIComponent (sourceElement.value));
       }
 
       function processText (source) {
@@ -67,9 +69,9 @@
 
       function GetUrlText () {
 
-        var query = window.location.search.substring(1);
-        var url = new URL(query);
-        var text = url.searchParams.get("q");
+        var url = new URL(window.location.href);
+        var text = url.searchParams.get(URL_PARAM);
+        return text? text : "";
 
       }
     })();
