@@ -48,6 +48,9 @@
 
         targetElement.innerHTML = processText (sourceElement.value);
         lenElement.innerHTML = "String lenght: <b>" + sourceElement.value.length + "</b>";
+        
+        window.history.pushState('ws.htm', 'Title', '/ws.htm?q=' +
+          encodeURIComponent (sourceElement.value));
       }
 
       function processText (source) {
