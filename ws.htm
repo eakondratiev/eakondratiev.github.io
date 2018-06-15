@@ -42,13 +42,13 @@
       var sourceElement = document.getElementById ("text-box"),
         targetElement = document.getElementById ("text-processed"),
         lenElement = document.getElementById ("text-len"),
-        text = decodeURIComponent (GetUrlText ());
+        textParamRaw = GetUrlText ();
       
       sourceElement.onchange = textChanged;
       sourceElement.onkeyup = textChanged;
       
       if (text) {
-        sourceElement.value = text;
+        sourceElement.value = decodeURIComponent (textParamRaw);
         textChanged ();
       }
 
