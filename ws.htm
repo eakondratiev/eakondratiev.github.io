@@ -73,8 +73,13 @@
 
       function GetUrlText () {
 
-        var url = new URL(window.location.href);
-        return url.searchParams.get(URL_PARAM);
+        try {
+          var url = new URL(window.location.href);
+          return url.searchParams.get(URL_PARAM);
+        }
+        finally {
+          return null;
+        }
 
       }
     })();
