@@ -74,7 +74,7 @@
           var url = new URL(window.location.href);
           return url.searchParams.get(URL_PARAM);
         }
-        finally {
+        catch(error) {
           return null;
         }
 
