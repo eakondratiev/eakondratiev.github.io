@@ -10,25 +10,30 @@
         border: solid 1px #999;
         box-sizing: border-box; padding:4pt; width:100%;}
       #text-box {font-size:1rem;}
-      #text-processed {font-family:Consolas; font-size: 1.5rem;
-        display:none; margin: 8pt 0; width:100%;}
-      #text-processed b {color: #c00; min-width:2pt; background: #edc;} /* non-ascii */
+      #text-processed {font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        font-size: 1.2rem; display:none; margin: 16pt 0; width:100%;}
+      #text-processed b {color: #c00; min-width:2pt; background: #fd9;} /* non-ascii */
       #text-processed i {background: #eee; font-style: normal; color: #777;} /* white space */
+      .new-line-symbol {font-family: 'Lucida Console'}
     </style>
   </head>
   <body>
-  <div class="page-wide header">
-    <header class="content">
-      <h1>White Space and UTF Characters Highlighter</h1>
-    </header>
-  </div>
-  <div class="page-wide">
-    <div class="content">
-      <input type="text" id="text-box" placeholder="Enter or paste a text here..." />
-      <div>Text length: <b id="text-len"></b></div>
-      <div id="text-processed"></div>
+    <div class="page-wide header">
+      <header class="content">
+        <h1>White Space and UTF Characters Highlighter</h1>
+      </header>
     </div>
-  </div>
+    <div class="page-wide">
+      <div class="content">
+        <p>Enter or paste a text here...</p>
+        <textarea id="text-box" rows="5"></textarea>
+        <div>Text length: <b id="text-len"></b></div>
+        <div id="text-processed"></div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+    ...
+    </div>
   </body>
   <script>
     (function(){
@@ -39,7 +44,8 @@
         targetElement = document.getElementById ("text-processed"),
         lenElement = document.getElementById ("text-len"),
         textParamRaw = GetUrlText ();
-      
+
+      sourceElement.focus();
       sourceElement.onchange = textChanged;
       sourceElement.onkeyup = textChanged;
       
@@ -61,11 +67,13 @@
       function processText (source) {
 
         var reNonAscii = (/([\u00FF-\uFFFF])/g),
-          reWhiteSpace = (/\s/g),
+          reNewlines = (/[\r\f\n]/g),
+          reWhiteSpace = (/[ ]/g),
           reTab = (/\t/g);
-        return source.replace (reNonAscii, "<b>$1</b>")
-                     .replace (reTab, "<i>&rarr;</i>")
-                     .replace (reWhiteSpace, "<i>.</i>");
+        return source.replace(reNonAscii, '<b>$1</b>')
+                     .replace (reTab, '<i>&rarr;</i>')
+                     .replace (reWhiteSpace, '<i>.</i>')
+                     .replace(reNewlines, '<i class="new-line-symbol">&para;</i><br />');
       }
 
       /**
