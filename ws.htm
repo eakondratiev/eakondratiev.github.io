@@ -11,10 +11,10 @@
         box-sizing: border-box; padding:4pt; width:100%;}
       #text-box {font-size:1rem;}
       #text-processed {font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
-        font-size: 1.2rem; display:none; margin: 16pt 0; width:100%;}
+        display:none; margin: 16pt 0; width:100%;}
       #text-processed b {color: #c00; min-width:2pt; background: #fd9;} /* non-ascii */
       #text-processed i {background: #eee; font-style: normal; color: #777;} /* white space */
-      .new-line-symbol {font-family: 'Lucida Console'}
+      .new-line-symbol {font-family: 'Lucida Console'; font-size:0.8rem; padding: 0 2pt;}
     </style>
   </head>
   <body>
@@ -32,64 +32,65 @@
       </div>
     </div>
     <div class="page-wide footer">
-    ...
+      ...
     </div>
+    <script>
+      (function () {
+
+        const URL_PARAM = "q";
+
+        var sourceElement = document.getElementById("text-box"),
+          targetElement = document.getElementById("text-processed"),
+          lenElement = document.getElementById("text-len"),
+          textParamRaw = GetUrlText();
+
+        sourceElement.focus();
+        sourceElement.onchange = textChanged;
+        sourceElement.onkeyup = textChanged;
+
+        if (textParamRaw) {
+          sourceElement.value = decodeURIComponent(textParamRaw);
+          textChanged();
+        }
+
+        function textChanged() {
+
+          targetElement.innerHTML = processText(sourceElement.value);
+          targetElement.style.display = "block";
+          lenElement.innerHTML = sourceElement.value.length.toString();
+
+          window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
+            URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
+        }
+
+        function processText(source) {
+
+          // NOTE: textarea internal value, the line breaks are normalized to LF (only).
+          var reNonAscii = /([\u00FF-\uFFFF])/g,
+            reNewline = /\n/g,
+            reWhiteSpace = /[ ]/g,
+            reTab = /\t/g;
+          return source.replace(reNonAscii, '<b>$1</b>')
+            .replace(reTab, '<i>&rarr;</i>')
+            .replace(reWhiteSpace, '<i>.</i>')
+            .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />');
+        }
+
+        /**
+         * Returns the text from url parameter or null.
+         * */
+        function GetUrlText() {
+
+          try {
+            var url = new URL(window.location.href);
+            return url.searchParams.get(URL_PARAM);
+          }
+          catch (error) {
+            return null;
+          }
+
+        }
+      })();
+    </script>
   </body>
-  <script>
-    (function(){
-
-      const URL_PARAM = "q";
-
-      var sourceElement = document.getElementById ("text-box"),
-        targetElement = document.getElementById ("text-processed"),
-        lenElement = document.getElementById ("text-len"),
-        textParamRaw = GetUrlText ();
-
-      sourceElement.focus();
-      sourceElement.onchange = textChanged;
-      sourceElement.onkeyup = textChanged;
-      
-      if (textParamRaw) {
-        sourceElement.value = decodeURIComponent (textParamRaw);
-        textChanged ();
-      }
-
-      function textChanged () {
-
-        targetElement.innerHTML = processText (sourceElement.value);
-        targetElement.style.display = "block";
-        lenElement.innerHTML = sourceElement.value.length.toString();
-        
-        window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
-          URL_PARAM + '=' + encodeURIComponent (sourceElement.value));
-      }
-
-      function processText (source) {
-
-        var reNonAscii = (/([\u00FF-\uFFFF])/g),
-          reNewlines = (/[\r\f\n]/g),
-          reWhiteSpace = (/[ ]/g),
-          reTab = (/\t/g);
-        return source.replace(reNonAscii, '<b>$1</b>')
-                     .replace (reTab, '<i>&rarr;</i>')
-                     .replace (reWhiteSpace, '<i>.</i>')
-                     .replace(reNewlines, '<i class="new-line-symbol">&para;</i><br />');
-      }
-
-      /**
-       * Returns the text from url parameter or null.
-       * */
-      function GetUrlText () {
-
-        try {
-          var url = new URL(window.location.href);
-          return url.searchParams.get(URL_PARAM);
-        }
-        catch(error) {
-          return null;
-        }
-
-      }
-    })();
-  </script>
 </html>
