@@ -1,0 +1,8 @@
+{
+  "name":"EA@Github",
+  "icons": [
+    {"src":"/assets/icons/android-chrome-192.png", "sizes":"192x192", "type":"image/png"}
+  ],
+  "theme_color":"#008e35",
+  "display":"standalone"
+}
