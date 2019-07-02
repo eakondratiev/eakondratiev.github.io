@@ -52,7 +52,7 @@
       (function () {
 
         var velocityValueElement = document.getElementById ('velocity-value'),
-          velocityUnitContainer = document.getElementById ('velocity-units');
+          velocityUnitElements = document.getElementsByClassName ('velocity-unit');
 
         velocityValueElement.onchange = velocityChanged;
         velocityValueElement.onkeyup = velocityChanged;
@@ -63,18 +63,43 @@
          */
         function velocityChanged () {
 
-          var vTxt;
+          var vTxt,
+            vNumber;
           
           if (velocityValueElement === null) {
             console.log ('Value element is null;')
             return;
           }
 
-          vTxt = velocityValueElement.value;
+          vTxt = velocityValueElement.value.replace(',', '.');
+          vNumber = parseFloat (vTxt);
 
-          console.log (vTxt);
+          console.log ({vTxt, vNumber});
+
+          var unitData = getUnitData ();
+          console.log (unitData);
         }
 
+        /**
+         * Returns the selected unit properties.
+         */
+        function getUnitData () {
+
+          var i;
+
+          for (i = 0; i < velocityUnitElements.length; i++) {
+
+            if (velocityUnitElements[i].checked) {
+              return {
+                name: velocityUnitElements[i].value,
+                k: velocityUnitElements[i].dataset.k
+              }
+            }
+
+          }
+
+          return null;
+        }
       })();
     </script>
   </body>
