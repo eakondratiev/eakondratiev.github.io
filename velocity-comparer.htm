@@ -63,7 +63,14 @@
          */
         function velocityChanged () {
 
-          var vTxt = velocityValueElement.nodeValue();
+          var vTxt;
+          
+          if (velocityValueElement === null) {
+            console.log ('Value element is null;')
+            return;
+          }
+
+          vTxt = velocityValueElement.nodeValue();
 
           console.log (vTxt);
         }
