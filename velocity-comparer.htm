@@ -34,7 +34,7 @@
         </div>
         <div id="velocity-units" class="velocity-utnis">
           <label>
-            <input type="radio" name="velocity-unit" value="ms" data-k="1" /> m/s
+            <input type="radio" name="velocity-unit" value="ms" data-k="1" checked /> m/s
           </label>
           <label>
             <input type="radio" name="velocity-unit" value="kmh" data-k="10/36" /> km/h
@@ -50,6 +50,23 @@
     </div>
     <script>
       (function () {
+
+        var velocityValueElement = document.getElementById ('.velocity-value'),
+          velocityUnitContainer = document.getElementById ('.velocity-units');
+
+        velocityValueElement.onchange = velocityChanged;
+        velocityValueElement.onkeyup = velocityChanged;
+
+
+        /**
+         * Update calculations
+         */
+        function velocityChanged () {
+
+          var vTxt = velocityValueElement.nodeValue();
+
+          console.log (vTxt);
+        }
 
       })();
     </script>
