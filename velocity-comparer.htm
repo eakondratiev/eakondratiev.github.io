@@ -85,15 +85,28 @@
          */
         function getUnitData () {
 
-          var i;
-          console.log('Units: ' + velocityUnitElements.length.toString());
+          var i,
+            k,
+            overPosition;
 
           for (i = 0; i < velocityUnitElements.length; i++) {
 
             if (velocityUnitElements[i].checked) {
+
+              k = velocityUnitElements[i].dataset.k;
+              overPosition = k.indexOf ('/');
+
+              if (overPosition >= 0) {
+                // k in the form of a/b
+                k = parseFloat (0, overPosition) / parseFloat (overPosition + 1);
+              }
+              else {
+                k = parseFloat (k);
+              }
+
               return {
                 name: velocityUnitElements[i].value,
-                k: velocityUnitElements[i].dataset.k
+                k: k
               }
             }
 
