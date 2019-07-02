@@ -64,7 +64,9 @@
         function velocityChanged () {
 
           var vTxt,
-            vNumber;
+            vNumber,
+            unitData,
+            velocity;
           
           if (velocityValueElement === null) {
             console.log ('Value element is null;')
@@ -73,11 +75,19 @@
 
           vTxt = velocityValueElement.value.replace(',', '.');
           vNumber = parseFloat (vTxt);
+          unitData = getUnitData ();
+
+          if (unitData === null) {
+            console.log ('Unit not selected');
+            return;
+          }
 
           console.log ({vTxt, vNumber});
-
-          var unitData = getUnitData ();
           console.log (unitData);
+
+          velocity = vNumber * unitData.k; // m/s
+
+          console.log ('Velocity: ' + velocity.toString() + ' m/s.')
         }
 
         /**
