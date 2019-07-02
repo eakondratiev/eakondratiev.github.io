@@ -1,7 +1,7 @@
 # eakondratiev.github.io
 Web Pages
 
-## White Spaces & UTF
+## Whitespaces & UTF
 url: eakondratiev.github.io/[page_name]
 https://eakondratiev.github.io/ws.htm
 
