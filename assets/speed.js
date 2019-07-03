@@ -59,6 +59,8 @@ function Speed () {
       unitData,
       speed;
 
+    comparisonElement.innerHTML = '';
+
     if (velocityValueElement === null) {
       console.log('Value element is null;')
       return;
