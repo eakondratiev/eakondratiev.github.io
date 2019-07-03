@@ -160,8 +160,23 @@ function Speed () {
    */
   function isValid(speed) {
 
+    if (isNaN (speed)) {
+      otherUnitsElement.innerHTML = messages[0];
+      return false;
+    }
+
     if (speed > SPEED_OF_LIGHT) {
       otherUnitsElement.innerHTML = messages[3];
+      return false;
+    }
+
+    if (speed < 0) {
+      otherUnitsElement.innerHTML = messages[2];
+      return false;
+    }
+
+    if (Math.abs(speed) < 1e-10) {
+      otherUnitsElement.innerHTML = messages[1]; // zero
       return false;
     }
 
