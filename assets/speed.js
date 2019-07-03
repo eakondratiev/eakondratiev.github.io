@@ -14,7 +14,6 @@ function Speed () {
   velocityValueElement.onkeyup = velocityChanged;
 
   units = getUnits();
-  console.log({ units });
 
   otherUnitsElement.innerHTML = '<i>todo</i>';
 
@@ -118,9 +117,27 @@ function Speed () {
    */
   function showOtherUnits(speed) {
 
-    var i;
+    var i,
+      unit,
+      text = '',
+      unitSpeed;
 
-    otherUnitsElement.innerHTML = speed.toString() + ' m/s';
+    for (i = 0; i < velocityUnitElements.length; i++) {
+
+      if (!velocityUnitElements[i].checked) {
+
+        // Get the unit by the key
+        unit = units[velocityUnitElements[i].value];
+
+        unitSpeed = speed / unit.k;
+        text += ' <b>' + unitSpeed.toString() + '</b> ' + unit.name;
+
+      }
+
+    }
+
+    otherUnitsElement.innerHTML = text;
 
   }
+
 }
