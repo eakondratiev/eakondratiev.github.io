@@ -80,8 +80,6 @@ function Speed () {
         name: velocityUnitElements[i].parentNode.textContent,
           k: k
         }
-      }
-
     }
 
     return units;
