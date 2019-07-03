@@ -19,6 +19,7 @@ function Speed () {
 
   velocityValueElement.onchange = velocityChanged;
   velocityValueElement.onkeyup = velocityChanged;
+  velocityUnitElements.onchange = velocityChanged;
 
   units = getUnits();
 
@@ -206,7 +207,7 @@ function Speed () {
       return v.toExponential(3);
     }
 
-    return v.toFixed(2);
+    return v.toFixed(2).replace (/(\.00|0)$/, '');
 
   }
 
