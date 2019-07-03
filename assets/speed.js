@@ -96,29 +96,15 @@ function Speed () {
    */
   function getUnitData() {
 
-    var i,
-      k,
-      overPosition;
+    var i;
 
     for (i = 0; i < velocityUnitElements.length; i++) {
 
       if (velocityUnitElements[i].checked) {
 
-        k = velocityUnitElements[i].dataset.k;
-        overPosition = k.indexOf('/');
+        // Get the unit by the key
+        return units[velocityUnitElements[i].value];
 
-        if (overPosition >= 0) {
-          // k in the form of a/b
-          k = parseFloat(k.substring(0, overPosition)) / parseFloat(k.substring(overPosition + 1));
-        }
-        else {
-          k = parseFloat(k);
-        }
-
-        return {
-          name: velocityUnitElements[i].value,
-          k: k
-        }
       }
 
     }
