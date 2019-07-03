@@ -142,7 +142,7 @@ function Speed () {
         unit = units[velocityUnitElements[i].value];
 
         unitSpeed = speed / unit.k;
-        text += ' <b>' + unitSpeed.toString() + '</b> ' + unit.name;
+        text += ' <b>' + formatNumber (unitSpeed) + '</b> ' + unit.name;
 
       }
 
@@ -181,6 +181,29 @@ function Speed () {
     }
 
     return true;
+
+  }
+
+  /**
+   * Returns the formatted numeric value.
+   * @param {Number} v The value.
+   * @returns {String} The formatted value.
+   */
+  function formatNumber(v) {
+
+    var absv;
+
+    if (isNaN(v)) {
+      return '---';
+    }
+
+    absv = Math.abs(v);
+
+    if (absv < 1e-4 || absv >= 1e7) {
+      return v.toExponential(3);
+    }
+
+    return v.toFixed(2);
 
   }
 
