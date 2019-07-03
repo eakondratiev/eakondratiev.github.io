@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Speed Comparer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="EA Speed Comparer" />
+    <meta name="application-name" content="EA Speed Comparer" />
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css" rel="stylesheet" type="text/css" />
+    <script src="/assets/speed.js"></script>
+    <style>
+      .velocity-utnis {font-size: .8rem; margin:4pt 0 16pt 0;}
+      .velocity-utnis label {margin-right: 8pt;}
+    </style>
+  </head>
+  <body>
+    <div class="page-wide header">
+      <header class="content">
+        <h1>Speed Comparer</h1>
+      </header>
+    </div>
+    <div class="page-wide">
+      <div class="content">
+        <p>Speed</p>
+        <div>
+          <input type="text" id="velocity-value" class="velocity-value" />
+        </div>
+        <div id="velocity-units" class="velocity-utnis">
+          <label>
+            <input type="radio" name="velocity-unit" value="ms" data-k="1" checked /> m/s
+          </label>
+          <label>
+            <input type="radio" name="velocity-unit" value="kms" data-k="1000" /> km/s
+          </label>
+          <label>
+            <input type="radio" name="velocity-unit" value="kmh" data-k="10/36" /> km/h
+          </label>
+          <label>
+            <input type="radio" name="velocity-unit" value="mph" data-k="0.447" /> mph
+          </label>
+        </div>
+        <div id="other-units" class="other-units">
+
+        </div>
+        <ul class="facts">
+          <li>1I/’Oumuamua: 26 km/s</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      ...
+    </div>
+    <script>
+      Speed();
+    </script>
+  </body>
+</html>
