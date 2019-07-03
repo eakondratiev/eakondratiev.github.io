@@ -19,7 +19,16 @@ function Speed () {
 
   velocityValueElement.onchange = velocityChanged;
   velocityValueElement.onkeyup = velocityChanged;
-  velocityUnitElements.onchange = velocityChanged;
+
+  // Radio buttons change event
+  (function () {
+    var i;
+
+    for (i = 0; i < velocityUnitElements.length; i++) {
+      velocityUnitElements[i].onchange = velocityChanged;
+    }
+
+  })();
 
   units = getUnits();
 
