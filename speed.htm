@@ -17,8 +17,11 @@
     <link href="/assets/main.css" rel="stylesheet" type="text/css" />
     <script src="/assets/speed.js"></script>
     <style>
-      .velocity-utnis {font-size: .8rem; margin:4pt 0 16pt 0;}
-      .velocity-utnis label {margin-right: 8pt;}
+      .speed-units {font-size: .8rem; margin:4pt 0 16pt 0;}
+      .speed-units label {margin-right: 8pt;}
+      .other-units {margin: 8pt 0;}
+      .other-units b {margin-left: 8pt;}
+      .other-units b:first-child {margin-left: 8pt;}
     </style>
   </head>
   <body>
@@ -31,20 +34,20 @@
       <div class="content">
         <p>Speed</p>
         <div>
-          <input type="text" id="velocity-value" class="velocity-value" />
+          <input type="text" id="speed-value" class="speed-value" />
         </div>
-        <div id="velocity-units" class="velocity-utnis">
+        <div id="speed-units" class="speed-units">
           <label>
-            <input type="radio" name="velocity-unit" value="ms" data-k="1" checked /> m/s
+            <input type="radio" name="speed-unit" value="ms" data-k="1" checked /> m/s
           </label>
           <label>
-            <input type="radio" name="velocity-unit" value="kms" data-k="1000" /> km/s
+            <input type="radio" name="speed-unit" value="kms" data-k="1000" /> km/s
           </label>
           <label>
-            <input type="radio" name="velocity-unit" value="kmh" data-k="10/36" /> km/h
+            <input type="radio" name="speed-unit" value="kmh" data-k="10/36" /> km/h
           </label>
           <label>
-            <input type="radio" name="velocity-unit" value="mph" data-k="0.447" /> mph
+            <input type="radio" name="speed-unit" value="mph" data-k="0.447" /> mph
           </label>
         </div>
         <div id="other-units" class="other-units">

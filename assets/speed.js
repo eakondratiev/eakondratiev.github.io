@@ -5,8 +5,8 @@
  */
 function Speed () {
 
-  var velocityValueElement = document.getElementById('velocity-value'),
-    velocityUnitElements = document.getElementsByName('velocity-unit'),
+  var velocityValueElement = document.getElementById('speed-value'),
+    velocityUnitElements = document.getElementsByName('speed-unit'),
     otherUnitsElement = document.getElementById('other-units'),
     units;
 
