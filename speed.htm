@@ -17,6 +17,7 @@
     <link href="/assets/main.css" rel="stylesheet" type="text/css" />
     <script src="/assets/speed.js"></script>
     <style>
+      .speed-value {font-size: 1rem; padding:4pt;}
       .speed-units {font-size: .8rem; margin:4pt 0 16pt 0;}
       .speed-units label {margin-right: 8pt;}
       .other-units {margin: 8pt 0;}
@@ -34,7 +35,7 @@
       <div class="content">
         <p>Speed</p>
         <div>
-          <input type="text" id="speed-value" class="speed-value" />
+          <input type="text" id="speed-value" class="speed-value" maxlength="24" />
         </div>
         <div id="speed-units" class="speed-units">
           <label>

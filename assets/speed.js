@@ -5,17 +5,24 @@
  */
 function Speed () {
 
-  var velocityValueElement = document.getElementById('speed-value'),
+  var SPEED_OF_LIGHT = 299792458, // m/s
+    velocityValueElement = document.getElementById('speed-value'),
     velocityUnitElements = document.getElementsByName('speed-unit'),
     otherUnitsElement = document.getElementById('other-units'),
-    units;
+    units,
+    messages = [
+      'Enter a numeric value, please.',
+      'No move at all.',
+      'Negative speed! Please stop it.',
+      'All units be advised, a suspect speeding down the virtual area.'
+    ];
 
   velocityValueElement.onchange = velocityChanged;
   velocityValueElement.onkeyup = velocityChanged;
 
   units = getUnits();
 
-  otherUnitsElement.innerHTML = '<i>todo</i>';
+  velocityValueElement.focus();
 
   /**
    * Update calculations
@@ -122,6 +129,11 @@ function Speed () {
       text = '',
       unitSpeed;
 
+    if (!isValid(speed)) {
+      // Not valid, a message is shown.
+      return;
+    }
+
     for (i = 0; i < velocityUnitElements.length; i++) {
 
       if (!velocityUnitElements[i].checked) {
@@ -137,6 +149,23 @@ function Speed () {
     }
 
     otherUnitsElement.innerHTML = text;
+
+  }
+
+  /**
+   * Returns the value indicating whether the speed is value or not
+   * and show the message.
+   * @param {Number} speed The speed in m/s
+   * @returns {Boolean} Is the speed valid or not.
+   */
+  function isValid(speed) {
+
+    if (speed > SPEED_OF_LIGHT) {
+      otherUnitsElement.innerHTML = messages[3];
+      return false;
+    }
+
+    return true;
 
   }
 
