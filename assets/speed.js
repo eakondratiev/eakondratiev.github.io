@@ -6,15 +6,30 @@
 function Speed () {
 
   var SPEED_OF_LIGHT = 299792458, // m/s
+    SECONDS_PER_DAY = 3600 * 24,
+    SECONDS_PER_YEAR = SECONDS_PER_DAY * 365,
     velocityValueElement = document.getElementById('speed-value'),
     velocityUnitElements = document.getElementsByName('speed-unit'),
     otherUnitsElement = document.getElementById('other-units'),
+    comparisonElement = document.getElementById('comparison'),
     units,
     messages = [
       'Enter a numeric value, please.',
       'No move at all.',
       'Negative speed! Please stop it.',
       'All units be advised, a suspect speeding down the virtual area.'
+    ],
+    distances = [
+      { name: 'From Chicago to LA',
+        distance: 2.808e6 }, // meters
+      { name: 'From London to New York',
+        distance: 5.585e6 },
+      { name: 'Earth diameter',
+        distance: 12.742e6},
+      { name: 'Sun diameter',
+        distance: 1.391e9},
+      { name: 'From Sun to Earth',
+        distance: 1.496e11}
     ];
 
   velocityValueElement.onchange = velocityChanged;
@@ -42,7 +57,7 @@ function Speed () {
     var vTxt,
       vNumber,
       unitData,
-      velocity;
+      speed;
 
     if (velocityValueElement === null) {
       console.log('Value element is null;')
@@ -58,14 +73,13 @@ function Speed () {
       return;
     }
 
-    console.log({ vTxt, vNumber });
-    console.log(unitData);
+    speed = vNumber * unitData.k; // m/s
 
-    velocity = vNumber * unitData.k; // m/s
+    if (showOtherUnits(speed)) {
+      // Show comparison texts if the speed is valid.
+      showComparison(speed);
+    }
 
-    console.log('Speed: ' + velocity.toString() + ' m/s.');
-
-    showOtherUnits(velocity);
   }
 
   /**
@@ -131,6 +145,7 @@ function Speed () {
   /**
    * Shows the speed in other units in the element.
    * @param {Number} speed The speed in m/s.
+   * @returns {Boolean} The value indicating whether the speed is valid or not;
    */
   function showOtherUnits(speed) {
 
@@ -141,7 +156,7 @@ function Speed () {
 
     if (!isValid(speed)) {
       // Not valid, a message is shown.
-      return;
+      return false;
     }
 
     for (i = 0; i < velocityUnitElements.length; i++) {
@@ -162,7 +177,30 @@ function Speed () {
     }
 
     otherUnitsElement.innerHTML = text;
+    return true;
 
+  }
+
+/**
+ * Shows the time for making the distances in the element.
+ * @param {Number} speed The speed in m/s.
+ */
+  function showComparison(speed) {
+
+    var i,
+      seconds,
+      text = '';
+
+    console.log({ speed, distances });
+    for (i = 0; i < distances.length; i++) {
+
+      seconds = distances[i].distance / speed; // s 
+      text += '<p class="comparisonText">' + distances[i].name +
+        ': <span>' + formatTime (seconds) +
+        '</span></p>';
+    }
+
+    comparisonElement.innerHTML = text;
   }
 
   /**
@@ -218,6 +256,53 @@ function Speed () {
 
     return v.toFixed(2).replace (/(\.00|0)$/, '');
 
+  }
+
+  /**
+   * Returns the formatted time value.
+   * @param {Number} seconds The time in seconds.
+   * @returns {String} The formatted value.
+   */
+  function formatTime(seconds) {
+
+    var hh, mm, ss, secondsPrecision;
+
+    if (isNaN(seconds)) {
+      return '---';
+    }
+
+    if (!isFinite(seconds)) {
+      return '&infin;';
+    }
+
+    if (seconds > SECONDS_PER_YEAR) {
+      // Years
+      return (seconds /SECONDS_PER_YEAR).toFixed (1) + ' years'
+    }
+
+    if (seconds > SECONDS_PER_DAY) {
+      // Days
+      return (seconds /SECONDS_PER_DAY).toFixed (2) + ' days'
+    }
+
+    secondsPrecision = secondsPrecision || 0;
+
+    // https://stackoverflow.com/a/6313008
+    hh = Math.floor(seconds / 3600);
+    mm = Math.floor((seconds - (hh * 3600)) / 60);
+    ss = seconds - (hh * 3600) - (mm * 60);
+
+    if (seconds < 60) {
+      secondsPrecision = 2;
+    }
+
+    ss = ss.toFixed(secondsPrecision);
+
+    if (hh < 10) { hh = "0" + hh; }
+    if (mm < 10) { mm = "0" + mm; }
+    if (ss < 10) { ss = "0" + ss; }
+
+    return hh + ":" + mm + ":" + ss;
   }
 
 }
