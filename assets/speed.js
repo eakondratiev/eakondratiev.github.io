@@ -142,7 +142,10 @@ function Speed () {
         unit = units[velocityUnitElements[i].value];
 
         unitSpeed = speed / unit.k;
-        text += ' <b>' + formatNumber (unitSpeed) + '</b> ' + unit.name;
+
+        if (unitSpeed > 0.1) {
+          text += ' <b>' + formatNumber(unitSpeed) + '</b> ' + unit.name;
+        }
 
       }
 
