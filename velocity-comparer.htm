@@ -64,6 +64,7 @@
         velocityValueElement.onchange = velocityChanged;
         velocityValueElement.onkeyup = velocityChanged;
 
+        otherUnitsElement.innerHTML = '<i>todo</i>';
 
         /**
          * Update calculations
@@ -142,7 +143,7 @@
 
           var i;
 
-          otherUnitsElement.innerHTML = speed.toString() + ' m/s/';
+          otherUnitsElement.innerHTML = speed.toString() + ' m/s';
 
         }
       })();
