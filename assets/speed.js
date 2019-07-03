@@ -7,10 +7,14 @@ function Speed () {
 
   var velocityValueElement = document.getElementById('velocity-value'),
     velocityUnitElements = document.getElementsByName('velocity-unit'),
-    otherUnitsElement = document.getElementById('other-units');
+    otherUnitsElement = document.getElementById('other-units'),
+    units;
 
   velocityValueElement.onchange = velocityChanged;
   velocityValueElement.onkeyup = velocityChanged;
+
+  units = getUnits();
+  console.log({ units });
 
   otherUnitsElement.innerHTML = '<i>todo</i>';
 
@@ -49,7 +53,43 @@ function Speed () {
   }
 
   /**
+   * Returns the unit list.
+   * @returns {*} The associative array of units, the key - a unit code, the value - the unit name, factor etc.
+   */
+  function getUnits() {
+
+    var i,
+      k,
+      overPosition,
+      units = {};
+
+    for (i = 0; i < velocityUnitElements.length; i++) {
+
+      k = velocityUnitElements[i].dataset.k;
+      overPosition = k.indexOf('/');
+
+      if (overPosition >= 0) {
+        // k in the form of a/b
+        k = parseFloat(k.substring(0, overPosition)) / parseFloat(k.substring(overPosition + 1));
+      }
+      else {
+        k = parseFloat(k);
+      }
+
+      units[velocityUnitElements[i].value] = {
+        name: velocityUnitElements[i].parentNode.textContent,
+          k: k
+        }
+      }
+
+    }
+
+    return units;
+  }
+
+  /**
    * Returns the selected unit properties.
+   * @returns {*} The unit properties.
    */
   function getUnitData() {
 
