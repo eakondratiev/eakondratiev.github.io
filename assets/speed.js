@@ -61,7 +61,9 @@ function Speed () {
     var i,
       k,
       overPosition,
-      units = {};
+      units = {},
+      reSpaces = /\s+/g,
+      unitName;
 
     for (i = 0; i < velocityUnitElements.length; i++) {
 
@@ -76,10 +78,13 @@ function Speed () {
         k = parseFloat(k);
       }
 
+      unitName = velocityUnitElements[i].parentNode.textContent;
+      unitName = reSpaces.replace(unitName, ''); // remove spaces and new lines
+
       units[velocityUnitElements[i].value] = {
-        name: velocityUnitElements[i].parentNode.textContent,
-          k: k
-        }
+        name: unitName,
+        k: k
+      };
     }
 
     return units;
