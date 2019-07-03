@@ -5,6 +5,6 @@ Web Pages
 url: eakondratiev.github.io/[page_name]
 https://eakondratiev.github.io/ws.htm
 
-## Velocity Comparer
+## Speed Comparer
 url: eakondratiev.github.io/[page_name]
-https://eakondratiev.github.io/velocity-comparer.htm
+https://eakondratiev.github.io/speed.htm
