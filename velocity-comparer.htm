@@ -46,6 +46,9 @@
             <input type="radio" name="velocity-unit" value="mph" data-k="0.447" /> mph
           </label>
         </div>
+        <div id="other-units" class="other-units">
+
+        </div>
       </div>
     </div>
     <div class="page-wide footer">
@@ -55,7 +58,8 @@
       (function () {
 
         var velocityValueElement = document.getElementById ('velocity-value'),
-          velocityUnitElements = document.getElementsByName ('velocity-unit');
+          velocityUnitElements = document.getElementsByName('velocity-unit'),
+          otherUnitsElement = document.getElementById('other-units');
 
         velocityValueElement.onchange = velocityChanged;
         velocityValueElement.onkeyup = velocityChanged;
@@ -126,6 +130,18 @@
           }
 
           return null;
+        }
+
+        /**
+         * Shows the speed in other units in the element.
+         * @param {Number} speed The speed in m/s.
+         */
+        function showOtherUnits(speed) {
+
+          var i;
+
+          otherUnitsElement.innerHTML = speed.toString() + ' m/s/';
+
         }
       })();
     </script>
