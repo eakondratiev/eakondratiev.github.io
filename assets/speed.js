@@ -79,7 +79,7 @@ function Speed () {
       }
 
       unitName = velocityUnitElements[i].parentNode.textContent;
-      unitName = reSpaces.replace(unitName, ''); // remove spaces and new lines
+      unitName = unitName.replace(reSpaces, ''); // remove spaces and new lines
 
       units[velocityUnitElements[i].value] = {
         name: unitName,
