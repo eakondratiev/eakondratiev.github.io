@@ -179,7 +179,7 @@ function Speed () {
 
     var i,
       unit,
-      text = '<h2>Cover the Distance</h2>',
+      text = '<h2 class="comparison-header">Cover the Distance</h2>',
       unitSpeed;
 
     for (i = 0; i < speedUnitElements.length; i++) {
