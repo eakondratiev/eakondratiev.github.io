@@ -101,10 +101,13 @@ function Speed () {
 
     speed = vNumber * unitData.k; // m/s
 
-    if (showOtherUnits(speed)) {
-      // Show comparison texts if the speed is valid.
-      showComparison(speed);
+    if (!isValid(speed)) {
+      // Not valid, a message is shown.
+      return;
     }
+
+    showOtherUnits(speed);
+    showComparison(speed);
 
   }
 
@@ -171,19 +174,13 @@ function Speed () {
   /**
    * Shows the speed in other units in the element.
    * @param {Number} speed The speed in m/s.
-   * @returns {Boolean} The value indicating whether the speed is valid or not;
    */
   function showOtherUnits(speed) {
 
     var i,
       unit,
-      text = '',
+      text = '<h2>Cover the Distance</h2>',
       unitSpeed;
-
-    if (!isValid(speed)) {
-      // Not valid, a message is shown.
-      return false;
-    }
 
     for (i = 0; i < speedUnitElements.length; i++) {
 
@@ -203,7 +200,6 @@ function Speed () {
     }
 
     otherUnitsElement.innerHTML = text;
-    return true;
 
   }
 
