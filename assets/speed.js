@@ -1,6 +1,6 @@
 ﻿/*
  * File: speed.js 
- * 2019-07-03
+ * 2019-07-03_04
  * 
  */
 function Speed () {
@@ -8,8 +8,8 @@ function Speed () {
   var SPEED_OF_LIGHT = 299792458, // m/s
     SECONDS_PER_DAY = 3600 * 24,
     SECONDS_PER_YEAR = SECONDS_PER_DAY * 365,
-    velocityValueElement = document.getElementById('speed-value'),
-    velocityUnitElements = document.getElementsByName('speed-unit'),
+    speedValueElement = document.getElementById('speed-value'),
+    speedUnitElements = document.getElementsByName('speed-unit'),
     otherUnitsElement = document.getElementById('other-units'),
     comparisonElement = document.getElementById('comparison'),
     units,
@@ -29,30 +29,54 @@ function Speed () {
       { name: 'Sun diameter',
         distance: 1.391e9},
       { name: 'From Sun to Earth',
-        distance: 1.496e11}
+        distance: 1.496e11},
+      { name: 'Milky Way galaxy diameter',
+        distance: 1.85e21}
     ];
 
-  velocityValueElement.onchange = velocityChanged;
-  velocityValueElement.onkeyup = velocityChanged;
+  speedValueElement.onchange = calculateSpeed;
+  speedValueElement.onkeyup = calculateSpeed;
 
   // Radio buttons change event
   (function () {
     var i;
 
-    for (i = 0; i < velocityUnitElements.length; i++) {
-      velocityUnitElements[i].onchange = velocityChanged;
+    for (i = 0; i < speedUnitElements.length; i++) {
+      speedUnitElements[i].onchange = calculateSpeed;
     }
 
   })();
 
   units = getUnits();
 
-  velocityValueElement.focus();
+  speedValueElement.focus();
+
+  // Process url parameters
+  (function () {
+    var v = getUrlParameter('v'),
+      unit = getUrlParameter('unit'),
+      i;
+
+    if (v === null || unit === null) {
+      return;
+    }
+
+    speedValueElement.value = v;
+
+    for(i = 0; i < speedUnitElements.length; i++) {
+
+      if (speedUnitElements[i].value === unit) {
+        speedUnitElements[i].checked = true;
+      }
+    }
+  })();
+
+  calculateSpeed();
 
   /**
    * Update calculations
    */
-  function velocityChanged() {
+  function calculateSpeed() {
 
     var vTxt,
       vNumber,
@@ -61,12 +85,12 @@ function Speed () {
 
     comparisonElement.innerHTML = '';
 
-    if (velocityValueElement === null) {
+    if (speedValueElement === null) {
       console.log('Value element is null;')
       return;
     }
 
-    vTxt = velocityValueElement.value.replace(',', '.');
+    vTxt = speedValueElement.value.replace(',', '.');
     vNumber = parseFloat(vTxt);
     unitData = getUnitData();
 
@@ -97,9 +121,9 @@ function Speed () {
       reSpaces = /\s+/g,
       unitName;
 
-    for (i = 0; i < velocityUnitElements.length; i++) {
+    for (i = 0; i < speedUnitElements.length; i++) {
 
-      k = velocityUnitElements[i].dataset.k;
+      k = speedUnitElements[i].dataset.k;
       overPosition = k.indexOf('/');
 
       if (overPosition >= 0) {
@@ -110,10 +134,10 @@ function Speed () {
         k = parseFloat(k);
       }
 
-      unitName = velocityUnitElements[i].parentNode.textContent;
+      unitName = speedUnitElements[i].parentNode.textContent;
       unitName = unitName.replace(reSpaces, ''); // remove spaces and new lines
 
-      units[velocityUnitElements[i].value] = {
+      units[speedUnitElements[i].value] = {
         name: unitName,
         k: k
       };
@@ -130,12 +154,12 @@ function Speed () {
 
     var i;
 
-    for (i = 0; i < velocityUnitElements.length; i++) {
+    for (i = 0; i < speedUnitElements.length; i++) {
 
-      if (velocityUnitElements[i].checked) {
+      if (speedUnitElements[i].checked) {
 
         // Get the unit by the key
-        return units[velocityUnitElements[i].value];
+        return units[speedUnitElements[i].value];
 
       }
 
@@ -161,12 +185,12 @@ function Speed () {
       return false;
     }
 
-    for (i = 0; i < velocityUnitElements.length; i++) {
+    for (i = 0; i < speedUnitElements.length; i++) {
 
-      if (!velocityUnitElements[i].checked) {
+      if (!speedUnitElements[i].checked) {
 
         // Get the unit by the key
-        unit = units[velocityUnitElements[i].value];
+        unit = units[speedUnitElements[i].value];
 
         unitSpeed = speed / unit.k;
 
@@ -253,7 +277,7 @@ function Speed () {
     absv = Math.abs(v);
 
     if (absv < 1e-4 || absv >= 1e7) {
-      return v.toExponential(3);
+      return v.toExponential(2);
     }
 
     return v.toFixed(2).replace (/(\.00|0)$/, '');
@@ -279,12 +303,12 @@ function Speed () {
 
     if (seconds > SECONDS_PER_YEAR) {
       // Years
-      return (seconds /SECONDS_PER_YEAR).toFixed (1) + ' years'
+      return formatNumber(seconds / SECONDS_PER_YEAR) + ' years';
     }
 
     if (seconds > SECONDS_PER_DAY) {
       // Days
-      return (seconds /SECONDS_PER_DAY).toFixed (2) + ' days'
+      return formatNumber(seconds / SECONDS_PER_DAY) + ' days';
     }
 
     secondsPrecision = secondsPrecision || 0;
@@ -305,6 +329,23 @@ function Speed () {
     if (ss < 10) { ss = "0" + ss; }
 
     return hh + ":" + mm + ":" + ss;
+  }
+
+  /**
+   * Returns the url parameter value or null.
+   * @param {String} parameterName The url parameter name.
+   * @returns {String} The value or null.
+   * */
+  function getUrlParameter(parameterName) {
+
+    try {
+      var url = new URL(window.location.href);
+      return url.searchParams.get(parameterName);
+    }
+    catch (error) {
+      return null;
+    }
+
   }
 
 }
