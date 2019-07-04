@@ -179,7 +179,7 @@ function Speed () {
 
     var i,
       unit,
-      text = '<h2 class="comparison-header">Cover the Distance</h2>',
+      text = '',
       unitSpeed;
 
     for (i = 0; i < speedUnitElements.length; i++) {
@@ -213,7 +213,6 @@ function Speed () {
       seconds,
       text = '';
 
-    console.log({ speed, distances });
     for (i = 0; i < distances.length; i++) {
 
       seconds = distances[i].distance / speed; // s 
@@ -222,7 +221,9 @@ function Speed () {
         '</span></p>';
     }
 
-    comparisonElement.innerHTML = text;
+    comparisonElement.innerHTML =
+      '<h2 class="comparison-header">Cover the Distance</h2>' +
+      text;
   }
 
   /**
