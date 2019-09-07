@@ -99,8 +99,9 @@
       var maskText =  mask.join('.');
 
       resultElement.innerHTML = 
-        'Mask: <b>' + maskText + '</b>, CIDR ' + ip1text + '/' + cidr.toString() +
-        ', total IP: <b>' + (Math.pow (2, 32 - cidr)).toLocaleString('en-US') + '</b>' +
+        'Mask: <b>' + maskText + '</b>' +
+        '<br />CIDR ' + ip1text + ' / ' + cidr.toString() +
+        '<br />Total IP: <b>' + (Math.pow (2, 32 - cidr)).toLocaleString('en-US') + '</b>' +
         '</div>';
 
     }
