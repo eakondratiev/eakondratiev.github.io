@@ -16,7 +16,7 @@
   <link href="/assets/main.css" rel="stylesheet" type="text/css" />
   <style>
     .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
-    .range-result {margin: 4pt;}
+    .range-result {margin: 8pt 0;}
   </style>
 </head>
 <body>
@@ -34,6 +34,7 @@
         <button onclick="CalculateRanges()" accesskey="M">Get <u>M</u>ask</button>
         <div class="range-result"></div>
       </div>
+      <!-- version 2019-09-07 -->
 
     </div>
   </div>
@@ -99,10 +100,7 @@
       resultElement.innerHTML = 
         'Mask: <b>' + maskText + '</b>, CIDR ' + ip1text + '/' + cidr.toString() +
         ', total IP: <b>' + (Math.pow (2, 32 - cidr)).toLocaleString('en-US') + '</b>' +
-        '<br />IIS blocking record:</div>' + 
-        '<code>' +
-        '&lt;add ipAddress="' + ip1text + '" subnetMask="' + maskText + '" allowed="false" /&gt;' +
-        '</code>';
+        '</div>';
 
     }
 
