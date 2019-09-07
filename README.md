@@ -1,9 +1,11 @@
 # eakondratiev.github.io
 Web Pages
 
-## Whitespaces & UTF
-url: eakondratiev.github.io/[page_name]
+* Whitespaces & UTF
 https://eakondratiev.github.io/ws.htm
 
-## Speed Comparer
+* Speed Comparer
 https://eakondratiev.github.io/speed.htm
+
+* IP Range Calculator
+https://eakondratiev.github.io/iprange.htm

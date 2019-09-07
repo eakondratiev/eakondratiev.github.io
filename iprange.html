@@ -1,0 +1,219 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Speed &amp; Distance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="apple-mobile-web-app-title" content="EA Speed &amp; Distance" />
+  <meta name="application-name" content="EA Speed &amp; Distance" />
+  <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+  <link rel="manifest" href="/assets/icons/manifest.json" />
+  <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  <link href="/assets/main.css" rel="stylesheet" type="text/css" />
+  <style>
+    .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
+    .range-result {margin: 4pt;}
+  </style>
+</head>
+<body>
+  <div class="page-wide header">
+    <header class="content">
+      <h1>IP Range Calculator</h1>
+    </header>
+  </div>
+  <div class="page-wide">
+    <div class="content">
+
+      <div class="range-calc">
+        <h3>IP Range</h3>
+        <input type="text" placeholder="IP range" class="form-range" accesskey="R" />
+        <button onclick="CalculateRanges()" accesskey="M">Get <u>M</u>ask</button>
+        <div class="range-result"></div>
+      </div>
+
+    </div>
+  </div>
+  <div class="page-wide footer">
+    ...
+  </div>
+  <script>
+
+    document.getElementsByClassName ('form-range')[0].addEventListener ('keyup', function(event){
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        CalculateRanges();
+      }
+    });
+
+    /**
+     * Calculates the IP mask, CIDR and amount of IP addresses by the IP addresses range.
+     */
+    function CalculateRanges() {
+
+      'use strict';
+
+      var textElement = document.getElementsByClassName ('form-range')[0],
+        resultElement = document.getElementsByClassName ('range-result')[0],
+        text = textElement.value.trim(),
+        reRange = /^([\.0-9]{7,15})\s*-\s*([\.0-9]{7,15})$/,
+        m = reRange.exec(text),
+        ip1,
+        ip2,
+        mask,
+        cidr;
+
+      textElement.focus(); // otherwise the button will be emphasized
+
+      if (m === null) {
+        showError ('Not IP range', resultElement);
+        return;
+      }
+
+      ip1 = getByteArray (m[1]); // array of octets, for example: 0:192, 1:168, 2:0, 3: 15
+      ip2 = getByteArray (m[2]);
+      mask = getMask (ip1, ip2);
+
+      if (mask === null) {
+        showError ('Not IP range', resultElement);
+        return;
+      }
+      else {
+        cidr = countOnes (mask);
+
+        if (cidr < 0) {
+          showError ('Wrong range', resultElement);
+          return;
+        }
+      }
+
+      var ip1text = ip1.join('.');
+      var maskText =  mask.join('.');
+
+      resultElement.innerHTML = 
+        'Mask: <b>' + maskText + '</b>, CIDR ' + ip1text + '/' + cidr.toString() +
+        ', total IP: <b>' + (Math.pow (2, 32 - cidr)).toLocaleString('en-US') + '</b>' +
+        '<br />IIS blocking record:</div>' + 
+        '<code>' +
+        '&lt;add ipAddress="' + ip1text + '" subnetMask="' + maskText + '" allowed="false" /&gt;' +
+        '</code>';
+
+    }
+
+    /**
+     * Parses the string and returns the array of bytes representing the IP address.
+     */
+    function getByteArray(ip) {
+
+      var result = [],
+        reOctets = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/,
+        m = reOctets.exec(ip);
+
+      if (m === null) {
+        return null;
+      }
+
+      for (var i = 1; i < 5; i++) {
+
+        var octet = parseInt (m[i], 10);
+
+        if (octet < 0 || octet > 255) {
+          return null;
+        }
+
+        result.push (octet);
+
+      }
+
+      return result;
+
+    }
+
+    /**
+     * Returns the array with the IP subnet mask bytes.
+     */
+    function getMask (ip1, ip2) {
+
+      var mask = [],
+        octet;
+
+      if (ip1 === null || ip2 === null) {
+        return null;
+      }
+
+      for (var i = 0; i < 4; i++) {
+
+        octet = (ip1[i] ^ ip2[i]) ^ 255;
+        mask.push (octet);
+
+      }
+
+      return mask;
+    }
+
+    /**
+     * Returns nuymber of ones in the mask. Returns -1 if the mask array
+     * contains wroing bits (after ones only zeroes are possible).
+     */
+    function countOnes (mask) {
+
+      var ones = 0,
+        previuosBit = -1,
+        bit,
+        byte;
+
+      if (mask === null) {
+        return -1;
+      }
+
+      // Move from the least to the most significant bits
+      // so after zeroes only ones are possible in the mask.
+      // 111...10..0000
+
+      // four bytes: 0.1.2.3, from right to left
+      for (var i = 3; i >= 0; i--) {
+
+        byte = mask[i];
+
+        // bits from right to left: 76543210
+        for (j = 0; j < 8; j++) {
+
+          bit = byte & 1;
+
+          if (bit < previuosBit) {
+            return -1;
+          }
+
+          if (bit > 0) {
+            ones++;
+          }
+
+          byte = byte >>> 1;
+          previuosBit = bit;
+        }
+
+      }
+
+      return ones;
+    }
+
+    /**
+     * Shows the text in the element.
+     */
+    function showError (text, element) {
+      if (text === undefined && text.length === 0) {
+        return;
+      }
+      element.innerHTML = '<span style="color:#e00">' + text + '</span>';
+
+    }
+
+  </script>
+</body>
+</html>
