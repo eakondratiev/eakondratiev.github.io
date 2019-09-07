@@ -8,7 +8,7 @@ h1::after {content: ' '; border-bottom: 4pt solid #07e; display: block; width: 3
 textarea {font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;}
 button {background: #eee; border: solid 1px #aaa; border-radius: 3px; color: #333; padding: 2pt 4pt;}
 button:hover {background: #e3e3e3; color: #000;}
-button:focus {background: adf; color: #000; border-color: #730;}
+button:focus {background: #adf; color: #000; border-color: #37a;}
 
 .page-wide {margin: 0; padding: 0;}
 .content {margin:0 auto; max-width:700px; padding: 16pt 4pt 0 4pt;}
