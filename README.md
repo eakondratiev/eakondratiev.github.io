@@ -1,7 +1,7 @@
-# eakondratiev.github.io
+eakondratiev.github.io
 
 Web Pages
----------
+=========
 
 * [Whitespaces & UTF](https://eakondratiev.github.io/ws.htm)
 
