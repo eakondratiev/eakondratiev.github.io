@@ -14,7 +14,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/main.css?201912" rel="stylesheet" type="text/css" />
     <script src="/assets/speed.js"></script>
     <style>
       .speed-value {font-size: 1rem; padding:4pt;}
@@ -30,45 +30,47 @@
     </style>
   </head>
   <body>
-    <div class="page-wide header">
-      <header class="content">
-        <h1><b>Speed</b> &amp; Distance</h1>
-      </header>
-    </div>
-    <div class="page-wide">
-      <div class="content">
-        <p>Speed</p>
-        <div>
-          <input type="text" id="speed-value" class="speed-value" maxlength="24" />
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <h1><b>Speed</b> &amp; Distance</h1>
+        </header>
+      </div>
+      <div class="page-wide">
+        <div class="content">
+          <p>Speed</p>
+          <div>
+            <input type="text" id="speed-value" class="speed-value" maxlength="24" />
+          </div>
+          <div id="speed-units" class="speed-units">
+            <label>
+              <input type="radio" name="speed-unit" value="ms" data-k="1" checked /> m/s
+            </label>
+            <label>
+              <input type="radio" name="speed-unit" value="kms" data-k="1000" /> km/s
+            </label>
+            <label>
+              <input type="radio" name="speed-unit" value="kmh" data-k="10/36" /> km/h
+            </label>
+            <label>
+              <input type="radio" name="speed-unit" value="mph" data-k="0.447" /> mph
+            </label>
+          </div>
+          <div id="other-units" class="other-units"></div>
+          <div id="comparison" class="comparison"></div>
+          <h2 class="facts-header">Facts</h2>
+          <ul class="facts">
+            <li>Voyager 1: <a href="?v=17&amp;unit=kms">17 km/s</a></li>
+            <li>1I/’Oumuamua: <a href="?v=26&amp;unit=kms">26 km/s</a></li>
+            <li>Comet Lovejoy max: <a href="?v=565&amp;unit=kms">565 km/s</a></li>
+            <li>Solar wind: <a href="?v=250&amp;unit=kms">250</a> to <a href="?v=750&amp;unit=kms">750 km/s</a></li>
+            <li>Hypervelocity stars: <a href="?v=1000&amp;unit=kms">1000 km/s</a></li>
+          </ul>
         </div>
-        <div id="speed-units" class="speed-units">
-          <label>
-            <input type="radio" name="speed-unit" value="ms" data-k="1" checked /> m/s
-          </label>
-          <label>
-            <input type="radio" name="speed-unit" value="kms" data-k="1000" /> km/s
-          </label>
-          <label>
-            <input type="radio" name="speed-unit" value="kmh" data-k="10/36" /> km/h
-          </label>
-          <label>
-            <input type="radio" name="speed-unit" value="mph" data-k="0.447" /> mph
-          </label>
-        </div>
-        <div id="other-units" class="other-units"></div>
-        <div id="comparison" class="comparison"></div>
-        <h2 class="facts-header">Facts</h2>
-        <ul class="facts">
-          <li>Voyager 1: <a href="?v=17&amp;unit=kms">17 km/s</a></li>
-          <li>1I/’Oumuamua: <a href="?v=26&amp;unit=kms">26 km/s</a></li>
-          <li>Comet Lovejoy max: <a href="?v=565&amp;unit=kms">565 km/s</a></li>
-          <li>Solar wind: <a href="?v=250&amp;unit=kms">250</a> to <a href="?v=750&amp;unit=kms">750 km/s</a></li>
-          <li>Hypervelocity stars: <a href="?v=1000&amp;unit=kms">1000 km/s</a></li>
-        </ul>
       </div>
     </div>
     <div class="page-wide footer">
-      ...
+      Web tools.
     </div>
     <script>
       Speed();
