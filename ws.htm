@@ -14,7 +14,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/main.css?201912" rel="stylesheet" type="text/css" />
     <style>
       .dim-text {color:#555;}
       #text-box, #text-processed {
@@ -29,22 +29,24 @@
     </style>
   </head>
   <body>
-    <div class="page-wide header">
-      <header class="content">
-        <h1>Whitespaces and UTF</h1>
-      </header>
-    </div>
-    <div class="page-wide">
-      <div class="content">
-        <p class="dim-text">Highlights whitespaces and UTF characters in the text.</p>
-        <p>Enter or paste a text here...</p>
-        <textarea id="text-box" rows="5"></textarea>
-        <div>Text length: <b id="text-len"></b></div>
-        <div id="text-processed"></div>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <h1>Whitespaces and UTF</h1>
+        </header>
+      </div>
+      <div class="page-wide">
+        <div class="content">
+          <p class="dim-text">Highlights whitespaces and UTF characters in the text.</p>
+          <p>Enter or paste a text here...</p>
+          <textarea id="text-box" rows="5"></textarea>
+          <div>Text length: <b id="text-len"></b></div>
+          <div id="text-processed"></div>
+        </div>
       </div>
     </div>
     <div class="page-wide footer">
-      ...
+      Web tools.
     </div>
     <script>
       (function () {

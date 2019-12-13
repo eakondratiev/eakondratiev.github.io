@@ -1,5 +1,6 @@
 html {font-family: "Segoe UI","Helvetica","Arial",sans-serif;font-size:100%;}
-body {margin:0;padding:0;}
+body {display: flex; flex-direction: column; margin:0;padding:0;}
+html,body {height:100%;}
 ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,hgroup,p,blockquote,figure,form,fieldset,input,textarea,legend,pre,abbr,button{margin:0;padding:0;}
 pre,code,address,caption,th,figcaption{font-size:1em;font-weight:normal;font-style:normal;}fieldset,iframe,img{border:0;}
 caption,th{text-align:left}table{border-collapse:collapse;border-spacing:0}
@@ -10,8 +11,9 @@ textarea {font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,
 button {background: #eee; border: solid 1px #aaa; border-radius: 3px; color: #333; padding: 2pt 4pt;}
 button:hover {background: #e3e3e3; color: #000;}
 button:focus {background: #adf; color: #000; border-color: #37a;}
-
+.main-content {flex: 1 0 auto;}
 .page-wide {margin: 0; padding: 0;}
 .content {margin:0 auto; max-width:700px; padding: 16pt 4pt 0 4pt;}
 .header {background: #444; font-size:0.8rem;}
-.footer{background: #444; color:#999; font-size: 0.7rem; position: fixed; text-align: center; padding: 4pt; bottom: 0px;width: 100%;}
+.footer{flex-shrink: 0; background: #444; color:#999;
+  font-size: 0.7rem; position: fixed; text-align: center; padding: 4pt; bottom: 0px;width: 100%;}
