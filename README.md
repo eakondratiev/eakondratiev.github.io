@@ -9,5 +9,3 @@ Web Pages
 * [Speed Comparer](https://eakondratiev.github.io/speed.htm)
 
 * [IP Range Calculator](https://eakondratiev.github.io/iprange.htm)
-
-* [TEST](https://winpc/unit-converter/)
