@@ -16,7 +16,7 @@ button:focus {background: #adf; color: #000; border-color: #37a;}
 header.content {padding: 8pt 0;}
 .footer{flex-shrink: 0; background: #444; color:#999;
   font-size: 0.7rem; text-align: center; padding: 4pt;}
-.site-logo {color: #aaa; font-size:1.2rem; font-weight: bold;}
+.site-logo {color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none;}
 .site-nav {padding: 4pt 0; position: relative; left: -4pt;}
 .site-nav-top-item {display: inline; margin: 0 8pt; padding: 2pt 4pt;}
 .site-nav-top-item:first-child, .site-nav-top-item:last-child {margin:0}
