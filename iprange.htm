@@ -82,17 +82,10 @@
         return;
       }
 
+      // Get and validate IP addresses.
       ip1 = getByteArray(m[1]); // array of octets, for example: 0:192, 1:168, 2:0, 3: 15
       ip2 = getByteArray(m[2]);
-      mask = getMask(ip1, ip2);
       ip1PrecedesIp2 = (compareIpAddresses(ip1, ip2) <= 0); // false - ip2 precedes ip1, not expected.
-
-      console.log({
-        ip1: ip1,
-        ip2: ip2,
-        mask: mask,
-        compare: ip1PrecedesIp2
-      });
 
       if (mask === null) {
         showError('Not IP range', resultElement);
@@ -104,6 +97,7 @@
         return;
       }
 
+      mask = getMask(ip1, ip2);
       cidr = countOnes(mask);
 
       if (cidr < 0) {
