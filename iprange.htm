@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Speed &amp; Distance</title>
+  <title>IP Range Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <meta name="apple-mobile-web-app-title" content="EA Speed &amp; Distance" />
@@ -71,6 +71,7 @@
         m = reRange.exec(text),
         ip1,
         ip2,
+        ip1PrecedesIp2,
         mask,
         cidr;
 
@@ -84,25 +85,30 @@
       ip1 = getByteArray(m[1]); // array of octets, for example: 0:192, 1:168, 2:0, 3: 15
       ip2 = getByteArray(m[2]);
       mask = getMask(ip1, ip2);
+      ip1PrecedesIp2 = (compareIpAddresses(ip1, ip2) <= 0); // false - ip2 precedes ip1, not expected.
 
       console.log({
         ip1: ip1,
         ip2: ip2,
         mask: mask,
-        compare: compareIpAddresses(ip1, ip2)
+        compare: ip1PrecedesIp2
       });
 
       if (mask === null) {
         showError('Not IP range', resultElement);
         return;
       }
-      else {
-        cidr = countOnes(mask);
 
-        if (cidr < 0) {
-          showError('Wrong range', resultElement);
-          return;
-        }
+      if (isNaN(ip1PrecedesIp2) || !ip1PrecedesIp2) {
+        showError('The first IP address must precede the second IP address.', resultElement);
+        return;
+      }
+
+      cidr = countOnes(mask);
+
+      if (cidr < 0) {
+        showError('Wrong range', resultElement);
+        return;
       }
 
       var ip1text = ip1.join('.');
@@ -241,8 +247,9 @@
       var ARRAY_SIZE = 4,
         i;
 
-      if (typeof ip1 !== 'object' || ip1.length !== ARRAY_SIZE ||
-          typeof ip2 !== 'object' || ip2.length !== ARRAY_SIZE) {
+      // validate
+      if (ip1 === null || typeof ip1 !== 'object' || ip1.length !== ARRAY_SIZE ||
+          ip2 === null || typeof ip2 !== 'object' || ip2.length !== ARRAY_SIZE) {
 
         return NaN;
       }
