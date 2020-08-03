@@ -85,6 +85,13 @@
       ip2 = getByteArray(m[2]);
       mask = getMask(ip1, ip2);
 
+      console.log({
+        ip1: ip1,
+        ip2: ip2,
+        mask: mask,
+        compare: compareIpAddresses(ip1, ip2)
+      });
+
       if (mask === null) {
         showError('Not IP range', resultElement);
         return;
@@ -110,7 +117,9 @@
     }
 
     /**
-      * Parses the string and returns the array of bytes representing the IP address.
+      * Parses the string and returns the array of bytes representing the IP v4 address.
+      * @returns {[Number]} array of four numbers,
+      * array[0] is least significant octet, array[3] is most significatn.
       */
     function getByteArray(ip) {
 
@@ -214,6 +223,40 @@
         return;
       }
       element.innerHTML = '<span style="color:#e00">' + text + '</span>';
+
+    }
+
+    /**
+     * Compares two specified byte arrays and returns an integer that indicates their relative position in the sort order.
+     * @param {[Number]} ip1 The first IP address (four bytes array) to compare.
+     * @param {[Number]} ip2 The second IP address (four bytes array) to compare.
+     * @returns {Number} A signed number that indicates the relationship between the two comparands.
+     * Value -1 means the ip1 precedes ip2 in the sort order.
+     * Value  0 means the ip1 and ip2 are equal.
+     * Value  1 means the ip1 follows ip2 in the sort order.
+     * Returns NaN when ip1 or ip2 are not array of four numbers.
+     */
+    function compareIpAddresses(ip1, ip2) {
+
+      var ARRAY_SIZE = 4,
+        i;
+
+      if (typeof ip1 !== 'object' || ip1.length !== ARRAY_SIZE ||
+          typeof ip2 !== 'object' || ip2.length !== ARRAY_SIZE) {
+
+        return NaN;
+      }
+
+      /* Loop backward, start from most signifiacnt number. */
+      for (i = ARRAY_SIZE - 1; i >= 0; i--) {
+
+        if (ip1[i] < ip2[i]) { return -1; }
+        if (ip1[i] > ip2[i]) { return 1; }
+        // when equal compare less significant number, next loop.
+      }
+
+      // all elements are equal
+      return 0;
 
     }
 
