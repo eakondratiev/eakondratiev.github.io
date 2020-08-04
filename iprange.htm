@@ -18,6 +18,7 @@
     input[type=text] {padding: 2pt; width: 195px;}
     .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
     .range-result {margin: 8pt 0;}
+    .extended-range-note {color: #c00;}
   </style>
 </head>
 <body>
@@ -47,6 +48,24 @@
   </div>
   <script>
 
+    var ERR_MASK_OK = 0,
+      ERR_MASK_WRONG = 1,
+      ERR_MASK_COMPLEX = 2;
+    /* 
+     * The complex range example:
+     *   221.0.0.0 - 221.3.127.255
+     *   result
+     *   221.0.0.0/15 221.0.0.0 - 221.1.255.255
+     *   221.2.0.0/16 221.2.0.0 - 221.2.255.255
+     *   221.3.0.0/17 221.3.0.0 - 221.3.127.255
+     *
+     * Normal range example:
+     * 192.168.0.0
+     *   CIDR 192.168.0.0/24
+     *   MASK: 255.255.255.0
+     *   Total host: 256
+     */
+
     document.getElementsByClassName('form-range')[0].addEventListener('keyup', function (event) {
       // Number 13 is the "Enter" key on the keyboard
       if (event.keyCode === 13) {
@@ -73,7 +92,7 @@
         ip2,
         ip1PrecedesIp2,
         mask,
-        cidr;
+        cidrData;
 
       textElement.focus(); // otherwise the button will be emphasized
 
@@ -83,7 +102,12 @@
       }
 
       // Get and validate IP addresses.
-      ip1 = getByteArray(m[1]); // array of octets, for example: 0:192, 1:168, 2:0, 3: 15
+      // IP address arrays:
+      // * four numbers (octets),
+      // * element 0 - most significant, 3 - least significant.
+      // For example, 192.168.0.15 indices are:
+      //                0   1 2  3
+      ip1 = getByteArray(m[1]); // array of four octets
       ip2 = getByteArray(m[2]);
       ip1PrecedesIp2 = (compareIpAddresses(ip1, ip2) <= 0); // false - ip2 precedes ip1, not expected.
 
@@ -98,11 +122,32 @@
       }
 
       mask = getMask(ip1, ip2);
-      cidr = countOnes(mask);
+      cidrData = countOnes(mask);
 
-      if (cidr < 0) {
+      if (cidrData.error === ERR_MASK_WRONG) {
         showError('Wrong range', resultElement);
         return;
+      }
+
+      var maskNote = '';
+
+      if (cidrData.error === ERR_MASK_COMPLEX) {
+
+        // Get real mask from CIDR
+        mask = cidrToMask(cidrData.cidr);
+
+        // Get last IP address by the mask.
+        // Use same XOR: lastIp = firstIp XOR mask XOR 255
+        var lastIp = getMask(ip1, mask);
+        console.log({ lastIp });
+
+        // Next range start = last IP + 1
+        // Next range CIDR = CIDR - 1
+
+        maskNote = '<br /><span class="extended-range-note">' +
+          'NOTE: the range consists of several IP spans, this mask covers the first and widest range.' +
+          '</span > ';
+
       }
 
       var ip1text = ip1.join('.');
@@ -110,9 +155,9 @@
 
       resultElement.innerHTML =
         'Mask: <b>' + maskText + '</b>' +
-        '<br />CIDR ' + ip1text + ' / ' + cidr.toString() +
-        '<br />Total IP: <b>' + (Math.pow(2, 32 - cidr)).toLocaleString('en-US') + '</b>' +
-        '</div>';
+        '<br />CIDR ' + ip1text + ' / ' + cidrData.cidr.toString() +
+        '<br />Total IP: <b>' + (Math.pow(2, 32 - cidrData.cidr)).toLocaleString('en-US') + '</b>' +
+        maskNote;
 
     }
 
@@ -161,7 +206,7 @@
 
       for (var i = 0; i < 4; i++) {
 
-        octet = (ip1[i] ^ ip2[i]) ^ 255;
+        octet = (ip1[i] ^ ip2[i]) ^ 255; // bitwise XOR
         mask.push(octet);
 
       }
@@ -170,49 +215,52 @@
     }
 
     /**
-      * Returns nuymber of ones in the mask. Returns -1 if the mask array
-      * contains wrong bits (after ones only zeroes are possible).
+      * Returns the sructure with the number of ones in the mask and indicator of an error.
+      * Returns .cidr = -1 if the mask array contains wrong bits (after ones only zeroes are possible).
+      * @returns {*} .cidr - the number of sequential ones, .error - the error code.
       */
     function countOnes(mask) {
 
       var ones = 0,
-        previuosBit = -1,
+        previuosBit = 255,
         bit,
         byte;
 
       if (mask === null) {
-        return -1;
+        return { cidr: -1, error: ERR_MASK_WRONG };
       }
 
-      // Move from the least to the most significant bits
-      // so after zeroes only ones are possible in the mask.
+      // Move from the most to the least significant bits (left to right)
+      // so after ones only zeroes are possible in the mask.
       // 111...10..0000
 
-      // four bytes: 0.1.2.3, from right to left
-      for (var i = 3; i >= 0; i--) {
+      // four bytes: 0.1.2.3, from left to right
+      for (var i = 0; i <= 3; i++) {
 
         byte = mask[i];
 
-        // bits from right to left: 76543210
-        for (j = 0; j < 8; j++) {
+        // bits from left to right: 01234567
+        for (j = 7; j >= 0; j--) {
 
-          bit = byte & 1;
-
-          if (bit < previuosBit) {
-            return -1;
-          }
+          bit = byte & 128; // 128 = 1000 0000
 
           if (bit > 0) {
             ones++;
           }
 
-          byte = byte >>> 1;
+          if (bit > previuosBit) {
+            // 1 to 0 - ok, 0 to 1 - wrong
+            return { cidr: ones, error: ERR_MASK_COMPLEX };
+          }
+
+          byte = byte << 1; // shift bits to the left
           previuosBit = bit;
         }
 
       }
 
-      return ones;
+      return { cidr: ones, error: ERR_MASK_OK };
+
     }
 
     /**
@@ -248,10 +296,9 @@
         return NaN;
       }
 
-      /* Loop backward, start from most signifiacnt number. */
-      for (i = ARRAY_SIZE - 1; i >= 0; i--) {
+      /* Start from most signifiacnt number. */
+      for (i = 0; i < ARRAY_SIZE; i++) {
 
-        console.log('ip1', i, ip1[i]);
         if (ip1[i] < ip2[i]) { return -1; }
         if (ip1[i] > ip2[i]) { return 1; }
         // when equal compare less significant number, next loop.
@@ -259,6 +306,93 @@
 
       // all elements are equal
       return 0;
+
+    }
+
+    /**
+     * Returns array of four numbers (octets).
+     * @param cidr The CIDR, the number of ones in the mask.
+     */
+    function cidrToMask(cidr) {
+
+      var byte,
+        bit,
+        mask,
+        bits = 0,
+        result = [0, 0, 0, 0];
+
+      if (cidr <= 0 || cidr > 32) {
+        return result;
+      }
+
+      for (byte = 0; byte < result.length; byte++) {
+
+        result[byte] = 0;
+        mask = 128; // 128 = 1000 0000
+
+        for (bit = 7; bit >= 0; bit--) {
+
+          if (bits >= cidr) {
+            return result;
+          }
+
+          result[byte] |= mask; // byte = byte OR mask
+          mask = mask >> 1; // mask for the next bit to the right
+          ++bits;
+          
+        }
+      }
+
+      return result;
+    }
+
+    /**
+     * Returns the next IP after the specified IP.
+     * Returns null if the specified IP address is wrong or 255.255.255.255.
+     * @param ip The four numbers array, IP octets.
+     * @returns Four octets array.
+     */
+    function getNextIp(ip) {
+
+      var MAX_VALUE = 255,
+        ADDITION = 1, /* from 0 to 255 */
+        i,
+        reminder = ADDITION,
+        newOctetValue,
+        newIp = [0,0,0,0];
+
+      if (ip === null ||
+          ip.length !== 4) {
+
+        return null;
+      }
+
+      /* from least significant to most significant octet. */
+      for (i = ip.length - 1; i >= 0; i--) {
+
+        newOctetValue = ip[i] + reminder;
+
+        if (newOctetValue > MAX_VALUE) {
+          // overflow 
+
+          if (i === 0) {
+            // overflow in most significant octet
+            return null;
+          }
+
+          reminder = newOctetValue % MAX_VALUE;
+          newOctetValue = 0;
+
+        }
+        else {
+          reminder = 0;
+        }
+
+        newIp[i] = newOctetValue;
+        
+      }
+
+      return newIp;
 
     }
 
