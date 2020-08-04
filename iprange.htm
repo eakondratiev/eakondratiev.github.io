@@ -139,9 +139,10 @@
         // Get last IP address by the mask.
         // Use same XOR: lastIp = firstIp XOR mask XOR 255
         var lastIp = getMask(ip1, mask);
-        console.log({ lastIp });
 
         // Next range start = last IP + 1
+        var nextIp = getNextIp(lastIp);
+
         // Next range CIDR = CIDR - 1
 
         maskNote = '<br /><span class="extended-range-note">' +
