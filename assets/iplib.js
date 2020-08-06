@@ -1,11 +1,15 @@
 ﻿/*
  * IP functions library.
- * 2020-08-05
+ * 2020-08-06
+ * 
+ * Tests in https://github.com/eakondratiev/Projects/tree/master/js-tests
  */
-
+/**
+ * @preserve In public domain since 2019-09-07.
+ */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
-// @output_file_name iplib.js
+// @output_file_name iplib.min.js
 // ==/ClosureCompiler==
 
 /**
@@ -65,7 +69,6 @@
         return [{
           from: ip1,
           to: ip2,
-          host: ip1,
           mask: [255, 255, 255, 255],
           prefixBits: 32
         }];
@@ -98,7 +101,7 @@
 
             subRangeIndex = 0;
 
-            while (compareIpAddresses(rangeFrom, ip2) < 0 &&
+            while (compareIpAddresses(rangeFrom, ip2) <= 0 &&
                    prefixBits.error !== ERR_MASK_WRONG &&
                    subRangeIndex < 10) {
 
