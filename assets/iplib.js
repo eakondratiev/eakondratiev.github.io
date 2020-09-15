@@ -96,7 +96,7 @@
 
       case 0:
         // equal, same address
-        ranges.push ({
+        ranges.push({
           from: ip1,
           to: ip2,
           mask: [255, 255, 255, 255],
@@ -113,7 +113,7 @@
         rangeTo = ip2;
         mask = xorBytes(rangeFrom, rangeTo);
         prefixBits = getPrefixBitsNumber(mask);
-        
+
         switch (prefixBits.error) {
           case ERR_MASK_OK:
             // full range
@@ -125,7 +125,7 @@
               prefixBits: prefixBits.bits
             });
             return ranges;
-            
+
           case ERR_MASK_COMPLEX:
             // find sub-ranges
             // recursive call
@@ -142,24 +142,24 @@
 
               // The first address for the mask can be smaller than IPfrom,
               // in this case make new loop with smaller network
-              range = getRange (rangeFrom, mask);
+              range = getRange(rangeFrom, mask);
 
               // Get last IP address by the mask.
               // lastIp = firstIp XOR mask XOR 255
               // NOTE: when the mask is wrong the rangeTo can be lesser than rangeFrom,
-              // so check it in the loop condition nad do it while the right mask will be found.
+              // so check it in the loop condition and do it while the right mask will be found.
               rangeTo = xorBytes(rangeFrom, mask);
 
             }
             while (prefixBits.bits + bitsAddition <= 32 &&
-                   (compareIpAddresses (range.from, rangeFrom) < 0 ||
-                    compareIpAddresses (rangeFrom, rangeTo) > 0));
-                   // keep searching appropriate network (do the loop while):
-                   // prefix bits smaller than 32
-                   // AND (real from < range from OR range from < range to)
+              (compareIpAddresses(range.from, rangeFrom) < 0 ||
+                compareIpAddresses(rangeFrom, rangeTo) > 0));
+            // keep searching appropriate network (do the loop while):
+            // prefix bits smaller than 32
+            // AND (real from < range from OR range from < range to)
 
-            if (compareIpAddresses (rangeFrom, rangeTo) <= 0) {
-              
+            if (compareIpAddresses(rangeFrom, rangeTo) <= 0) {
+
               // create the range object and add to result
               ranges.push({
                 from: rangeFrom, // also the host
@@ -169,7 +169,7 @@
               });
 
               // 2. recursively try next subnet from rangeTo + 1 to ip2 (tail).
-              getRanges (getNextIp(rangeTo), ip2, ranges);
+              getRanges(getNextIp(rangeTo), ip2, ranges);
 
             }
 
@@ -276,8 +276,8 @@
       octet;
 
     if (ip1 === null ||
-        ip2 === null ||
-        ip1.length !== ip2.length) {
+      ip2 === null ||
+      ip1.length !== ip2.length) {
 
       return null;
     }
@@ -300,7 +300,7 @@
    * @param {[Number]} mask Array of octets (groups).
    * @returns {{bits: Number, error: Number}}} .bits - the number of sequential ones, .error - the error code.
    */
-  function getPrefixBitsNumber (mask) {
+  function getPrefixBitsNumber(mask) {
 
     var ones = 0,
       previuosBit = 255,
@@ -333,7 +333,7 @@
 
         if (bit > previuosBit) {
           // 1 to 0 - Ok, 0 to 1 - wrong
-          // after zeroe(s) we got one, so the mask is wrong,
+          // after zero(s) we got one, so the mask is wrong,
           // decrees counted one and exit.
           return { bits: ones - 1, error: ERR_MASK_COMPLEX };
         }
@@ -366,8 +366,8 @@
 
     // validate
     if (ip1 === null || typeof ip1 !== 'object' ||
-        ip2 === null || typeof ip2 !== 'object' ||
-        ip1.length !== ip2.length) {
+      ip2 === null || typeof ip2 !== 'object' ||
+      ip1.length !== ip2.length) {
 
       return NaN;
     }
@@ -482,14 +482,14 @@
    * @param {[Number]} mask Array of the mask octets.
    * @returns {{from: [Number], to: [Number]}} from and to IP addresses, each is an array of numbers.
    */
-  function getRange (ip, mask) {
+  function getRange(ip, mask) {
 
     var i,
       from;
 
     if (ip.length === undefined ||
-        mask.length === undefined ||
-        ip.length !== mask.length) {
+      mask.length === undefined ||
+      ip.length !== mask.length) {
 
       return null;
     }
@@ -499,14 +499,14 @@
 
     for (i = 0; i < ip.length; i++) {
 
-      from.push (ip[i] & mask[i]);
+      from.push(ip[i] & mask[i]);
 
     }
 
-    // calculate the ending addres and return result
+    // calculate the ending address and return result
     return {
       from: from,
-      to: xorBytes (ip, mask)
+      to: xorBytes(ip, mask)
     };
 
   }
@@ -515,7 +515,6 @@
   //IPlibTest ();
 
 }(window.IPlib = window.IPlib || {}));
-
 
 function IPlibTest () {
 
