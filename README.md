@@ -10,4 +10,4 @@ Web Pages
 
 * [IP Range Calculator](https://eakondratiev.github.io/iprange.htm)
 
-* [Floatin-point Summation](https://eakondratiev.github.io/floating-point-summation.htm)
+* [Floating-point Summation](https://eakondratiev.github.io/floating-point-summation.htm)
