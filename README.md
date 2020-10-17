@@ -9,3 +9,5 @@ Web Pages
 * [Speed Comparer](https://eakondratiev.github.io/speed.htm)
 
 * [IP Range Calculator](https://eakondratiev.github.io/iprange.htm)
+
+* [Floatin-point Summation](https://eakondratiev.github.io/floating-point-summation.htm)
