@@ -15,9 +15,13 @@ button:focus { background: #adf; color: #000; border-color: #37a; }
 .page-wide { margin: 0; padding: 0; }
 .content { margin:0 auto; max-width:700px; padding: 16pt 4pt 0 4pt; }
 .header { background: #444; font-size:0.8rem; }
-header.content { padding: 8pt 0; }
+header {padding: 8pt 0; display: grid; }
+.site-menu-btn {padding: 4pt; display: none;}
+.site-menu-btn div { width: 20pt; height: 3pt; background-color: #aaa; margin: 3pt 0; cursor: pointer; transition: background-color 1s;}
+.site-menu-btn:hover div { background-color: #fff; }
 .footer { flex-shrink: 0; background: #444; color:#999; font-size: 0.7rem; text-align: center; padding: 4pt; }
-.site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; }
+.site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; transition: color 1s;}
+.site-logo:hover { color: #fff; }
 .site-nav { padding: 4pt 0; position: relative; left: -4pt; }
 .site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt; }
 .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin:0 }
@@ -26,3 +30,11 @@ header.content { padding: 8pt 0; }
 .site-nav-top-item a:visited { color: #ccc; text-decoration: none; }
 .site-nav-top-item a:hover,
 .site-nav-top-item a:active { color: #fff; }
+
+@media (max-width: 370px) {
+  /* Mobile */
+  header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
+  .site-title {display: flex; align-items: center; justify-content:center;}
+  .site-menu-btn {display: block; text-align: center;}
+  .site-nav {display: none;}
+}
