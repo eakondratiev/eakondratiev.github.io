@@ -1,2 +1,6 @@
 # exclude .vs folder
 /.vs
+# exclude solution and web.config
+*.sln
+*.suo
+[Ww]eb.config

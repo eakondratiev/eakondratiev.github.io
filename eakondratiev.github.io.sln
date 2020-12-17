@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "eakondratiev.github.io", ".", "{37FAE20F-1E8A-44CC-8AB6-908F5ED1EAED}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_57263"
 		Debug.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\MyStuff\GitHub\eakondratiev.github.io\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57263\"
