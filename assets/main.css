@@ -25,7 +25,7 @@ header {padding: 8pt 0; display: grid; }
 .site-nav { padding: 4pt 0; position: relative; left: -4pt; }
 .site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt; }
 .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin:0 }
-.site-nav-top-item:hover { background: #777; }
+.site-nav-top-item:hover, .site-nav-top-item:active { background: #777; }
 .site-nav-top-item a:link,
 .site-nav-top-item a:visited { color: #ccc; text-decoration: none; }
 .site-nav-top-item a:hover,
@@ -36,5 +36,8 @@ header {padding: 8pt 0; display: grid; }
   header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
   .site-title {display: flex; align-items: center; justify-content:center;}
   .site-menu-btn {display: block; text-align: center;}
-  .site-nav {display: none;}
+  .site-nav {display: none;
+    background: #333; position: absolute; left: 0; width: 100vw;}
+  .site-nav-top-item {display: block; margin: 4pt;}
+  .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin: 4pt; }
 }
