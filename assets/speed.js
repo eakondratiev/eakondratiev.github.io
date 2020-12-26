@@ -1,7 +1,8 @@
 ﻿/*
  * File: speed.js 
  * 2019-07-03_04
- * 
+ * 2020-12-26 * percent of the speed of light added to results;
+ *            * the options parameter added to the formatNumber().
  */
 function Speed () {
 
