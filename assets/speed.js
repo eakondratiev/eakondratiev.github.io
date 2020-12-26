@@ -173,7 +173,7 @@ function Speed () {
 
   /**
    * Shows the speed in other units in the element.
-   * @param {Number} speed The speed in m/s.
+   * @param {Number} speed The speed, m/s.
    */
   function showOtherUnits(speed) {
 
@@ -197,6 +197,13 @@ function Speed () {
 
       }
 
+    }
+
+    if (!isNaN(speed)) {
+
+      text += ' <b>' +
+        formatNumber (100.0 * speed / SPEED_OF_LIGHT) +
+        '</b>% the speed of light';
     }
 
     otherUnitsElement.innerHTML = text;
