@@ -202,7 +202,7 @@ function Speed () {
     if (!isNaN(speed)) {
 
       text += ' <b>' +
-        formatNumber (100.0 * speed / SPEED_OF_LIGHT) +
+        formatNumber(100.0 * speed / SPEED_OF_LIGHT, { fractionDigits: 3}) +
         '</b>% the speed of light';
     }
 
@@ -267,12 +267,15 @@ function Speed () {
 
   /**
    * Returns the formatted numeric value.
-   * @param {Number} v The value.
+   * @param {number} v The value.
+   * @param {*} options The options.
+   * @param {number} options.fractionDigits The number of digits after decimal point, optional, default is 2.
    * @returns {String} The formatted value.
    */
-  function formatNumber(v) {
+  function formatNumber(v, options) {
 
-    var absv;
+    var absv,
+        fd = 2;
 
     if (isNaN(v)) {
       return '---';
@@ -280,11 +283,16 @@ function Speed () {
 
     absv = Math.abs(v);
 
-    if (absv < 1e-4 || absv >= 1e7) {
-      return v.toExponential(2);
+    options = options || {};
+    if (!isNaN(options.fractionDigits)) {
+      fd = options.fractionDigits;
     }
 
-    return v.toFixed(2).replace (/(\.00|0)$/, '');
+    if (absv < 1e-4 || absv >= 1e7) {
+      return v.toExponential(fd);
+    }
+
+    return v.toFixed(fd).replace (/(\.00|0)$/, '');
 
   }
 
