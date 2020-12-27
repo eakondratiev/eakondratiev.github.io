@@ -3,6 +3,7 @@
  * 2019-07-03_04
  * 2020-12-26 * percent of the speed of light added to results;
  *            * the options parameter added to the formatNumber().
+ * 2020-12-27 * 
  */
 function Speed () {
 
@@ -193,7 +194,7 @@ function Speed () {
         unitSpeed = speed / unit.k;
 
         if (unitSpeed > 0.1) {
-          text += ' <b>' + formatNumber(unitSpeed) + '</b> ' + unit.name;
+          text += getResultUnitBlock(unitSpeed, ' ' + unit.name);
         }
 
       }
@@ -202,13 +203,28 @@ function Speed () {
 
     if (!isNaN(speed)) {
 
-      text += ' <b>' +
-        formatNumber(100.0 * speed / SPEED_OF_LIGHT, { fractionDigits: 3}) +
-        '</b>% the speed of light';
+      text += getResultUnitBlock(
+        100.0 * speed / SPEED_OF_LIGHT,
+        '% the speed of light',
+        3);
+
     }
 
     otherUnitsElement.innerHTML = text;
 
+  }
+
+  /**
+   * Returns html code for the result/unit block.
+   * @param {number} value The value.
+   * @param {string} unit The unit name. Prepend with the space to separate from the value.
+   * @param {number} fractionDigits The fraction digits.
+   */
+  function getResultUnitBlock(value, unit, fractionDigits) {
+
+    return ' <span><b>' +
+      formatNumber(value, { fractionDigits: fractionDigits }) +
+      '</b>' + unit + '</span>';
   }
 
 /**

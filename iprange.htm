@@ -5,15 +5,16 @@
   <title>IP Range Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta name="apple-mobile-web-app-title" content="EA Speed &amp; Distance" />
-  <meta name="application-name" content="EA Speed &amp; Distance" />
+  <meta name="apple-mobile-web-app-title" content="IP Range" />
+  <meta name="application-name" content="IP Range" />
   <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
   <link rel="manifest" href="/assets/icons/manifest.json" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
-  <link href="/assets/main.css?201912" rel="stylesheet" type="text/css" />
+  <link href="/assets/main.css?202012" rel="stylesheet" type="text/css" />
+  <script src="/assets/menu.js"></script>
   <style>
     input[type=text] {padding: 2pt; width: 195px;}
     .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
@@ -25,9 +26,21 @@
 <body>
   <div class="main-content">
     <div class="page-wide header">
-      <header class="content">
-        <a class="site-logo" href="/">TOOL</a>
-      </header>
+        <header class="content">
+          <div class="site-menu-btn">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav">
+          <ul>
+          <li class="site-nav-top-item"><a href="/">Home Page</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          </ul>
+        </nav>
     </div>
     <div class="page-wide">
       <div class="content">
