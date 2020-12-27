@@ -222,9 +222,9 @@ function Speed () {
    */
   function getResultUnitBlock(value, unit, fractionDigits) {
 
-    return ' <span><b>' +
-      formatNumber(value, { fractionDigits: fractionDigits }) +
-      '</b>' + unit + '</span>';
+    return '<span><b>' +
+      formatNumber (value, { fractionDigits: fractionDigits }) +
+      '</b>' + unit + '</span> ';
   }
 
 /**
