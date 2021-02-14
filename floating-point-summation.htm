@@ -1,23 +1,96 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Summmation</title>
-        <style>
-            .num {font-family: 'Consolas', 'Courier New', Courier, monospace;}
-        </style>
-    </head>
-    <body>
-        <h1>Floating-point Summation</h1>
-        <input type="text" id="input-numbers" placeholder="0.1;0.2" value="0.1;0.2">
-        <button type="button" id="btn-calc-sum" accesskey="S"><u>S</u>um</button>
-        <div class="summation-result"></div>
-    </body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Floating-point Summation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="Tool" />
+    <meta name="application-name" content="Tool" />
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?202012" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.js"></script>
+    <style>
+      h3 {font-size: 0.9rem; margin: 16pt 0 0 0;}
+      p {margin: 8pt 0;}
+      .note {color: #444; font-size: 0.9rem;}
+      .fp-form {margin-top: 16pt;}
+      .fp-form input, .fp-form button {padding: 2pt 4pt; height: 20pt; box-sizing: border-box;}
+      .num {font-family:Lucida Console, Courier New, Courier, monospace; font-size: 0.9rem; line-height: 1.4;}
+    </style>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <div class="site-menu-btn">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav">
+          <ul>
+          <li class="site-nav-top-item"><a href="/">Home Page</a></li>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation">Floating-point Summation</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content hp-content">
+          <h1>Floating-point Summation</h1>
+          <div class="fp-form">
+            <input type="text" id="input-numbers" placeholder="0.1;0.2" value="0.1;0.2">
+            <button type="button" id="btn-calc-sum" accesskey="S"><u>S</u>um</button>
+          </div>
+          <div class="note">Enter several numbers delimited with the ";" character.</div>
+          <div class="note">Examples:
+            <a href="#" onclick="example(this)">0.1;0.2</a>,
+            <a href="#" onclick="example(this)">0.1;0.2;0.3</a>,
+            <a href="#" onclick="example(this)">0.25;0.5</a>
+          </div>
+          <div class="summation-result"></div>
+
+          <p>
+           Real numbers are represented in computing as an approximation.
+           Numbers with a common fraction in which the denominator is a power of two
+           are stored as exact numbers: 1/2, 1/4, 3/8, etc.
+           See the <a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic" rel="nofollow">Floating-point arithmetics</a>
+           article on Wikipedia.
+          </p>
+          <p>Some algorithms can reduce the numerical error which accumulates when adding real numbers in a sequence.
+          For example,
+          <a href="https://en.wikipedia.org/wiki/Kahan_summation_algorithm" rel="nofollow">Kahan summation algorithm</a>
+          and its variations.</p>
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      Web tools.
+    </div>
     <script>
         var inputElement = document.getElementById ('input-numbers');
         var resultElement = document.getElementsByClassName('summation-result')[0];
         var calcBtn = document.getElementById('btn-calc-sum');
 
         calcBtn.addEventListener ('click', processClick);
+
+        function example(link) {
+
+          inputElement.value = link.innerHTML;
+          console.log(link);
+          return false;
+        }
 
         function processClick() {
 
@@ -73,4 +146,5 @@
 
         }
     </script>
+  </body>
 </html>

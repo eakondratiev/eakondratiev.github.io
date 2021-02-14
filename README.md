@@ -4,6 +4,8 @@ eakondratiev.github.io
 Web Pages
 ---------
 
+* [Home page](https://eakondratiev.github.io/)
+
 * [Whitespaces & UTF](https://eakondratiev.github.io/ws.htm)
 
 * [Speed Comparer](https://eakondratiev.github.io/speed.htm)
