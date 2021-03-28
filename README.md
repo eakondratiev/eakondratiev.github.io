@@ -1,15 +1,12 @@
 eakondratiev.github.io
 ======================
 
-Web Pages
+Web Tools
 ---------
 
-* [Home page](https://eakondratiev.github.io/)
-
-* [Whitespaces & UTF](https://eakondratiev.github.io/ws.htm)
-
-* [Speed Comparer](https://eakondratiev.github.io/speed.htm)
-
-* [IP Range Calculator](https://eakondratiev.github.io/iprange.htm)
-
-* [Floating-point Summation](https://eakondratiev.github.io/floating-point-summation.htm)
+[Start here](https://eakondratiev.github.io/) - some tools: 
+[whitespace and non-ASCII characters highlighter](https://eakondratiev.github.io/ws.htm), 
+[IP v4 range calculator](https://eakondratiev.github.io/iprange.htm), 
+[speed comparison](https://eakondratiev.github.io/speed.htm), 
+[reducing accumulated error in floating-point summation](https://eakondratiev.github.io/floating-point-summation.htm), 
+etc.
