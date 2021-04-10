@@ -13,13 +13,13 @@
   <link rel="manifest" href="/assets/icons/manifest.json" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
-  <link href="/assets/main.css?202012" rel="stylesheet" type="text/css" />
+  <link href="/assets/main.css?202104" rel="stylesheet" type="text/css" />
   <script src="/assets/menu.js"></script>
   <style>
     input[type=text] {padding: 2pt; width: 195px;}
     .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
+    .range-example {font-size: 0.8rem;}
     .range-result {margin: 8pt 0;}
-    .range-result p {margin: 8pt 0;}
     .extended-range-note {color: #c00;}
   </style>
 </head>
@@ -44,16 +44,17 @@
         </nav>
     </div>
     <div class="page-wide">
-      <div class="content">
+      <div class="content page-content">
         <h1>IP Range Calculator</h1>
 
         <div class="range-calc">
           <div style="margin: 4pt 0;">IP <u>R</u>ange</div>
           <input type="text" placeholder="192.168.0.0-192.168.0.255" class="form-range" accesskey="R" />
           <button onclick="CalculateRanges()" accesskey="M">Get <u>M</u>ask</button>
+          <p class="range-example">Example: <a href="#" id="range-example-link">192.168.0.0-192.168.0.255</a></p>
           <div class="range-result"></div>
         </div>
-        <!-- version 2020-08-06 -->
+        <!-- version 2021-04-10 -->
 
       </div>
     </div>
@@ -80,6 +81,14 @@
      *   
      *   Tests in IPlibTest ();
      */
+
+    var exampleLink = document.getElementById('range-example-link');
+
+    exampleLink.addEventListener('click', function (event) {
+
+      document.getElementsByClassName('form-range')[0].value = exampleLink.innerHTML;
+
+    });
 
     document.getElementsByClassName('form-range')[0].addEventListener('keyup', function (event) {
       // Number 13 is the "Enter" key on the keyboard

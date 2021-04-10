@@ -31,6 +31,13 @@ header {padding: 8pt 0; display: grid; }
 .site-nav-top-item a:hover,
 .site-nav-top-item a:active { color: #fff; }
 
+.page-content h1 {font-weight: normal; color: #07a;}
+.page-content h2 {font-size: 1.2rem; font-weight: normal; margin: 12pt 0 0 0;}
+.page-content h3 {font-size: 1rem; margin: 8pt 0 0 0;}
+.page-content p {color: #444; margin: 8pt 0;}
+.page-content a:link, .page-content a:visited {color:#039;}
+.page-content a:active, .page-content a:hover {color:#07c;}
+
 @media (max-width: 370px) {
   /* Mobile */
   header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}

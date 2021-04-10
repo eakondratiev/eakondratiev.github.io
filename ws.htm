@@ -14,10 +14,9 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css?201920" rel="stylesheet" type="text/css" />
+    <link href="/assets/main.css?202104" rel="stylesheet" type="text/css" />
     <script src="/assets/menu.js"></script>
     <style>
-      .dim-text {color:#555;}
       #text-box, #text-processed {
         border: solid 1px #999;
         box-sizing: border-box; padding:4pt; width:100%;}
@@ -50,12 +49,11 @@
         </nav>
       </div>
       <div class="page-wide">
-        <div class="content">
+        <div class="content page-content">
           <h1>Whitespaces and UTF</h1>
-
-          <p class="dim-text">Highlights whitespaces and UTF/non-ASCII characters in the text.</p>
-          <p>Enter or paste a text here...</p>
-          <textarea id="text-box" rows="5"></textarea>
+          <p>Highlights whitespaces and non-Latin characters in the text. <a href="#" id="ws-example-link">Example</a></p>
+          <p>Enter or paste a <u>t</u>ext here...</p>
+          <textarea id="text-box" rows="5" accesskey="T"></textarea>
           <div>Text length: <b id="text-len"></b></div>
           <div id="text-processed"></div>
         </div>
@@ -66,12 +64,14 @@
     </div>
     <script>
       (function () {
+        'use strict';
 
         const URL_PARAM = "q";
 
         var sourceElement = document.getElementById("text-box"),
           targetElement = document.getElementById("text-processed"),
           lenElement = document.getElementById("text-len"),
+          exampleLink = document.getElementById('ws-example-link'),
           textParamRaw = GetUrlText();
 
         sourceElement.focus();
@@ -83,10 +83,23 @@
           textChanged();
         }
 
+        exampleLink.addEventListener('click', function (event) {
+
+          sourceElement.value = 'Sоme tеxt.';
+          textChanged();
+
+        });
+
         function textChanged() {
 
           targetElement.innerHTML = processText(sourceElement.value);
-          targetElement.style.display = "block";
+
+          if (sourceElement.value.length > 0) {
+            targetElement.style.display = "block";
+          }
+          else {
+            targetElement.style.display = "none";
+          }
           lenElement.innerHTML = sourceElement.value.length.toString();
 
           window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
