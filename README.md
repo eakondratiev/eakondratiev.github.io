@@ -12,4 +12,4 @@ Web Tools
 * [reducing accumulated error in floating-point summation](https://eakondratiev.github.io/floating-point-summation.htm), 
 etc.
 
-And some console apps.
+And some [console tools](https://eakondratiev.github.io/#console-tools).
