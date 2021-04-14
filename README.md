@@ -11,3 +11,5 @@ Web Tools
 * [speed comparison](https://eakondratiev.github.io/speed.htm), 
 * [reducing accumulated error in floating-point summation](https://eakondratiev.github.io/floating-point-summation.htm), 
 etc.
+
+And some console apps.
