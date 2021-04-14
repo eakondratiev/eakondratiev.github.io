@@ -1,3 +1,4 @@
+:root {color-scheme: light dark;}
 html { font-family: "Segoe UI","Helvetica","Arial", sans-serif; font-size:100%; }
 body { display: flex; flex-direction: column; margin:0; padding:0; }
 html,body { height:100%; }
@@ -47,4 +48,15 @@ header {padding: 8pt 0; display: grid; }
     background: #333; position: absolute; left: 0; width: 100vw;}
   .site-nav-top-item {display: block; margin: 12pt 4pt;}
   .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin: 12pt 4pt; }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {background: #222;}
+  button { background: #555; border-color: #777; color: #eee; }
+  button:hover { background: #777; color: #fff; border-color: #999; }
+  button:focus { background: #777; color: #fff; border-color: #aaa; }
+  .page-content h1 {color: #bdf;}
+  .page-content p {color: #ccc;}
+  .page-content a:link, .page-content a:visited {color:#7bf;}
+  .page-content a:active, .page-content a:hover {color:#def;}
 }

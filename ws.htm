@@ -23,9 +23,13 @@
       #text-box {font-size:1rem;}
       #text-processed {font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
         display:none; margin: 16pt 0; width:100%;}
-      #text-processed b {color: #c00; min-width:2pt; background: #fd9;} /* non-ascii */
-      #text-processed i {background: #eee; font-style: normal; color: #777;} /* whitespace */
+      #text-processed b {background: #fd9; color: #c00; font-weight: normal; min-width:2pt;} /* non-ascii */
+      #text-processed i {background: #eee; color: #777; font-style: normal;} /* whitespace */
       .new-line-symbol {font-family: 'Lucida Console'; font-size:0.8rem; padding: 0 2pt;}
+      @media (prefers-color-scheme: dark) {
+        #text-processed b {background: #966502; color: #fe9;}
+        #text-processed i {background: #505050; color: #eee;}
+      }
     </style>
   </head>
   <body>

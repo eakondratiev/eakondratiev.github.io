@@ -20,7 +20,10 @@
     .range-calc {border-bottom: dotted 1pt #777; margin: 8pt 0; padding: 4pt 0;}
     .range-example {font-size: 0.8rem;}
     .range-result {margin: 8pt 0;}
-    .extended-range-note {color: #c00;}
+    .page-content p.extended-range-note {color: #c00;}
+    @media (prefers-color-scheme: dark) {
+      .page-content p.extended-range-note {color: #f93;}
+    }
   </style>
 </head>
 <body>
@@ -46,7 +49,6 @@
     <div class="page-wide">
       <div class="content page-content">
         <h1>IP Range Calculator</h1>
-
         <div class="range-calc">
           <div style="margin: 4pt 0;">IP <u>R</u>ange</div>
           <input type="text" placeholder="192.168.0.0-192.168.0.255" class="form-range" accesskey="R" />
