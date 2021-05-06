@@ -7,6 +7,15 @@
 
     <meta name="apple-mobile-web-app-title" content="Floating-point Summation" />
     <meta name="application-name" content="Floating-point Summation" />
+
+    <meta property="og:title" content="Floating-point Summation">
+    <meta name="description" content="Discover inaccuracy of the floating-point representation of numbers.">
+    <meta property="og:description" content="Discover inaccuracy of the floating-point representation of numbers.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/floating-point-summation.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/floating-point-summation.htm">
+
     <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
@@ -30,14 +39,14 @@
     <div class="main-content">
       <div class="page-wide header">
         <header class="content">
-          <div class="site-menu-btn">
+          <button class="site-menu-btn" aria-label="Open the site menu">
             <div></div>
             <div></div>
             <div></div>
-          </div>
+          </button>
           <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
         </header>
-        <nav class="content site-nav">
+        <nav class="content site-nav" aria-label="Site menu">
           <ul>
           <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
@@ -50,7 +59,7 @@
         <div class="content page-content">
           <h1>Floating-point Summation</h1>
           <div class="fp-form">
-            <input type="text" id="input-numbers" placeholder="0.1;0.2" value="0.1;0.2">
+            <input type="text" id="input-numbers" placeholder="0.1;0.2" value="0.1;0.2" aria-label="Enter some semicolon delimited numbers">
             <button type="button" id="btn-calc-sum" accesskey="S"><u>S</u>um</button>
           </div>
           <div class="note">Enter several numbers delimited with the ";" character.</div>

@@ -7,6 +7,15 @@
 
     <meta name="apple-mobile-web-app-title" content="Whitespace and UTF Characters" />
     <meta name="application-name" content="Whitespace and UTF Characters" />
+
+    <meta property="og:title" content="Whitespace and UTF Characters">
+    <meta name="description" content="Highlights whitespaces and UTF characters in a text.">
+    <meta property="og:description" content="Highlights whitespaces and UTF characters in a text.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/ws.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/ws.htm">
+
     <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
@@ -36,14 +45,14 @@
     <div class="main-content">
       <div class="page-wide header">
         <header class="content">
-          <div class="site-menu-btn">
+          <button class="site-menu-btn" aria-label="Open the site menu">
             <div></div>
             <div></div>
             <div></div>
-          </div>
+          </button>
           <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
         </header>
-        <nav class="content site-nav">
+        <nav class="content site-nav" aria-label="Site menu">
           <ul>
           <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
@@ -56,8 +65,8 @@
         <div class="content page-content">
           <h1>Whitespaces and UTF</h1>
           <p>Highlights whitespaces and non-Latin characters in the text. <a href="#" id="ws-example-link">Example</a></p>
-          <p>Enter or paste a <u>t</u>ext here...</p>
-          <textarea id="text-box" rows="5" accesskey="T"></textarea>
+          <p id="textarea-label">Enter or paste a <u>t</u>ext here...</p>
+          <textarea id="text-box" rows="5" accesskey="T" aria-labelledby="textarea-label"></textarea>
           <div>Text length: <b id="text-len"></b></div>
           <div id="text-processed"></div>
         </div>

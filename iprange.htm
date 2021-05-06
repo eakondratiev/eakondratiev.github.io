@@ -39,14 +39,14 @@
   <div class="main-content">
     <div class="page-wide header">
         <header class="content">
-          <div class="site-menu-btn">
+          <button class="site-menu-btn" aria-label="Open the site menu">
             <div></div>
             <div></div>
             <div></div>
-          </div>
+          </button>
           <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
         </header>
-        <nav class="content site-nav">
+        <nav class="content site-nav" aria-label="Site menu">
           <ul>
           <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
@@ -60,13 +60,13 @@
         <h1>IP Range Calculator</h1>
         <p>Enter the IPv4 range and get the network mask and CIDR for its subnets.</p>
         <div class="range-calc">
-          <div style="margin: 4pt 0;">IP <u>R</u>ange</div>
-          <input type="text" placeholder="192.168.0.0-192.168.0.255" class="form-range" accesskey="R" />
+          <div style="margin: 4pt 0;" id="range-field-label">IP <u>R</u>ange</div>
+          <input type="text" placeholder="192.168.0.0-192.168.0.255" class="form-range" accesskey="R" aria-labelledby="range-field-label" />
           <button onclick="CalculateRanges()" accesskey="M">Get <u>M</u>ask</button>
           <p class="range-example">Example: <a href="#" id="range-example-link">192.168.0.0-192.168.0.255</a></p>
           <div class="range-result"></div>
         </div>
-        <!-- version 2021-05-05 -->
+        <!-- version 2021-05-06 -->
 
       </div>
     </div>

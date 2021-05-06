@@ -7,6 +7,15 @@
 
     <meta name="apple-mobile-web-app-title" content="Speed &amp; Distance" />
     <meta name="application-name" content="Speed &amp; Distance" />
+
+    <meta property="og:title" content="Speed and Distance">
+    <meta name="description" content="Converts the speed and shows the time for covering some distances.">
+    <meta property="og:description" content="Converts the speed and shows the time for covering some distances.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/speed.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/speed.htm">
+
     <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
@@ -38,14 +47,14 @@
     <div class="main-content">
       <div class="page-wide header">
         <header class="content">
-          <div class="site-menu-btn">
+          <button class="site-menu-btn" aria-label="Open the site menu">
             <div></div>
             <div></div>
             <div></div>
-          </div>
+          </button>
           <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
         </header>
-        <nav class="content site-nav">
+        <nav class="content site-nav" aria-label="Site menu">
           <ul>
           <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
@@ -59,9 +68,9 @@
           <h1>Speed &amp; Distance</h1>
           <p style="margin-top:16pt;"><u>S</u>peed</p>
           <div style="margin: 4pt 0;">
-            <input type="text" id="speed-value" class="speed-value" maxlength="24" accesskey="S" placeholder="Enter a numric value" />
+            <input type="text" id="speed-value" class="speed-value" maxlength="24" accesskey="S" placeholder="Enter a numric value" aria-label="Speed" />
           </div>
-          <div id="speed-units" class="speed-units">
+          <div id="speed-units" class="speed-units" aria-label="Speed units selector">
             <label>
               <input type="radio" name="speed-unit" value="ms" data-k="1" checked /> m/s
             </label>
