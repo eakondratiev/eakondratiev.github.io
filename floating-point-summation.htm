@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Floating-point Summation</title>
+    <title>Floating-Point Summation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="apple-mobile-web-app-title" content="Floating-point Summation" />
-    <meta name="application-name" content="Floating-point Summation" />
+    <meta name="apple-mobile-web-app-title" content="Floating-Point Summation" />
+    <meta name="application-name" content="Floating-Point Summation" />
 
-    <meta property="og:title" content="Floating-point Summation">
+    <meta property="og:title" content="Floating-Point Summation">
     <meta name="description" content="Discover inaccuracy of the floating-point representation of numbers.">
     <meta property="og:description" content="Discover inaccuracy of the floating-point representation of numbers.">
     <meta property="og:locale" content="en_US">
@@ -57,7 +57,7 @@
       </div>
       <div class="page-wide">
         <div class="content page-content">
-          <h1>Floating-point Summation</h1>
+          <h1>Floating-Point Summation</h1>
           <div class="fp-form">
             <input type="text" id="input-numbers" placeholder="0.1;0.2" value="0.1;0.2" aria-label="Enter some semicolon delimited numbers">
             <button type="button" id="btn-calc-sum" accesskey="S"><u>S</u>um</button>
@@ -110,11 +110,11 @@
             resultElement.innerHTML =
                 '<h3>Input</h3>' +
                 '<div class="num">' + resInputRaw + '</div>' +
-                '<h3>Floating-point Representation</h3>' +
+                '<h3>Floating-point representation</h3>' +
                 '<div class="num">' + inputNumbers.map(x => x.toFixed(32)).join('<br>') + '</div>' +
-                '<h3>Simple Summation</h3>' +
+                '<h3>Simple summation</h3>' +
                 '<div class="num">' + inputNumbers.reduce((acc, v) => acc + v) + '</div>' +
-                '<h3>Klein Algorigthm</h3>' +
+                '<h3>Klein algorigthm</h3>' +
                 '<div class="num">' + KleinSum (inputNumbers) + '</div>';
 
         }
