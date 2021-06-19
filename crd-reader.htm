@@ -29,15 +29,11 @@
       pre {margin: 12pt 0;}
       code, .code {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; font-size: 10pt;
         background-color: #f3f3f3; border: solid 1px #ddd; border-radius: 2pt; padding: 2pt 4pt;}
-      a.tool-button-link:link, a.tool-button-link:visited {background: #06c; color: #fff;
-        border: none; border-radius: 4px; font-size: 10pt; font-weight: bold; padding: 2pt 8pt; text-decoration: none;}
-      a.tool-button-link:hover {background: #08e;}
-      a.tool-button-link:active {background: #049;}
-      a.tool-button-link:focus {box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.5); outline: none;}
+      .tool-no-wrap {white-space: nowrap;}
+      .tool-download-arr {font-weight: bold; text-decoration: underline; margin: 0 4pt;}
+      .tool-download {font-weight: bold;}
       @media (prefers-color-scheme: dark) {
         code, .code {background-color: #505050; color: #eee; border-color: #606060;}
-        a.tool-button-link:focus {background-color: #5ae;}
-        a.tool-button-link:focus {box-shadow: 0 0 4px 2px rgba(255, 255, 255, 0.2);}
       }
     </style>
   </head>
@@ -67,7 +63,7 @@
           <h1>Windows CRD File Reader</h1>
 
           <p>
-          ReadCrd is a cross-planform console application which prints content of the Cardfile for Windows 3.x file (CRD extension).
+          ReadCrd is a cross-planform <b>console application</b> which prints content of the Cardfile for Windows 3.x file (CRD extension).
           The file signature must be <code>MGC</code> or <code>RRG</code>.
           </p>
 
@@ -92,7 +88,7 @@
           <h2>Windows Terminal</h2>
 
           <p>
-          Use the command chcp to display and change the code page used by the terminal. For example, to set the UTF-8 encoding use
+          Use the command <i>chcp</i> to display and change the code page used by the terminal. For example, to set the UTF-8 encoding use
           </p>
 
           <pre class="code">chcp 65001
@@ -104,9 +100,15 @@ ReadCrd.exe -e Windows-1251 Contacts.CRD</pre>
 
           <pre class="code">chcp 1251
 ReadCrd.exe Contacts.CRD</pre>
-          
+
+          <h2>Download <b class="tool-download-arr">&darr;</b></h2>          
           <div style="margin: 12pt 0;">
-          <a class="tool-button-link" target="_blank" href="https://github.com/eakondratiev/ReadCrd/releases" download rel="noreferrer">Download</a>
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">Linux version</a>
+            <b class="tool-no-wrap">15 KB</b> unpacked.
+          </div>
+          <div style="margin: 12pt 0;">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">Windows version</a>
+            <b class="tool-no-wrap">19 KB</b> unpacked.
           </div>
 
         </div>
