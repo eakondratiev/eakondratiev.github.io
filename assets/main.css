@@ -27,7 +27,7 @@ header {padding: 8pt 0; display: grid; }
 .site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; transition: color 1s;}
 .site-logo:hover { color: #fff; }
 .site-nav { padding: 4pt 0; position: relative; left: -4pt; }
-.site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt; }
+.site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt;}
 .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin:0 }
 .site-nav-top-item:hover, .site-nav-top-item:active { background: #777; }
 .site-nav-top-item a:link,
@@ -47,9 +47,9 @@ header {padding: 8pt 0; display: grid; }
   header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
   .site-title {display: flex; align-items: center; justify-content:center; padding-right: 35px;}
   .site-menu-btn {display: block; text-align: center;}
-  .site-nav {display: none;
-    background: #333; position: absolute; left: 0; width: 100vw;}
-  .site-nav-top-item {display: block; margin: 12pt 4pt;}
+  .site-nav {display: none; box-shadow: 0 5px 5px rgba(3,3,3,0.4);
+    background: #333; border-bottom: solid 2px #f90; position: absolute; left: 0; width: 100vw;}
+  .site-nav-top-item {display: block; margin: 12pt 4pt;  font-size:1rem;}
   .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin: 12pt 4pt; }
 }
 
