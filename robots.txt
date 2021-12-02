@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /*.md
+
+User-agent: *
+Disallow: /404.htm
+
+User-agent: *
+Allow: /
+
+Sitemap: https://eakondratiev.github.io/sitemap.xml
