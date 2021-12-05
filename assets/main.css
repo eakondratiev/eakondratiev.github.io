@@ -42,9 +42,11 @@ header {padding: 8pt 0; display: grid; }
 .page-content a:link, .page-content a:visited {color:#039;}
 .page-content a:active, .page-content a:hover {color:#07c;}
 
+#incompatible-browser {border: solid 1px #c00; color: #c00; padding: 8pt; margin: 8pt 0; display: none;}
+
 @media (max-width: 420px) {
   /* Mobile */
-  header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
+  header .content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
   .site-title {display: flex; align-items: center; justify-content:center; padding-right: 35px;}
   .site-menu-btn {display: block; text-align: center;}
   .site-nav {display: none; box-shadow: 0 5px 5px rgba(3,3,3,0.4);
