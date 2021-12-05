@@ -138,7 +138,7 @@ function Speed() {
 
     for (i = 0; i < speedUnitElements.length; i++) {
 
-      k = speedUnitElements[i].dataset.k;
+      k = speedUnitElements[i].getAttribute('data-k'); //dataset.k;
       overPosition = k.indexOf('/');
 
       if (overPosition >= 0) {
