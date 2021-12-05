@@ -4,7 +4,7 @@
  * 2020-12-26 * percent of the speed of light added to results;
  *            * the options parameter added to the formatNumber().
  * 2020-12-27 * 
- * 2021-12-05 * browser compatibility check.
+ * 2021-12-05 * browser compatibility check; the .dataset replaced with .getAttribute().
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -12,7 +12,9 @@
 // ==/ClosureCompiler==
 function Speed() {
 
-  if (document.getElementsByName === undefined) {
+  if (document.getElementsByName === undefined ||
+      typeof URL !== 'function') {
+
     document.getElementById('incompatible-browser').style.display = 'block';
     return;
   }
@@ -138,7 +140,7 @@ function Speed() {
 
     for (i = 0; i < speedUnitElements.length; i++) {
 
-      k = speedUnitElements[i].getAttribute('data-k'); //dataset.k;
+      k = speedUnitElements[i].getAttribute('data-k');
       overPosition = k.indexOf('/');
 
       if (overPosition >= 0) {
