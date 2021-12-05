@@ -10,18 +10,18 @@
 // ==/ClosureCompiler==
 (function () {
 
+  // check for compatibility
+  if (document.getElementsByClassName === undefined ||
+    window.addEventListener === undefined ||
+    window.getComputedStyle === undefined) {
+
+    // just return without any message: the menu without style still works.
+    return;
+
+  }
+
   // initialize
   window.onload = function (event) {
-
-    // check for compatibility
-    if (document.getElementsByClassName === undefined ||
-        window.addEventListener === undefined ||
-        window.getComputedStyle === undefined) {
-
-      document.getElementById('incompatible-browser').style.display = 'block';
-      return;
-
-    }
 
     var menuBtn = document.getElementsByClassName('site-menu-btn')[0],
       menu = document.getElementsByClassName('site-nav')[0];

@@ -1,11 +1,21 @@
 ﻿/*
  * File: speed.js 
- * 2019-07-03_04
+ * 2019-07-03...04
  * 2020-12-26 * percent of the speed of light added to results;
  *            * the options parameter added to the formatNumber().
  * 2020-12-27 * 
+ * 2021-12-05 * browser compatibility check.
  */
-function Speed () {
+// ==ClosureCompiler==
+// @compilation_level SIMPLE_OPTIMIZATIONS
+// @output_file_name speed.min.js
+// ==/ClosureCompiler==
+function Speed() {
+
+  if (document.getElementsByName === undefined) {
+    document.getElementById('incompatible-browser').style.display = 'block';
+    return;
+  }
 
   var SPEED_OF_LIGHT = 299792458, // m/s
     SECONDS_PER_DAY = 3600 * 24,
