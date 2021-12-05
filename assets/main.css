@@ -17,7 +17,7 @@ button:focus { background: #adf; color: #000; border-color: #37a; }
 .content { margin:0 auto; max-width:700px; padding: 16pt 4pt 0 4pt; }
 .header { background: #444; font-size:0.8rem; }
 header {padding: 8pt 0; display: grid; }
-.site-menu-btn { cursor: pointer; display: none; padding: 4pt; background:none; border:none;}
+.site-menu-btn { cursor: pointer; display: none; padding: 4pt; background:none; border:none; max-width: 23pt;}
 .site-menu-btn:hover, .site-menu-btn:focus { background:none; border:none;}
 .site-menu-btn div { width: 20pt; height: 3pt; background-color: #aaa; margin: 3pt 0; transition: background-color 1s;}
 .site-menu-btn:hover div, .site-menu-btn:focus div { background-color: #fff; box-shadow: inset 0 0 2pt 0 #07a;}
@@ -26,8 +26,8 @@ header {padding: 8pt 0; display: grid; }
 .footer:hover b {color: #fff;}
 .site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; transition: color 1s;}
 .site-logo:hover { color: #fff; }
-.site-nav { padding: 4pt 0; position: relative; left: -4pt; }
-.site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt;}
+.site-nav { padding: 4pt 0; position: relative; left: -4pt; line-height: 2;}
+.site-nav-top-item { display: inline; margin: 0 8pt; padding: 2pt 4pt; white-space: nowrap;}
 .site-nav-top-item:first-child, .site-nav-top-item:last-child { margin:0 }
 .site-nav-top-item:hover, .site-nav-top-item:active { background: #777; }
 .site-nav-top-item a:link,
@@ -46,7 +46,7 @@ header {padding: 8pt 0; display: grid; }
 
 @media (max-width: 420px) {
   /* Mobile */
-  header .content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
+  header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
   .site-title {display: flex; align-items: center; justify-content:center; padding-right: 35px;}
   .site-menu-btn {display: block; text-align: center;}
   .site-nav {display: none; box-shadow: 0 5px 5px rgba(3,3,3,0.4);
