@@ -12,8 +12,7 @@
 // ==/ClosureCompiler==
 function Speed() {
 
-  if (document.getElementsByName === undefined ||
-      typeof URL !== 'function') {
+  if (document.getElementsByName === undefined) {
 
     document.getElementById('incompatible-browser').style.display = 'block';
     return;
@@ -384,6 +383,7 @@ function Speed() {
       return url.searchParams.get(parameterName);
     }
     catch (error) {
+      document.getElementById('incompatible-browser').style.display = 'block';
       return null;
     }
 
