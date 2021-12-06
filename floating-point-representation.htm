@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Floating-Point Representation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="Floating-Point Representation" />
+    <meta name="application-name" content="Floating-Point Representation" />
+
+    <meta property="og:title" content="Floating-Point Representation">
+    <meta name="description" content="Shows representation of the floating-point numbers in computer programs.">
+    <meta property="og:description" content="Shows representation of the floating-point numbers in computer programs.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/floating-point-representation.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/floating-point-representation.htm">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20211205" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20211205"></script>
+    <style>
+      .bits {margin: 16pt 0;}
+      .octet {margin: 0 4pt;}
+      .fp-bit {font-family: 'Cascadia Mono', Consolas, 'Lucida Console', Courier New, Courier, monospace;
+        padding: 0 1pt; white-space: nowrap;}
+      .fp-sign {background-color: #fd0;}
+      .fp-exp {background-color: #9e0;}
+      .fp-fraction {background-color: #7cf;}
+      .note {color: #000; font-size: 0.9rem;}
+      .fp-form {margin-top: 16pt;}
+      .fp-form input, .fp-form button {padding: 2pt 4pt; height: 20pt; box-sizing: border-box;}
+      @media (prefers-color-scheme: dark) {
+        .note {color: #ccc;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <ul>
+          <li class="site-nav-top-item"><a href="/">Home Page</a></li>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <div id="incompatible-browser">Please, update your browser.</div>
+          <h1>Floating-Point Representation</h1>
+          <p>Shows representation of the floating-point numbers in computer programs.</p>
+
+          <div class="fp-form">
+            <input type="text" id="input-fp-number" placeholder="0.1" value="" aria-label="Enter a floating point number">
+            <button type="button" id="btn-show-rep" accesskey="S"><u>S</u>how</button>
+          </div>
+          <div class="note">Enter a floating point number.</div>
+          <div class="note">Examples:
+            <a href="#" onclick="example(this)">0.1</a>,
+            <a href="#" onclick="example(this)">-2.0</a>,
+            <a href="#" onclick="example(this)">6.0</a>
+          </div>
+          <div class="fp-representation"></div>
+
+          <p>
+           Real numbers are represented in computing as an array of bits.
+           In the 32-bit representation
+           the first bit is a sign, the next 8 bits are exponent, and other bits are significand.
+           See the <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow">Single-precision floating-point format</a>
+           article on Wikipedia.
+          </p>
+
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      imperfect <b>tools</b>
+    </div>
+    <script src="/assets/fprep.min.js"></script>
+    <script>
+      var inputElement = document.getElementById ('input-fp-number');
+      var resultElement = document.getElementsByClassName('fp-representation')[0];
+      var calcBtn = document.getElementById('btn-show-rep');
+
+      calcBtn.addEventListener('click', function () {
+        processFloatingPointValue(inputElement, resultElement);
+      });
+
+      function example(link) {
+        inputElement.value = link.innerHTML;
+        return false;
+      }
+
+    </script>
+  </body>
+</html>
