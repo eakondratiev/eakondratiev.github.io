@@ -45,6 +45,10 @@ function processFloatingPointValue(inputElement, resultElement) {
       for (i = 0; i < BITS; i++) {
 
         // marks open
+        if (i === 0 || i === 16) {
+          bitsString += '<span class="fp-nowrap">';
+        }
+
         if (i % 8 === 0) {
           bitsString += '<span class="octet">';
         }
@@ -55,6 +59,11 @@ function processFloatingPointValue(inputElement, resultElement) {
         if (i === 7 || i === 15 || i === 23 || i === 31) {
           bitsString += '</span>';
         }
+
+        if (i === 15 || i === 31) {
+          bitsString += '</span>'; // no wrap
+        }
+
 
       }
 
