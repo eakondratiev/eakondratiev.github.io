@@ -44,24 +44,11 @@ function processFloatingPointValue(inputElement, resultElement) {
       // display bits
       for (i = 0; i < BITS; i++) {
 
-        // marks open
-        if (i === 0 || i === 16) {
-          bitsString += '<span class="fp-nowrap">';
-        }
-
-        if (i % 8 === 0) {
-          bitsString += '<span class="octet">';
-        }
-
         bitsString += formatBit(arr[i], i);
 
-        // marks close
+        // separate octets with a space, so the line could be break down.
         if (i === 7 || i === 15 || i === 23 || i === 31) {
-          bitsString += '</span>';
-        }
-
-        if (i === 15 || i === 31) {
-          bitsString += '</span>'; // no wrap
+          bitsString += ' ';
         }
 
 
