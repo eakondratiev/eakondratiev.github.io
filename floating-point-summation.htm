@@ -154,7 +154,7 @@
         try {
           s = n.toFixed(32);
         }
-        catch {
+        catch (err) {
           // older browsers
           s = n.toFixed(20);
         }
