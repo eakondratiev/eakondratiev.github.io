@@ -73,7 +73,7 @@
           <div class="summation-result"></div>
 
           <p>
-           Real numbers are represented in computing as an approximation.
+           Real numbers are <a href="floating-point-representation.htm">represented</a> in computing as an approximation.
            Numbers with a common fraction in which the denominator is a power of two
            are stored as exact numbers: 1/2, 1/4, 3/8, etc.
            See the <a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic" rel="nofollow">Floating-point arithmetics</a>
@@ -92,18 +92,30 @@
     <script>
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
-          !Array.prototype.map ||
-          !Array.prototype.reduce) {
+         !Element.prototype.addEventListener ||
+         !Array.prototype.map ||
+         !Array.prototype.reduce) {
 
         document.getElementById('incompatible-browser').style.display = 'block';
 
       }
+      else {
 
-      var inputElement = document.getElementById ('input-numbers');
-      var resultElement = document.getElementsByClassName('summation-result')[0];
-      var calcBtn = document.getElementById('btn-calc-sum');
+        var inputElement = document.getElementById('input-numbers');
+        var resultElement = document.getElementsByClassName('summation-result')[0];
+        var calcBtn = document.getElementById('btn-calc-sum');
 
-      calcBtn.addEventListener ('click', processClick);
+        calcBtn.addEventListener('click', function() {
+          processClick (inputElement, resultElement);
+        });
+
+        inputElement.addEventListener('keypress', function(e) { 
+          if (e.key === 'Enter') {
+            processClick (inputElement, resultElement); 
+          }
+        });
+
+      }
 
       function example(link) {
 
@@ -112,10 +124,26 @@
         return false;
       }
 
-      function processClick() {
+      /**
+       * Returns the parsed number.
+       * @param {string} text the text.
+       * @returns {number}
+       */
+      function getNumber(text) {
+
+        text = text.replace (',', '.');
+        return parseFloat(text); 
+      }
+
+      /**
+       * Processes click of the button.
+       * @param inputElement the input element.
+       * @param resultElement the result element.
+       */
+      function processClick(inputElement, resultElement) {
 
         var inputTexts = inputElement.value.split(';'),
-          inputNumbers = inputTexts.map(function (x) { return parseFloat(x); });
+          inputNumbers = inputTexts.map(function (x) { return getNumber(x); });
         var resInputRaw = inputNumbers.join('<br>');
 
         resultElement.innerHTML =
