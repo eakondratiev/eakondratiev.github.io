@@ -90,6 +90,8 @@
       imperfect <b>tools</b>
     </div>
     <script>
+      var inputElement = document.getElementById('input-numbers');
+
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
          !Element.prototype.addEventListener ||
@@ -101,7 +103,6 @@
       }
       else {
 
-        var inputElement = document.getElementById('input-numbers');
         var resultElement = document.getElementsByClassName('summation-result')[0];
         var calcBtn = document.getElementById('btn-calc-sum');
 
