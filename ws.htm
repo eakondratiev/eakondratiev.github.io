@@ -117,8 +117,10 @@
           }
           lenElement.innerHTML = sourceElement.value.length.toString();
 
-          window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
-            URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
+          if (window.history.pushState) {
+            window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
+              URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
+          }
         }
 
         function processText(source) {

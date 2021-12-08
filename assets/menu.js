@@ -75,8 +75,10 @@
 
       element.value = text;
 
-      window.history.pushState(page, 'Title', 
-        '/' + page + '?' + urlParamName + '=' + encodeURIComponent(text));
+      if (window.history.pushState) {
+        window.history.pushState(page, 'Title', 
+          '/' + page + '?' + urlParamName + '=' + encodeURIComponent(text));
+      }
     }
 
   }
