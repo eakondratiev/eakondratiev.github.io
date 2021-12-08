@@ -91,10 +91,9 @@
     </div>
     <script>
       // check for compatibility
-      if (document.getElementsByClassName) {
+      if (document.getElementsByClassName === undefined) {
 
         document.getElementById('incompatible-browser').style.display = 'block';
-        return;
 
       }
 
