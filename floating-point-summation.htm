@@ -90,72 +90,80 @@
       imperfect <b>tools</b>
     </div>
     <script>
-        var inputElement = document.getElementById ('input-numbers');
-        var resultElement = document.getElementsByClassName('summation-result')[0];
-        var calcBtn = document.getElementById('btn-calc-sum');
+      // check for compatibility
+      if (document.getElementsByClassName) {
 
-        calcBtn.addEventListener ('click', processClick);
+        document.getElementById('incompatible-browser').style.display = 'block';
+        return;
 
-        function example(link) {
+      }
 
-          inputElement.value = link.innerHTML;
-          console.log(link);
-          return false;
-        }
+      var inputElement = document.getElementById ('input-numbers');
+      var resultElement = document.getElementsByClassName('summation-result')[0];
+      var calcBtn = document.getElementById('btn-calc-sum');
 
-        function processClick() {
+      calcBtn.addEventListener ('click', processClick);
 
-            var inputTexts = inputElement.value.split(';'),
-                inputNumbers = inputTexts.map(x => parseFloat(x));
-            var resInputRaw = inputNumbers.join('<br>');
+      function example(link) {
 
-            resultElement.innerHTML =
-                '<h3>Input</h3>' +
-                '<div class="num">' + resInputRaw + '</div>' +
-                '<h3>Floating-point representation</h3>' +
-                '<div class="num">' + inputNumbers.map(x => x.toFixed(32)).join('<br>') + '</div>' +
-                '<h3>Simple summation</h3>' +
-                '<div class="num">' + inputNumbers.reduce((acc, v) => acc + v) + '</div>' +
-                '<h3>Klein algorigthm</h3>' +
-                '<div class="num">' + KleinSum (inputNumbers) + '</div>';
+        inputElement.value = link.innerHTML;
+        console.log(link);
+        return false;
+      }
 
-        }
+      function processClick() {
 
-        /**
-         * Returns sum of the input values.
-         * See https://en.wikipedia.org/wiki/Kahan_summation_algorithm
-         * @param {[Number]} input The input numbers.
-         */
-        function KleinSum(input) {
-            var sum = 0.0;
-            var cs = 0.0;
-            var ccs = 0.0;
-            var t;
-            var i;
+          var inputTexts = inputElement.value.split(';'),
+              inputNumbers = inputTexts.map(x => parseFloat(x));
+          var resInputRaw = inputNumbers.join('<br>');
 
-            for (i = 0; i < input.length; i++) {
-                t = sum + input[i];
-                if (Math.abs(sum) >= Math.abs(input[i])) {
-                    c = (sum - t) + input[i];
-                }
-                else {
-                    c = (input[i] - t) + sum;
-                }
-                sum = t;
-                t = cs + c;
-                if (Math.abs (cs) >= Math.abs(c)) {
-                    cc = (cs - t) + c;
-                }
-                else {
-                    cc = (c - t) + cs;
-                }
-                cs = t;
-                ccs = ccs + cc;
-            }
+          resultElement.innerHTML =
+              '<h3>Input</h3>' +
+              '<div class="num">' + resInputRaw + '</div>' +
+              '<h3>Floating-point representation</h3>' +
+              '<div class="num">' + inputNumbers.map(x => x.toFixed(32)).join('<br>') + '</div>' +
+              '<h3>Simple summation</h3>' +
+              '<div class="num">' + inputNumbers.reduce((acc, v) => acc + v) + '</div>' +
+              '<h3>Klein algorigthm</h3>' +
+              '<div class="num">' + KleinSum (inputNumbers) + '</div>';
 
-            return sum + cs + ccs;
+      }
 
-        }
+      /**
+       * Returns sum of the input values.
+       * See https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+       * @param {[Number]} input The input numbers.
+       */
+      function KleinSum(input) {
+          var sum = 0.0;
+          var cs = 0.0;
+          var ccs = 0.0;
+          var t;
+          var i;
+
+          for (i = 0; i < input.length; i++) {
+              t = sum + input[i];
+              if (Math.abs(sum) >= Math.abs(input[i])) {
+                  c = (sum - t) + input[i];
+              }
+              else {
+                  c = (input[i] - t) + sum;
+              }
+              sum = t;
+              t = cs + c;
+              if (Math.abs (cs) >= Math.abs(c)) {
+                  cc = (cs - t) + c;
+              }
+              else {
+                  cc = (c - t) + cs;
+              }
+              cs = t;
+              ccs = ccs + cc;
+          }
+
+          return sum + cs + ccs;
+
+      }
     </script>
   </body>
 </html>
