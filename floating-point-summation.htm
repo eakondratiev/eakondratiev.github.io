@@ -24,8 +24,8 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css?20211205" rel="stylesheet" type="text/css" />
-    <script src="/assets/menu.min.js?20211205"></script>
+    <link href="/assets/main.css?20211208" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20211208"></script>
     <style>
       .note {color: #000; font-size: 0.9rem;}
       .fp-form {margin-top: 16pt;}
@@ -53,6 +53,7 @@
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
           <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">Floating-point Representation</a></li>
           </ul>
         </nav>
       </div>
@@ -66,9 +67,9 @@
           </div>
           <div class="note">Enter some numbers delimited with the semicolon ";" character.</div>
           <div class="note">Examples:
-            <a href="#" onclick="example(this)">0.1;0.2</a>,
-            <a href="#" onclick="example(this)">0.1;0.2;0.3</a>,
-            <a href="#" onclick="example(this)">0.25;0.5</a>
+            <a href="#" onclick="T.setExample('input-numbers', '0.1;0.2', 'n')">0.1;0.2</a>,
+            <a href="#" onclick="T.setExample('input-numbers', '0.1;0.2;0.3', 'n')">0.1;0.2;0.3</a>,
+            <a href="#" onclick="T.setExample('input-numbers', '0.25;0.5', 'n')">0.25;0.5</a>
           </div>
           <div class="summation-result"></div>
 
@@ -118,24 +119,6 @@
 
       }
 
-      function example(link) {
-
-        inputElement.value = link.innerHTML;
-        console.log(link);
-        return false;
-      }
-
-      /**
-       * Returns the parsed number.
-       * @param {string} text the text.
-       * @returns {number}
-       */
-      function getNumber(text) {
-
-        text = text.replace (',', '.');
-        return parseFloat(text); 
-      }
-
       /**
        * Processes click of the button.
        * @param inputElement the input element.
@@ -144,19 +127,39 @@
       function processClick(inputElement, resultElement) {
 
         var inputTexts = inputElement.value.split(';'),
-          inputNumbers = inputTexts.map(function (x) { return getNumber(x); });
+          inputNumbers = inputTexts.map(function (x) { return T.getNumber(x); });
         var resInputRaw = inputNumbers.join('<br>');
 
         resultElement.innerHTML =
           '<h3>Input</h3>' +
           '<div class="num">' + resInputRaw + '</div>' +
           '<h3>Floating-point Representation in Javascript</h3>' +
-          '<div class="num">' + inputNumbers.map(function (x) { return x.toFixed(32); }).join('<br>') + '</div>' +
+          '<div class="num">' + inputNumbers.map(function (x) { return fpsJsNumber(x); }).join('<br>') + '</div>' +
           '<h3>Simple Summation</h3>' +
           '<div class="num">' + inputNumbers.reduce(function (acc, v) { return acc + v; }) + '</div>' +
           '<h3>Klein Algorigthm</h3>' +
-          '<div class="num">' + KleinSum (inputNumbers) + '</div>';
+          '<div class="num">' + fpsKleinSum (inputNumbers) + '</div>';
 
+      }
+
+      /**
+       * Returns string representation of the number using maximum of fractional digits.
+       * @param {number} n the number.
+       * @returns {string}
+       */
+      function fpsJsNumber(n) {
+
+        var s;
+
+        try {
+          s = n.toFixed(32);
+        }
+        catch {
+          // older browsers
+          s = n.toFixed(20);
+        }
+
+        return s;
       }
 
       /**
@@ -164,7 +167,7 @@
        * See https://en.wikipedia.org/wiki/Kahan_summation_algorithm
        * @param {[Number]} input The input numbers.
        */
-      function KleinSum(input) {
+      function fpsKleinSum(input) {
           var sum = 0.0;
           var cs = 0.0;
           var ccs = 0.0;

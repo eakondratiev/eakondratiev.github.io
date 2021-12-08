@@ -43,6 +43,10 @@ header {padding: 8pt 0; display: grid; }
 .page-content a:active, .page-content a:hover {color:#07c;}
 
 #incompatible-browser {border: solid 1px #c00; color: #c00; padding: 8pt; margin: 8pt 0; display: none;}
+.page-content a.outer-link:link,
+.page-content a.outer-link:visited {color: #444;}
+.page-content a.outer-link:active,
+.page-content a.outer-link:hover {color: #000;}
 
 @media (max-width: 420px) {
   /* Mobile */
@@ -65,4 +69,10 @@ header {padding: 8pt 0; display: grid; }
   .page-content p {color: #ccc;}
   .page-content a:link, .page-content a:visited {color:#7bf;}
   .page-content a:active, .page-content a:hover {color:#def;}
+
+.page-content a.outer-link:link,
+.page-content a.outer-link:visited {color: #999;}
+.page-content a.outer-link:active,
+.page-content a.outer-link:hover {color: #fff;}
+
 }

@@ -2,9 +2,12 @@
  * Floating-point representation,
  * used WASM code.
  * 
+ * Depends on: menu.js
+ * 
  * ref: https://docs.microsoft.com/en-us/cpp/build/ieee-floating-point-representation?view=msvc-170
  * 
  * 2021-12-06
+ * 2021-12-08 use of T.getNumber().
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -16,7 +19,7 @@
 function processFloatingPointValue(inputElement, resultElement) {
 
   var inputText = inputElement.value;
-  var number = parseFloat(inputText);
+  var number = T.getNumber(inputText);
 
   if (isNaN(number) || !isFinite(number)) {
     resultElement.innerHTML = 'n/a';

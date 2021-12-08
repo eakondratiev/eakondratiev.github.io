@@ -3,6 +3,7 @@
  * 
  * 2020-12-26
  * 2021-12-05 browser compatibility tests added.
+ * 2021-12-08 The T library added, T.setExample(), T.getNumber().
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -51,3 +52,44 @@
   }
 
 })();
+
+/**
+ * Library functions.
+ */
+(function(T, undefined){
+
+  'use strict';
+
+  /**
+   * Sets the text in the input element and url parameter;
+   * @param {DOMElement} elementId the inpuut element identifier.
+   * @param {string} text the text of example.
+   * @param {string urlParamName the url parameter name.
+   */
+  T.setExample = function (elementId, text, urlParamName) {
+
+    var element = document.getElementById (elementId);
+    var page = location.href.split("/").slice(-1);
+
+    if (element) {
+
+      element.value = text;
+
+      window.history.pushState(page, 'Title', 
+        '/' + page + '?' + urlParamName + '=' + encodeURIComponent(text));
+    }
+
+  }
+
+  /**
+   * Returns the parsed number.
+   * @param {string} text the text.
+   * @returns {number}
+   */
+  T.getNumber = function (text) {
+
+    text = text.replace (',', '.');
+    return parseFloat(text); 
+  }
+
+}(window.T = window.T || {}));

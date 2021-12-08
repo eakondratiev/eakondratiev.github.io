@@ -24,8 +24,8 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css?20211205" rel="stylesheet" type="text/css" />
-    <script src="/assets/menu.min.js?20211205"></script>
+    <link href="/assets/main.css?20211208" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20211208"></script>
     <style>
       .bits {margin: 8pt 0; line-height: 1.5;}
       .fp-bit {font-family: 'Cascadia Mono', Consolas, 'Lucida Console', Courier New, Courier, monospace;
@@ -58,6 +58,7 @@
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
           <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
           </ul>
         </nav>
       </div>
@@ -73,9 +74,9 @@
           </div>
           <div class="note">Enter a floating point number.</div>
           <div class="note">Examples:
-            <a href="#" onclick="example(this)">0.1</a>,
-            <a href="#" onclick="example(this)">-2.0</a>,
-            <a href="#" onclick="example(this)">6.0</a>
+            <a href="#" onclick="T.setExample('input-fp-number', '0.1', 'n')">0.1</a>,
+            <a href="#" onclick="T.setExample('input-fp-number', '-2.0', 'n')">-2.0</a>,
+            <a href="#" onclick="T.setExample('input-fp-number', '6.0', 'n')">6.0</a>
           </div>
           <div class="fp-representation"></div>
 
@@ -83,8 +84,13 @@
            Real numbers are represented in computing as an array of bits.
            In the 32-bit representation
            the first bit is a sign, the next 8 bits are exponent, and other bits are significand.
-           See the <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow">Single-precision floating-point format</a>
+           See the <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow" class="outer-link">Single-precision floating-point format</a>
            article on Wikipedia.
+          </p>
+          <p>
+            This representation is inaccurate by design for some numbers.
+            The error accumulates when summing several numbers.
+            To reduce this kind of numerical errors <a href="floating-point-summation.htm">algorithms</a> were developed.
           </p>
 
         </div>
@@ -93,21 +99,34 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/fprep.min.js"></script>
+    <script src="/assets/fprep.min.js?20211208"></script>
     <script>
       var inputElement = document.getElementById ('input-fp-number');
-      var resultElement = document.getElementsByClassName('fp-representation')[0];
-      var calcBtn = document.getElementById('btn-show-rep');
 
-      calcBtn.addEventListener('click', function () {
-        processFloatingPointValue(inputElement, resultElement);
-      });
+      // check for compatibility
+      if (document.getElementsByClassName === undefined ||
+         !Element.prototype.addEventListener ||
+         !Array.prototype.map ||
+         !Array.prototype.reduce) {
 
-      function example(link) {
-        inputElement.value = link.innerHTML;
-        return false;
+        document.getElementById('incompatible-browser').style.display = 'block';
+
       }
+      else {
+        var resultElement = document.getElementsByClassName('fp-representation')[0];
+        var calcBtn = document.getElementById('btn-show-rep');
 
+        calcBtn.addEventListener('click', function () {
+          processFloatingPointValue(inputElement, resultElement);
+        });
+
+        inputElement.addEventListener('keypress', function(e) { 
+          if (e.key === 'Enter') {
+            processFloatingPointValue(inputElement, resultElement);
+          }
+        });
+
+      }
     </script>
   </body>
 </html>
