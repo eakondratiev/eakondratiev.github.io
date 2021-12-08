@@ -91,7 +91,9 @@
     </div>
     <script>
       // check for compatibility
-      if (document.getElementsByClassName === undefined) {
+      if (document.getElementsByClassName === undefined ||
+          !Array.prototype.map ||
+          !Array.prototype.reduce) {
 
         document.getElementById('incompatible-browser').style.display = 'block';
 
@@ -112,19 +114,19 @@
 
       function processClick() {
 
-          var inputTexts = inputElement.value.split(';'),
-              inputNumbers = inputTexts.map(x => parseFloat(x));
-          var resInputRaw = inputNumbers.join('<br>');
+        var inputTexts = inputElement.value.split(';'),
+          inputNumbers = inputTexts.map(function (x) { return parseFloat(x); });
+        var resInputRaw = inputNumbers.join('<br>');
 
-          resultElement.innerHTML =
-              '<h3>Input</h3>' +
-              '<div class="num">' + resInputRaw + '</div>' +
-              '<h3>Floating-point representation</h3>' +
-              '<div class="num">' + inputNumbers.map(x => x.toFixed(32)).join('<br>') + '</div>' +
-              '<h3>Simple summation</h3>' +
-              '<div class="num">' + inputNumbers.reduce((acc, v) => acc + v) + '</div>' +
-              '<h3>Klein algorigthm</h3>' +
-              '<div class="num">' + KleinSum (inputNumbers) + '</div>';
+        resultElement.innerHTML =
+          '<h3>Input</h3>' +
+          '<div class="num">' + resInputRaw + '</div>' +
+          '<h3>Floating-point representation</h3>' +
+          '<div class="num">' + inputNumbers.map(function (x) { return x.toFixed(32); }).join('<br>') + '</div>' +
+          '<h3>Simple summation</h3>' +
+          '<div class="num">' + inputNumbers.reduce(function (acc, v) { return acc + v; }) + '</div>' +
+          '<h3>Klein algorigthm</h3>' +
+          '<div class="num">' + KleinSum (inputNumbers) + '</div>';
 
       }
 
