@@ -8,6 +8,7 @@
  * 
  * 2021-12-06
  * 2021-12-08 use of T.getNumber().
+ * 2021-12-09 special case of zero.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -26,6 +27,21 @@ function processFloatingPointValue(inputElement, resultElement) {
     return;
   }
 
+  if (number === 0) {
+    // special case
+
+    var zeroes = [];
+    var i;
+
+    for (i = 0; i < 32; i++) zeroes[i] = 0;
+
+    resultElement.innerHTML = '<h2>32-bit representation</h2>' +
+      '<p>Zero is a <b>special case</b>. It represented by special bit pattern of all zeroes.</p>' +
+      '<p>' + formatBits (zeroes) + '</p>';
+
+    return;
+  }
+
   fetch('/assets/fprep.wasm')
     .then(response =>
       response.arrayBuffer()
@@ -37,28 +53,14 @@ function processFloatingPointValue(inputElement, resultElement) {
       var instance = results.instance;
       var i;
       var floatValue;
-      var bitsString = '';
 
       const { memory, getFloatBits } = instance.exports;
       const arr = new Int32Array(memory.buffer, 0, BITS);
 
       getFloatBits(arr.byteOffser, number);
 
-      // display bits
-      for (i = 0; i < BITS; i++) {
-
-        bitsString += formatBit(arr[i], i);
-
-        // separate octets with a space, so the line could be break down.
-        if (i === 7 || i === 15 || i === 23 || i === 31) {
-          bitsString += ' ';
-        }
-
-
-      }
-
       resultElement.innerHTML = '<h2>32-bit representation</h2>' +
-        '<div class="bits">' + bitsString + '</div>';
+        '<div class="bits">' + formatBits (arr) + '</div>';
 
       // bits description
       // the sign bit
@@ -126,6 +128,32 @@ function processFloatingPointValue(inputElement, resultElement) {
 
     })
     .catch(console.error);
+
+  /**
+   * Returns html code for the bits.
+   * @param {[number]} bits the array of bits.
+   * @returns {string}
+   */
+  function formatBits(bits) {
+
+    var i,
+        text = '';
+
+    // display bits
+    for (i = 0; i < bits.length; i++) {
+
+      text += formatBit(bits[i], i);
+
+      // separate octets with a space, so the line could be break down.
+      if (i === 7 || i === 15 || i === 23 || i === 31) {
+        text += ' ';
+      }
+
+    }
+
+    return text;
+
+  }
 
   /**
    * Returns formatted bit.

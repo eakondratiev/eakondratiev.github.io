@@ -4,6 +4,8 @@
  * 2020-12-26
  * 2021-12-05 browser compatibility tests added.
  * 2021-12-08 The T library added, T.setExample(), T.getNumber().
+ * 2021-12-09 T.getUrlParameters() added.
+ * 
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -94,4 +96,61 @@
     return parseFloat(text); 
   }
 
+  /**
+   * Returns object with the url parameters as a key-value pairs.
+   * If the url does not contains parameters then an empty object is returned.
+   * If the url parameter has no value then the value is null.
+   * If the url contain several parameters with the same name then the value is array of values;
+   * @returns {*}
+   */
+  T.getUrlParameters = function () {
+
+    var reQs = /.*\?([^#]*)(#.*)?/gi;
+    var qs = (window.location.href).replace (reQs, '$1');
+    var rawParameters = qs.split('&');
+    var i;
+    var p;
+    var paramName;
+    var value;
+    var params = {};
+
+    if (!reQs.test(window.location.href)) {
+      // No url parameters
+      return {};
+    }
+
+    for (i = 0; i < rawParameters.length; i++) {
+
+      value = undefined;
+      p = rawParameters[i].split('=');
+
+      if (p.length === 2) {
+        value = p[1];
+      }
+      else if (p.length === 1) {
+        value = null;
+      }
+
+      paramName = p[0];
+
+      if (value !== undefined &&
+          paramName !== '') {
+
+        if (params.hasOwnProperty(paramName)) {
+          params[paramName] = [params[paramName]];
+          params[paramName].push(value);
+        }
+        else {
+          params[p[0]] = value;
+        }
+      }
+
+    }
+
+    return params;
+
+  }
+
+
 }(window.T = window.T || {}));
+

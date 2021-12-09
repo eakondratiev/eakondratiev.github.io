@@ -2,15 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Floating-Point Representation</title>
+    <title>Floating-Point Numbers Representation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="apple-mobile-web-app-title" content="Floating-Point Representation" />
-    <meta name="application-name" content="Floating-Point Representation" />
+    <meta name="apple-mobile-web-app-title" content="Floating-Point Numbers Representation" />
+    <meta name="application-name" content="Floating-Point Numbers Representation" />
 
-    <meta property="og:title" content="Floating-Point Representation">
-    <meta name="description" content="Shows representation of the floating-point numbers in computer programs.">
-    <meta property="og:description" content="Shows representation of the floating-point numbers in computer programs.">
+    <meta property="og:title" content="Floating-Point Numbers Representation">
+    <meta name="description" content="Shows representation of the floating-point numbers in binary formats.">
+    <meta property="og:description" content="Shows representation of the floating-point numbers in binary formats.">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/floating-point-representation.htm">
@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
     <link href="/assets/main.css?20211208" rel="stylesheet" type="text/css" />
-    <script src="/assets/menu.min.js?20211208"></script>
+    <script src="/assets/menu.min.js?20211209"></script>
     <style>
       .bits {margin: 8pt 0; line-height: 1.5;}
       .fp-bit {font-family: 'Cascadia Mono', Consolas, 'Lucida Console', Courier New, Courier, monospace;
@@ -65,8 +65,8 @@
       <div class="page-wide">
         <div class="content page-content">
           <div id="incompatible-browser">Please, update your browser.</div>
-          <h1>Floating-Point Representation</h1>
-          <p>Shows representation of the floating-point numbers in computer programs.</p>
+          <h1>Floating-Point Numbers Representation</h1>
+          <p>Shows representation of the floating-point numbers in binary formats.</p>
 
           <div class="fp-form">
             <input type="text" id="input-fp-number" placeholder="0.1" value="" aria-label="Enter a floating point number">
@@ -74,15 +74,15 @@
           </div>
           <div class="note">Enter a floating point number.</div>
           <div class="note">Examples:
-            <a href="#" onclick="T.setExample('input-fp-number', '0.1', 'n')">0.1</a>,
-            <a href="#" onclick="T.setExample('input-fp-number', '-2.0', 'n')">-2.0</a>,
-            <a href="#" onclick="T.setExample('input-fp-number', '6.0', 'n')">6.0</a>
+            <a href="floating-point-representation.htm?n=0.1">0.1</a>,
+            <a href="floating-point-representation.htm?n=-2.0">-2.0</a>,
+            <a href="floating-point-representation.htm?n=6.0">6.0</a>,
           </div>
           <div class="fp-representation"></div>
 
           <p>
            Real numbers are represented in computing as an array of bits.
-           In the 32-bit representation
+           In the 32-bit representation (<i>float</i> data type in C language)
            the first bit is a sign, the next 8 bits are exponent, and other bits are significand.
            See the <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow" class="outer-link">Single-precision floating-point format</a>
            article on Wikipedia.
@@ -99,10 +99,8 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/fprep.min.js?20211208"></script>
+    <script src="/assets/fprep.min.js?20211209"></script>
     <script>
-      var inputElement = document.getElementById ('input-fp-number');
-
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
          !Element.prototype.addEventListener ||
@@ -113,8 +111,16 @@
 
       }
       else {
+        var inputElement = document.getElementById ('input-fp-number');
         var resultElement = document.getElementsByClassName('fp-representation')[0];
         var calcBtn = document.getElementById('btn-show-rep');
+        var urlParams = T.getUrlParameters();
+
+        if (urlParams.n !== undefined) {
+          // process the url parameter
+          inputElement.value = urlParams.n;
+          processFloatingPointValue(inputElement, resultElement);
+        }
 
         calcBtn.addEventListener('click', function () {
           processFloatingPointValue(inputElement, resultElement);
@@ -127,6 +133,8 @@
         });
 
       }
+
+
     </script>
   </body>
 </html>
