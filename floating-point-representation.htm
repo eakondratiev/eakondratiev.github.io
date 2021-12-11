@@ -84,6 +84,8 @@
            Real numbers are represented in computing as an array of bits.
            In the 32-bit representation (<i>float</i> data type in C language)
            the first bit is a sign, the next 8 bits are exponent, and other bits are significand.
+           In the 64-bit representation (<i>double</i> data type in C language)
+           the first bit is a sign, the next 11 bits are exponent, and other bits are significand.
            See the <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow" class="outer-link">Single-precision floating-point format</a>
            article on Wikipedia.
           </p>
@@ -99,10 +101,11 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/fprep.min.js?20211209"></script>
+    <script src="/assets/fprep.min.js?20211211"></script>
     <script>
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
+         window.fetch === undefined ||
          !Element.prototype.addEventListener ||
          !Array.prototype.map ||
          !Array.prototype.reduce) {
