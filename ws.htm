@@ -66,7 +66,7 @@
         <div class="content page-content">
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>Whitespaces and UTF</h1>
-          <p>Highlights whitespaces and non-Latin characters in the text. <a href="#" id="ws-example-link">Example</a></p>
+          <p>Highlights whitespaces and non-Latin characters in the text. <a href="ws.htm?t=Sоme tеxt.">Example</a></p>
           <p id="textarea-label">Enter or paste a <u>t</u>ext here...</p>
           <textarea id="text-box" rows="5" accesskey="T" aria-labelledby="textarea-label"></textarea>
           <div>Text length: <b id="text-len"></b></div>
@@ -81,12 +81,11 @@
       (function () {
         'use strict';
 
-        const URL_PARAM = "q";
+        const URL_PARAM = "t";
 
         var sourceElement = document.getElementById("text-box"),
           targetElement = document.getElementById("text-processed"),
           lenElement = document.getElementById("text-len"),
-          exampleLink = document.getElementById('ws-example-link'),
           textParamRaw = GetUrlText();
 
         sourceElement.focus();
@@ -98,13 +97,9 @@
           textChanged();
         }
 
-        exampleLink.addEventListener('click', function (event) {
-
-          sourceElement.value = 'Sоme tеxt.';
-          textChanged();
-
-        });
-
+        /**
+         * Sets text from the textarea to the url parameter.
+         */
         function textChanged() {
 
           targetElement.innerHTML = processText(sourceElement.value);
@@ -123,14 +118,18 @@
           }
         }
 
-        function processText(source) {
+        /**
+         * Processes entered text.
+         * @param {string} text the entered text.
+         */
+        function processText(text) {
 
           // NOTE: textarea internal value, the line breaks are normalized to LF (only).
           var reNonAscii = /([\u00FF-\uFFFF])/g,
             reNewline = /\n/g,
             reWhiteSpace = /[ ]/g,
             reTab = /\t/g;
-          return source.replace(reNonAscii, '<b>$1</b>')
+          return text.replace(reNonAscii, '<b>$1</b>')
             .replace(reTab, '<i>&rarr;</i>')
             .replace(reWhiteSpace, '<i>.</i>')
             .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />');
