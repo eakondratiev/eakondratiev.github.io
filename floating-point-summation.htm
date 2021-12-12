@@ -67,9 +67,9 @@
           </div>
           <div class="note">Enter some numbers delimited with the semicolon ";" character.</div>
           <div class="note">Examples:
-            <a href="#" onclick="T.setExample('input-numbers', '0.1;0.2', 'n')">0.1;0.2</a>,
-            <a href="#" onclick="T.setExample('input-numbers', '0.1;0.2;0.3', 'n')">0.1;0.2;0.3</a>,
-            <a href="#" onclick="T.setExample('input-numbers', '0.25;0.5', 'n')">0.25;0.5</a>
+            <a href="floating-point-summation.htm?n=0.1;0.2;0.3">0.1;0.2;0.3</a>,
+            <a href="floating-point-summation.htm?n=0.1;0.2">0.1;0.2</a>,
+            <a href="floating-point-summation.htm?n=0.25;0.5">0.25;0.5</a>,
           </div>
           <div class="summation-result"></div>
 
@@ -83,7 +83,7 @@
           <p>Some algorithms can reduce the numerical error which accumulates when adding real numbers in a sequence.
           For example,
           <a href="https://en.wikipedia.org/wiki/Kahan_summation_algorithm" rel="nofollow" class="outer-link">Kahan summation algorithm</a>
-          and its variations.</p>
+          and its variations. <b>Note</b>: these algorithms work for three or more numbers.</p>
         </div>
       </div>
     </div>
@@ -106,6 +106,13 @@
 
         var resultElement = document.getElementsByClassName('summation-result')[0];
         var calcBtn = document.getElementById('btn-calc-sum');
+        var urlParams = T.getUrlParameters();
+
+        if (urlParams.n !== undefined) {
+          // process the url parameter
+          inputElement.value = urlParams.n;
+          processClick(inputElement, resultElement);
+        }
 
         calcBtn.addEventListener('click', function() {
           processClick (inputElement, resultElement);
@@ -129,6 +136,11 @@
         var inputTexts = inputElement.value.split(';'),
           inputNumbers = inputTexts.map(function (x) { return T.getNumber(x); });
         var resInputRaw = inputNumbers.join('<br>');
+
+        if (inputElement.value === '') {
+          resultElement.innerHTML = '';
+          return;
+        }
 
         resultElement.innerHTML =
           '<h3>Input</h3>' +
