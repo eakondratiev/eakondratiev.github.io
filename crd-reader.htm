@@ -65,13 +65,24 @@
           <h1>Windows CRD File Reader</h1>
 
           <p>
-          ReadCrd is a cross-planform <b>console application</b> which prints content of the Cardfile for Windows 3.x file (a contact list, CRD extension).
-          The file signature must be <code>MGC</code> or <code>RRG</code>.
+          ReadCrd is a cross-platform <b>command-line application</b> that prints the content of the Cardfile for Windows 3.x file (a contact list, CRD extension).
+          The file signature must be <code>MGC</code> or <code>RRG</code>. The Windows Cardfile is a personal information manager software.
+          This program is not included in modern versions of Microsoft Windows anymore.
           </p>
+
+          <h2>Download <b class="tool-download-arr">&darr;</b></h2>
+          <div style="margin: 12pt 0;">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">Linux version</a>
+            <b class="tool-no-wrap">15 KB</b> unpacked.
+          </div>
+          <div style="margin: 12pt 0;">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">Windows version</a>
+            <b class="tool-no-wrap">19 KB</b> unpacked.
+          </div>
 
           <h2>Usage</h2>
           <p>
-          Download the Linux or Windows binary file in a folder with CRD files and run it in a console.
+          Download the Linux or Windows binary file, copy it into a folder with CRD files, open the terminal (console) and run it:
           </p>
 
           <pre><code>./ReadCrd Contacts.CRD</code></pre>
@@ -84,7 +95,7 @@
 
           <h2>Limitations</h2>
           <p>
-          Files with the <code>RRG</code> signature can contain OLE Objects. In this case only the card title is printed without text data.
+          Files with the <code>RRG</code> signature can contain OLE Objects. In this case, only the card title is printed without text data.
           </p>
 
           <h2>Windows Terminal</h2>
@@ -103,15 +114,11 @@ ReadCrd.exe -e Windows-1251 Contacts.CRD</pre>
           <pre class="code">chcp 1251
 ReadCrd.exe Contacts.CRD</pre>
 
-          <h2>Download <b class="tool-download-arr">&darr;</b></h2>          
-          <div style="margin: 12pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">Linux version</a>
-            <b class="tool-no-wrap">15 KB</b> unpacked.
-          </div>
-          <div style="margin: 12pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">Windows version</a>
-            <b class="tool-no-wrap">19 KB</b> unpacked.
-          </div>
+          <p>
+            To save the CRD file content to a text file use redirection:
+          </p>
+
+          <pre class="code">./ReadCrd Contacts.CRD > crd-content.txt</pre>
 
         </div>
       </div>
