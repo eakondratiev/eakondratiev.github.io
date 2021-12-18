@@ -125,7 +125,7 @@ function processFloatingPointValue(inputElement, resultElement) {
     // exponent description
     var expValue = '';
 
-    description = 'The exponent ' + exponentBits + ' bits stored as <span class="fp-bit fp-exp">';
+    description = 'The exponent stored as ' + exponentBits + ' bits <span class="fp-bit fp-exp">';
 
     for (i = 1; i <= exponentBits; i++) {
       expValue += array[i];
@@ -144,8 +144,8 @@ function processFloatingPointValue(inputElement, resultElement) {
     var fraction = '',
       fValue = 0;
 
-    description = 'The fraction ' + (totalBits - exponentBits - 1) +
-      ' bits stored as <span class="fp-bit fp-fraction">';
+    description = 'The fraction stored as ' + (totalBits - exponentBits - 1) +
+      ' bits <span class="fp-bit fp-fraction">';
 
     for (i = exponentBits + 1; i < totalBits; i++) {
       fraction += array[i];
