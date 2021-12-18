@@ -5,6 +5,7 @@
  * 2021-12-05 browser compatibility tests added.
  * 2021-12-08 The T library added, T.setExample(), T.getNumber().
  * 2021-12-09 T.getUrlParameters() added.
+ * 2021-12-18 T.formatNumber() added.
  * 
  */
 // ==ClosureCompiler==
@@ -12,6 +13,8 @@
 // @output_file_name menu.min.js
 // ==/ClosureCompiler==
 (function () {
+
+  'use strict';
 
   // check for compatibility
   if (document.getElementsByClassName === undefined ||
@@ -151,6 +154,26 @@
 
   }
 
+  /**
+   * Returns localized number. See the Intl.NumberFormat() constructor description.
+   * If the number.toLocaleString()  or locale or option not supported,
+   * then the number.toString() result is returned.
+   * @param {number} n The number.
+   * @param {string} locales Optional. A string with a BCP 47 language tag, or an array of such strings. 
+   * @param {*} options Optional . An object with some or all of the supported properties.
+   * @returns {string}
+   */
+  T.formatNumber = function (n, locales, options) {
+
+    try {
+      return n.toLocaleString (locales, options);
+    }
+    catch (e) {
+      console.log ('T.formatNumber', e);
+      return n.toString();
+    }
+
+  }
 
 }(window.T = window.T || {}));
 
