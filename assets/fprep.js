@@ -11,6 +11,7 @@
  * 2021-12-09 special case of zero.
  * 2021-12-11 code corrections, 64-bit (double) added.
  * 2021-12-18 32- and 64-bit representation is shown.
+ * 2021-12-19 long bits formatting.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -61,8 +62,9 @@ function processFloatingPointValue(inputElement, resultElement) {
       getDoubleBits(arr64.byteOffser, number);
       resultElement.innerHTML += getResults (arr64, number);
 
-      resultElement.innerHTML += '<p>The javascript representation is 64-bits <b>' +
-        number.toFixed(64) + '</b>.</p>';
+      resultElement.innerHTML += '<p>The javascript representation is 64-bits</p>' +
+        '<div class="content-wide"><b>' +
+        number.toFixed(64) + '</b></div>';
 
     })
     .catch(console.error);
@@ -148,6 +150,9 @@ function processFloatingPointValue(inputElement, resultElement) {
       ' bits <span class="fp-bit fp-fraction">';
 
     for (i = exponentBits + 1; i < totalBits; i++) {
+      if (i > 0 && i % 8 === 0) {
+        fraction += '</span> <span class="fp-bit fp-fraction">'; // space
+      }
       fraction += array[i];
       fValue += array[i] * Math.pow(2, exponentBits - i);
     }

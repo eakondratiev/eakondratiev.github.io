@@ -70,9 +70,8 @@ header {padding: 8pt 0; display: grid; }
   .page-content a:link, .page-content a:visited {color:#7bf;}
   .page-content a:active, .page-content a:hover {color:#def;}
 
-.page-content a.outer-link:link,
-.page-content a.outer-link:visited {color: #999;}
-.page-content a.outer-link:active,
-.page-content a.outer-link:hover {color: #fff;}
-
+  .page-content a.outer-link:link,
+  .page-content a.outer-link:visited {color: #ccc;}
+  .page-content a.outer-link:active,
+  .page-content a.outer-link:hover {color: #aaa;}
 }

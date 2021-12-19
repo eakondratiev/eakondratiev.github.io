@@ -36,7 +36,11 @@
       .note {color: #000; font-size: 0.9rem;}
       .fp-form {margin-top: 16pt;}
       .fp-form input, .fp-form button {padding: 2pt 4pt; height: 20pt; box-sizing: border-box;}
+      .content-wide {display:inline-block; max-width:90vw; overflow-x: auto;}
       @media (prefers-color-scheme: dark) {
+        .fp-sign {background-color: #a50;}
+        .fp-exp {background-color: #480;}
+        .fp-fraction {background-color: #349;}
         .note {color: #ccc;}
       }
     </style>
@@ -101,7 +105,7 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/fprep.min.js?20211218"></script>
+    <script src="/assets/fprep.min.js?20211219"></script>
     <script>
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
