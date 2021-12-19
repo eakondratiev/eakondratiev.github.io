@@ -105,6 +105,12 @@ function processFloatingPointValue(inputElement, resultElement) {
       '<h2>' + totalBits + '-bit representation</h2>' +
       '<div class="bits">' + formatBits (array, exponentBits) + '</div>';
 
+    // special cases
+    if (number === 0) {
+      text += '<p>Zero is a special case: all bits are zeroes.</p>';
+      return text;
+    }
+
     // bits description
     // the sign bit
     var fpSign;
