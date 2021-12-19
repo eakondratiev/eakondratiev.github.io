@@ -64,7 +64,7 @@ function processFloatingPointValue(inputElement, resultElement) {
 
       resultElement.innerHTML += '<p>The javascript representation is 64-bits</p>' +
         '<div class="content-wide"><b>' +
-        number.toFixed(64) + '</b></div>';
+        number.toFixed(20) + '</b></div>';
 
     })
     .catch(console.error);
