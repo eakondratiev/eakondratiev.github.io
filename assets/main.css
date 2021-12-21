@@ -48,6 +48,9 @@ header {padding: 8pt 0; display: grid; }
 .page-content a.outer-link:active,
 .page-content a.outer-link:hover {color: #000;}
 
+.page-tags {margin: 32pt 0 16pt 0; font-size:12px; font-size: .7rem;}
+.page-tags b {color: #049; margin-right: 8pt; font-weight: normal;}
+
 @media (max-width: 420px) {
   /* Mobile */
   header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
@@ -74,4 +77,6 @@ header {padding: 8pt 0; display: grid; }
   .page-content a.outer-link:visited {color: #ccc;}
   .page-content a.outer-link:active,
   .page-content a.outer-link:hover {color: #aaa;}
+
+  .page-tags b {color: #cb8;}
 }
