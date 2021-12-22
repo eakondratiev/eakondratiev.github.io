@@ -24,7 +24,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css?20211221" rel="stylesheet" type="text/css" />
+    <link href="/assets/main.css?20211222" rel="stylesheet" type="text/css" />
     <script src="/assets/menu.min.js?20211218"></script>
     <style>
       #text-box, #text-processed {
@@ -55,9 +55,9 @@
         </header>
         <nav class="content site-nav" aria-label="Site menu">
           <ul>
-          <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">FP32/64</a></li>
           <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
           </ul>
         </nav>
@@ -69,8 +69,11 @@
           <p>Highlights whitespaces and non-Latin characters in the text. <a href="ws.htm?t=Sоme tеxt.">Example</a></p>
           <p id="textarea-label">Enter or paste a <u>t</u>ext here...</p>
           <textarea id="text-box" rows="5" accesskey="T" aria-labelledby="textarea-label"></textarea>
-          <div>Text length: <b id="text-len"></b></div>
+          <div>Text length: <b id="text-len">0</b></div>
           <div id="text-processed"></div>
+          <div class="page-tags">
+            <b>#Unicode</b>
+          </div>
         </div>
       </div>
     </div>

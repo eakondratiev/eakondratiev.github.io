@@ -23,7 +23,7 @@
   <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
-  <link href="/assets/main.css?20211221" rel="stylesheet" type="text/css" />
+  <link href="/assets/main.css?20211222" rel="stylesheet" type="text/css" />
   <script src="/assets/menu.min.js?20211218"></script>
   <style>
     input[type=text] {padding: 2pt; width: 195px;}
@@ -49,9 +49,9 @@
         </header>
         <nav class="content site-nav" aria-label="Site menu">
           <ul>
-          <li class="site-nav-top-item"><a href="/">Home Page</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
           <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">FP32/64</a></li>
           <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
           </ul>
         </nav>
@@ -65,11 +65,16 @@
           <div style="margin: 4pt 0;" id="range-field-label">IP <u>R</u>ange</div>
           <input type="text" placeholder="192.168.0.0-192.168.0.255" class="form-range" accesskey="R" aria-labelledby="range-field-label" />
           <button onclick="CalculateRanges()" accesskey="M">Get <u>M</u>ask</button>
-          <p class="range-example">Example: <a href="#" id="range-example-link">192.168.0.0-192.168.0.255</a></p>
+          <p class="range-example">Examples:
+            <a href="iprange.htm?iprange=192.168.0.0-192.168.0.255">192.168.0.0-192.168.0.255</a>,
+            <a href="iprange.htm?iprange=221.0.0.0-221.3.127.255">221.0.0.0-221.3.127.255</a>
+          </p>
           <div class="range-result"></div>
         </div>
-        <!-- version 2021-05-06 -->
-
+        <div class="page-tags">
+          <b>#Networking</b> <b>#Route</b> <b>#IP</b> <b>#Subnet</b> <b>#CDIR</b> <b>#Online</b>
+        </div>
+        <!-- version 2021-12-22 -->
       </div>
     </div>
   </div>
@@ -96,41 +101,54 @@
      *   Tests in IPlibTest ();
      */
 
-    var exampleLink = document.getElementById('range-example-link');
+      // check for compatibility
+    if (document.getElementsByClassName === undefined ||
+        !Element.prototype.addEventListener) {
 
-    exampleLink.addEventListener('click', function (event) {
+      document.getElementById('incompatible-browser').style.display = 'block';
 
-      document.getElementsByClassName('form-range')[0].value = exampleLink.innerHTML;
+    }
+    else {
 
-    });
+      var urlParams = T.getUrlParameters();
+      var inputElement = document.getElementsByClassName('form-range')[0];
+      var resultElement = document.getElementsByClassName('range-result')[0];
 
-    document.getElementsByClassName('form-range')[0].addEventListener('keyup', function (event) {
-      // Number 13 is the "Enter" key on the keyboard
-      if (event.keyCode === 13) {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        CalculateRanges();
+      if (urlParams.iprange !== undefined) {
+        // process the url parameter
+        inputElement.value = urlParams.iprange;
+        CalculateRanges (inputElement, resultElement);
       }
-    });
+
+      inputElement.addEventListener('keyup', function (event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Trigger the button element with a click
+          CalculateRanges (inputElement, resultElement);
+        }
+      });
+
+    }
 
     /**
-      * Calculates the IP mask, CIDR and amount of IP addresses by the IP addresses range.
-      */
-    function CalculateRanges() {
+     * Calculates the IP mask, CIDR and amount of IP addresses by the IP addresses range.
+     * @param {DOMElement} inputElement the input element.
+     * @param {DOMElement} resultElement the element for results.
+     */
+    function CalculateRanges(inputElement, resultElement) {
 
       'use strict';
 
-      var textElement = document.getElementsByClassName('form-range')[0],
-        resultElement = document.getElementsByClassName('range-result')[0],
-        text = textElement.value.trim(),
+      var text = inputElement.value.trim(),
         reRange = /^([\.0-9]{7,15})\s*-\s*([\.0-9]{7,15})$/,
         m = reRange.exec(text),
         ip1,
         ip2,
         ranges;
 
-      textElement.focus(); // otherwise the button will be emphasized
+      inputElement.focus(); // otherwise the button will be emphasized
 
       // Get and validate IP addresses.
       if (m === null) {

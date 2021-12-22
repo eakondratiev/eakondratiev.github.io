@@ -48,7 +48,7 @@ header {padding: 8pt 0; display: grid; }
 .page-content a.outer-link:active,
 .page-content a.outer-link:hover {color: #000;}
 
-.page-tags {margin: 32pt 0 16pt 0; font-size:12px; font-size: .7rem;}
+.page-tags {margin: 32pt 0 16pt 0; font-size:12px; font-size: .7rem; line-height: 2;}
 .page-tags b {color: #049; margin-right: 8pt; font-weight: normal;}
 
 @media (max-width: 420px) {
