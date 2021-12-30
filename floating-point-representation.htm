@@ -102,13 +102,13 @@
               The <i>double-precision</i> (<i>double</i> data type in C language) values are stored as 8 bytes or 64 bits: 1 sign bit, 11-bit exponent, 52-bit significand.
             </p>
             <p>
-              Three more formats exist 2-byte (half-precision), 10-byte (double-extended precision), and 16-byte (quadruple-precision).
+              Other formats are: 2-byte (half-precision), 10-byte (double-extended precision), and 16-byte (quadruple-precision).
               The single-precision floating-point format is described in this
               <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format" rel="nofollow" class="outer-link">article on Wikipedia</a>.
             </p>
             <h3>Exponent</h3>
             <p>
-              The exponents are power of two and the exponents biased. To get the real exponent substract the value 127 (for single-precision)
+              The exponents are power of two. The exponent is stored in biased form. To get the real exponent substract the value 127 (for single-precision)
               or 1023 (for double-precision) from the stored exponent. Note: all zeroes and all ones in exponent are reserved for special numbers.
             </p>
             <p>
