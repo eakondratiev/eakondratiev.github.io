@@ -88,15 +88,16 @@
         var sourceElement = document.getElementById("text-box"),
           targetElement = document.getElementById("text-processed"),
           lenElement = document.getElementById("text-len"),
-          textParamRaw = GetUrlText();
+          urlParams = T.getUrlParameters();
 
         sourceElement.focus();
         sourceElement.onchange = textChanged;
         sourceElement.onkeyup = textChanged;
 
-        if (textParamRaw) {
-          sourceElement.value = decodeURIComponent(textParamRaw);
-          textChanged();
+        if (urlParams.t !== undefined) {
+          // process the url parameter
+          sourceElement.value = decodeURIComponent(urlParams.t);
+          textChanged();;
         }
 
         /**
@@ -137,20 +138,6 @@
             .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />');
         }
 
-        /**
-         * Returns the text from url parameter or null.
-         * */
-        function GetUrlText() {
-
-          try {
-            var url = new URL(window.location.href);
-            return url.searchParams.get(URL_PARAM);
-          }
-          catch (error) {
-            return null;
-          }
-
-        }
       })();
     </script>
   </body>
