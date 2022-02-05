@@ -6,6 +6,7 @@
  * 2021-12-08 The T library added, T.setExample(), T.getNumber().
  * 2021-12-09 T.getUrlParameters() added.
  * 2021-12-18 T.formatNumber() added.
+ * 2022-02-05 The TOP_MENU structure and menu initializetion added.
  * 
  */
 // ==ClosureCompiler==
@@ -15,6 +16,22 @@
 (function () {
 
   'use strict';
+
+  var TOP_MENU = [
+    {
+      header: 'Online Tools',
+      items: [
+        {url: 'iprange.htm', name: 'IPv4 Ranges'},
+        {url: 'ws.htm',      name: 'White Spaces'},
+        {url: 'floating-point-representation.htm', name: 'FP32/64'},
+        {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'}
+      ]},
+    {
+      header: 'Console Tools',
+      items: [
+        {url: 'crd-reader.htm', name: 'CRD Reader'}
+      ]}
+    ];
 
   // check for compatibility
   if (document.getElementsByClassName === undefined ||
@@ -31,6 +48,37 @@
 
     var menuBtn = document.getElementsByClassName('site-menu-btn')[0],
       menu = document.getElementsByClassName('site-nav')[0];
+
+    // Initialize menu items
+    (function(m, c){
+
+      var block, item, i, j,
+        html = '';
+
+      for (i = 0; i < m.length; i++) {
+
+        block = m[i];
+
+        if (block.header !== undefined) {
+          html += '<h3 class="site-nav-header">' + block.header + '</h3>';
+        }
+
+        html += '<ul>';
+
+        for (j = 0; j < block.items.length; j++) {
+
+          item = block.items[j];
+          html += '<li class="site-nav-top-item"><a href="' + item.url + '">' + item.name + '</a></li>';
+
+        }
+
+        html += '</ul>';
+
+      }
+
+      c.innerHTML = html;
+
+    })(TOP_MENU, menu);
 
     // Handles clicks on the burger-button.
     menuBtn.addEventListener('click', function () {
