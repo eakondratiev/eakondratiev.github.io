@@ -1,6 +1,7 @@
 {
   "start_url": "/",
-  "name": "EA@Github",
+  "scope": ".",
+  "name": "Tool",
   "icons": [
     {
       "src": "/assets/icons/android-chrome-192.png",
