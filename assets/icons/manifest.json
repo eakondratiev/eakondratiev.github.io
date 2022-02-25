@@ -1,6 +1,6 @@
 {
   "start_url": "/",
-  "scope": ".",
+  "scope": "/",
   "name": "Tool",
   "icons": [
     {
