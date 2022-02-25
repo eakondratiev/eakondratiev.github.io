@@ -10,7 +10,7 @@
 
   if ('serviceWorker' in navigator) {
 
-    var INSTALL_BLOCK_CSS = 'uc-install-app-block',
+    var INSTALL_BLOCK_CSS = 'install-app-block',
       deferredInstalAppPromptEvent,
       installBlocks,
       installBlock,
