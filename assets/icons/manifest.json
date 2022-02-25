@@ -1,8 +1,13 @@
 {
-  "name":"EA@Github",
+  "start_url": "https://eakondratiev.github.io/",
+  "name": "EA@Github",
   "icons": [
-    {"src":"/assets/icons/android-chrome-192.png", "sizes":"192x192", "type":"image/png"}
+    {
+      "src": "/assets/icons/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
   ],
-  "theme_color":"#008e35",
-  "display":"standalone"
+  "theme_color": "#008e35",
+  "display": "standalone"
 }
