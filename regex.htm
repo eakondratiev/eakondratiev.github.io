@@ -1,0 +1,194 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Regex Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="Tool" />
+    <meta name="application-name" content="Tool" />
+
+    <meta property="og:title" content="Tool">
+    <meta name="description" content="Test your regular expressions">
+    <meta property="og:description" content="Test your regular expressions">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/">
+    <meta name="google-site-verification" content="DG8CDSi7XJOTIAp-BDhrgPccz9Js2GR8G1EKSbn_Dek" />
+    <meta name="msvalidate.01" content="8DEC6FAF984E8A6C5DC915A0BABC8B19" />
+    <link rel="canonical" href="https://eakondratiev.github.io/">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20211222" rel="stylesheet" type="text/css" />
+    <style>
+      textarea {font-size:1rem;}
+      .match-true  {background-color: #9d7; color:#000; padding: 0 4pt;}
+      .match-false {background-color: #fbb; color:#000; padding: 0 4pt;}
+      .err {color:#e00;}
+    </style>
+    <script src="/assets/web-app.js"></script>
+    <script src="/assets/menu.min.js?20220205"></script>
+    <script><!-- Clarity tracking code -->
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "amp2on3c4r");
+    </script>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <ul>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">FP32/64</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <div id="incompatible-browser">Please, update yopur browser.</div>
+
+          <h1>Test your regular expressions</h1>
+
+          <div style="margin:16pt 0;">
+            <div>Regular E<u>x</u>pression</div>
+            <textarea cols="55" rows="2" name="re" id="source-re" accesskey="X" title="Enter the regular expression here"></textarea>
+            <div><u>S</u>ource String</div>
+            <textarea cols="55" rows="2" name="ss" id="source-string" accesskey="S" title="Enter the source string here"></textarea>
+            <div><u>R</u>eplacement String, optional</div>
+            <textarea cols="55" rows="2" name="rs" id="source-replace" accesskey="R" title="Optionally eneter the replacement string"></textarea>
+            <div class="btns">
+            <button type="button" accesskey="T" data-title="Test" id="button-test"><u>T</u>est</button>
+            </div>
+          </div>
+
+          <div id="result-block" style="display:none;">
+            <h3>Result</h3>
+            <div id="result"></div>
+          </div>
+
+          <p><a target="_blank" href="http://www.regexper.com/" rel="nofollow noreferrer">Regexp visualization</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      imperfect <b>tools</b>
+    </div>
+    <script>
+      (function () {
+        'use strict';
+        var testRe = document.getElementById('source-re'),
+          replacementString = document.getElementById('source-replace'),
+          sourceString = document.getElementById('source-string'),
+          jsResultBlock = document.getElementById('result'),
+          resultBlock = document.getElementById('result-block'),
+          btn = document.getElementById('button-test');
+
+        if (!Element.prototype.addEventListener) {
+
+          document.getElementById('incompatible-browser').style.display = 'block';
+          return;
+
+        }
+
+        // Event handlers
+        testRe.addEventListener('keyup', doTest);
+        replacementString.addEventListener('keyup', doTest);
+        sourceString.addEventListener('keyup', doTest);
+        btn.addEventListener('click', doTest);
+
+        /**
+         * Does the regex test.
+         * @param (*} event the DOM event
+         */
+        function doTest(event) {
+
+          var re,
+            m,
+            i,
+            hdr = true,
+            src = sourceString.value;
+
+          if (event.keyCode !== undefined && event.keyCode !== 13) {
+            // A key was pressed by not Enter
+            return;
+          }
+
+          // Cancel the default action, if needed
+          event.preventDefault();
+
+          // do test
+          testRe.style.border = '';
+          resultBlock.style.display = 'block';
+          jsResultBlock.innerHTML = '';
+
+          if (testRe.value.length === 0) {
+            testRe.style.border = '1px solid #e00';
+            return;
+          }
+
+          try {
+
+            re = new RegExp(testRe.value, 'gi');
+
+            // 1. isMatch
+            (function(){
+              var res = '' + re.test(src); // string
+              jsResultBlock.innerHTML = '<p><b>Is match</b>: <span class="match-' + res + '">' + res + '</span></p>';
+            })();
+
+            // 2. groups
+            while ((m = re.exec(src)) !== null) {
+
+              if (hdr) {
+                jsResultBlock.innerHTML += '<h3>Matche(s):</h3><p>';
+                hdr = false;
+              }
+
+              for (i = 0; i < m.length; i++) {
+                jsResultBlock.innerHTML += ((i > 0)? '<b>' : '') +
+                  m[i] + ((i > 0) ? '</b>' : '') + '<br>';
+              }
+
+              jsResultBlock.innerHTML += '</p>';
+            }
+
+            // 3. replacement
+            if (replacementString.value.length > 0) {
+              jsResultBlock.innerHTML += '<h3>Result of replacement</h3><p>' +
+                src.replace(re, replacementString.value) + '</p>';
+            }
+
+          }
+          catch (e) {
+            jsResultBlock.innerHTML = '<div>Error:</div><div class="err">' +
+              e.toString() +
+              '</div>';
+          }
+
+        }
+
+      })();
+    </script>
+  </body>
+</html>
