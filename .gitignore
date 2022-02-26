@@ -1,5 +1,7 @@
 # exclude .vs folder
 /.vs
+# exclude the work folder
+/.work
 # exclude solution and web.config
 *.sln
 *.suo
