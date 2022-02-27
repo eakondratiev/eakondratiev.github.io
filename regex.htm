@@ -28,7 +28,10 @@
   
     <link href="/assets/main.css?20211222" rel="stylesheet" type="text/css" />
     <style>
-      textarea {font-size:1rem;}
+      textarea {font-size:1rem; padding: 2pt; max-width: 95vw;}
+      .field-name {color:#444; font-size: 0.8rem; margin:2pt 0;}
+      .re-flags label {margin-right: 16pt; white-space:nowrap;}
+      .btns {margin: 8pt 0;}
       .match-true  {background-color: #9d7; color:#000; padding: 0 4pt;}
       .match-false {background-color: #fbb; color:#000; padding: 0 4pt;}
       .err {color:#e00;}
@@ -69,14 +72,21 @@
           <div id="incompatible-browser">Please, update yopur browser.</div>
 
           <h1>Test your regular expressions</h1>
+          <div>Javascript flavor</div>
 
           <div style="margin:16pt 0;">
-            <div>Regular E<u>x</u>pression</div>
+            <div class="field-name">Regular E<u>x</u>pression</div>
             <textarea cols="55" rows="2" name="re" id="source-re" accesskey="X" title="Enter the regular expression here"></textarea>
-            <div><u>S</u>ource String</div>
+            <div class="field-name"><u>S</u>ource String</div>
             <textarea cols="55" rows="2" name="ss" id="source-string" accesskey="S" title="Enter the source string here"></textarea>
-            <div><u>R</u>eplacement String, optional</div>
+            <div class="field-name"><u>R</u>eplacement String, optional</div>
             <textarea cols="55" rows="2" name="rs" id="source-replace" accesskey="R" title="Optionally eneter the replacement string"></textarea>
+            <div class="field-name">Flags</div>
+            <div class="re-flags">
+              <label><input type="checkbox" id="flag-global" accesskey="G" value="g" checked /> glo<u>b</u>al</label>
+              <label><input type="checkbox" id="flag-ignorecase" accesskey="I" value="i" checked /> <u>i</u>gnore case</label>
+              <label><input type="checkbox" id="flag-multiline" accesskey="M" value="m" /> <u>m</u>ultiline</label>
+            </div>
             <div class="btns">
             <button type="button" accesskey="T" data-title="Test" id="button-test"><u>T</u>est</button>
             </div>
@@ -102,6 +112,9 @@
           sourceString = document.getElementById('source-string'),
           jsResultBlock = document.getElementById('result'),
           resultBlock = document.getElementById('result-block'),
+          flagGlobalElement = document.getElementById('flag-global'),
+          flagIgnorecaseElement = document.getElementById('flag-ignorecase'),
+          flagMultilineElement = document.getElementById('flag-multiline'),
           btn = document.getElementById('button-test');
 
         if (!Element.prototype.addEventListener) {
@@ -124,6 +137,7 @@
         function doTest(event) {
 
           var re,
+            flags = '',
             m,
             i,
             hdr = true,
@@ -147,14 +161,21 @@
             return;
           }
 
+          // get flags
+          if (flagGlobalElement.checked) { flags += 'g'; }
+          if (flagIgnorecaseElement.checked) { flags += 'i'; }
+          if (flagMultilineElement.checked) { flags += 'm'; }
+
           try {
 
-            re = new RegExp(testRe.value, 'gi');
+            re = new RegExp(testRe.value, flags);
+
+            jsResultBlock.innerHTML += '<p><span>\\' + testRe.value + '\\' + flags + '</p>';
 
             // 1. isMatch
             (function(){
               var res = '' + re.test(src); // string
-              jsResultBlock.innerHTML = '<p><b>Is match</b>: <span class="match-' + res + '">' + res + '</span></p>';
+              jsResultBlock.innerHTML += '<p><b>Is match</b>: <span class="match-' + res + '">' + res + '</span></p>';
             })();
 
             // 2. groups
