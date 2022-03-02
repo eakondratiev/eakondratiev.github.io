@@ -188,11 +188,14 @@
 
             re = new RegExp(testRe.value, flags);
 
-            jsResultBlock.innerHTML += '<p><span>\\' + testRe.value + '\\' + flags + '</p>';
+            jsResultBlock.innerHTML += '<p><span>/' + testRe.value + '/' + flags + '</p>';
 
             // 1. isMatch
             (function(){
-              var res = '' + re.test(src); // string
+              // NOTE: the regexp is statefull witg the g (and y) flag,
+              //       so another instance is created here.
+              var r = new RegExp(testRe.value, flags),
+                res = '' + r.test(src); // string
               jsResultBlock.innerHTML += '<p><b>Is match</b>: <span class="match-' + res + '">' + res + '</span></p>';
             })();
 
@@ -203,6 +206,8 @@
                 jsResultBlock.innerHTML += '<h3>Matche(s):</h3><p>';
                 hdr = false;
               }
+
+              console.log ('Match', m);
 
               for (i = 0; i < m.length; i++) {
                 jsResultBlock.innerHTML += ((i > 0)? '<b>' : '') +
