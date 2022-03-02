@@ -23,6 +23,7 @@
       header: 'Online Tools',
       items: [
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
+        {url: 'regex.htm', name: 'Test Regular Expressions'},
         {url: 'ws.htm',      name: 'White Spaces'},
         {url: 'floating-point-representation.htm', name: 'FP32/64'},
         {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'}
@@ -224,6 +225,7 @@
 
   }
 
+
   /**
     * @constructor
     */
@@ -247,8 +249,6 @@
     }
 
   }
-
-})();
 
 }(window.T = window.T || {}));
 

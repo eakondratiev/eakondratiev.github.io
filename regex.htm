@@ -37,7 +37,7 @@
       .err {color:#e00;}
     </style>
     <script src="/assets/web-app.js"></script>
-    <script src="/assets/menu.min.js?20220205"></script>
+    <script src="/assets/menu.min.js?20220302"></script>
     <script><!-- Clarity tracking code -->
    /*
         (function(c,l,a,r,i,t,y){
@@ -81,8 +81,8 @@
             <textarea cols="55" rows="2" name="re" id="source-re" accesskey="X" title="Enter the regular expression here"></textarea>
             <div class="field-name"><u>S</u>ource String</div>
             <textarea cols="55" rows="2" name="ss" id="source-string" accesskey="S" title="Enter the source string here"></textarea>
-            <div class="field-name"><u>R</u>eplacement String, optional</div>
-            <textarea cols="55" rows="2" name="rs" id="source-replace" accesskey="R" title="Optionally eneter the replacement string"></textarea>
+            <div class="field-name">R<u>e</u>placement String, optional</div>
+            <textarea cols="55" rows="2" name="rs" id="source-replace" accesskey="E" title="Optionally eneter the replacement string"></textarea>
             <div class="field-name">Flags</div>
             <div class="re-flags">
               <label><input type="checkbox" id="flag-global" accesskey="G" value="g" checked /> glo<u>b</u>al</label>
@@ -91,6 +91,7 @@
             </div>
             <div class="btns">
             <button type="button" accesskey="T" data-title="Test" id="button-test"><u>T</u>est</button>
+            <button type="button" accesskey="R" data-title="Reset" id="button-reset"><u>R</u>eset</button>
             </div>
           </div>
 
@@ -109,7 +110,8 @@
     <script>
       (function () {
         'use strict';
-        var testRe = document.getElementById('source-re'),
+        var PAGE_DB_PREFIX = 'cb-regex-',
+          testRe = document.getElementById('source-re'),
           replacementString = document.getElementById('source-replace'),
           sourceString = document.getElementById('source-string'),
           jsResultBlock = document.getElementById('result'),
@@ -117,7 +119,9 @@
           flagGlobalElement = document.getElementById('flag-global'),
           flagIgnorecaseElement = document.getElementById('flag-ignorecase'),
           flagMultilineElement = document.getElementById('flag-multiline'),
-          btn = document.getElementById('button-test');
+          btn = document.getElementById('button-test'),
+          btnReset = document.getElementById('button-reset'),
+          db = new T.Db();
 
         if (!Element.prototype.addEventListener) {
 
@@ -126,11 +130,18 @@
 
         }
 
+        initializeFromDb ();
+
         // Event handlers
         testRe.addEventListener('keyup', doTest);
         replacementString.addEventListener('keyup', doTest);
         sourceString.addEventListener('keyup', doTest);
         btn.addEventListener('click', doTest);
+        btnReset.addEventListener('click', reset);
+
+        flagGlobalElement.addEventListener('change', saveFlag);
+        flagIgnorecaseElement.addEventListener('change', saveFlag);
+        flagMultilineElement.addEventListener('change', saveFlag);
 
         /**
          * Does the regex test.
@@ -149,6 +160,11 @@
             // A key was pressed by not Enter
             return;
           }
+
+          // Save values in the browser db
+          db.set(PAGE_DB_PREFIX + 'regex', testRe.value);
+          db.set(PAGE_DB_PREFIX + 'src', src);
+          db.set(PAGE_DB_PREFIX + 'repl', replacementString.value);
 
           // Cancel the default action, if needed
           event.preventDefault();
@@ -208,6 +224,70 @@
               e.toString() +
               '</div>';
           }
+
+        }
+
+        /**
+         * Saves the value of the checkbox in the browser db.
+         * @param {*} event the event.
+         */
+        function saveFlag(event) {
+
+          var cb = event.target;
+
+          if (cb) {
+            db.set (PAGE_DB_PREFIX + cb.value, cb.checked);
+          }
+        }
+
+        /**
+         * Sets the form values from browser db.
+         */
+        function initializeFromDb () {
+
+          var cbList = [flagGlobalElement, flagIgnorecaseElement, flagMultilineElement],
+            i,
+            v;
+
+          v = db.get(PAGE_DB_PREFIX + 'regex');
+          testRe.value = v? v : '';
+
+          v = db.get(PAGE_DB_PREFIX + 'src');
+          sourceString.value = v? v : '';
+
+          v = db.get(PAGE_DB_PREFIX + 'repl');
+          replacementString.value = v? v : '';
+
+          for (i = 0; i < cbList.length; i++) {
+
+            v = db.get(PAGE_DB_PREFIX + cbList[i].value);
+            console.log ('State', v);
+            if (v !== undefined && v !== null) {
+              cbList[i].checked = (v === 'true')? true : false;
+            }
+          }
+
+        }
+
+        /**
+         * Resets the form.
+         */
+        function reset () {
+
+          testRe.value = '';
+          sourceString.value = '';
+          replacementString.value = '';
+
+          flagGlobalElement.checked = true;
+          flagIgnorecaseElement.checked = true;
+          flagMultilineElement.checked = false;
+
+          db.remove (PAGE_DB_PREFIX + 'regex');
+          db.remove (PAGE_DB_PREFIX + 'src');
+          db.remove (PAGE_DB_PREFIX + 'repl');
+          db.remove (PAGE_DB_PREFIX + 'g');
+          db.remove (PAGE_DB_PREFIX + 'i');
+          db.remove (PAGE_DB_PREFIX + 'm');
 
         }
 
