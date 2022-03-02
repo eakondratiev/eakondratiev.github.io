@@ -7,6 +7,7 @@
  * 2021-12-09 T.getUrlParameters() added.
  * 2021-12-18 T.formatNumber() added.
  * 2022-02-05 The TOP_MENU structure and menu initializetion added.
+ * 2022-03-02 T.Db constructor added.
  * 
  */
 // ==ClosureCompiler==
@@ -222,6 +223,32 @@
     }
 
   }
+
+  /**
+    * @constructor
+    */
+  T.Db = function () {
+
+    var KEY_PREFIX = 'tool-site-';
+
+    return {
+      set: function(key, value) {
+        localStorage.setItem (KEY_PREFIX + key, value)
+      },
+
+      get: function(key) {
+        return localStorage.getItem (KEY_PREFIX + key);
+      },
+
+      remove: function (key) {
+        return localStorage.removeItem (KEY_PREFIX + key);
+      }
+
+    }
+
+  }
+
+})();
 
 }(window.T = window.T || {}));
 
