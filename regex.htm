@@ -34,6 +34,7 @@
       .btns {margin: 8pt 0;}
       .match-true  {background-color: #9d7; color:#000; padding: 0 4pt;}
       .match-false {background-color: #fbb; color:#000; padding: 0 4pt;}
+      .re-space {background-color: #fd0; padding:0 2pt;}
       .err {color:#e00;}
     </style>
     <script src="/assets/web-app.js"></script>
@@ -101,6 +102,14 @@
           </div>
 
           <p><a target="_blank" href="http://www.regexper.com/" rel="nofollow noreferrer">Regexp visualization</a></p>
+
+          <p>NOTE: some regexes can make your browser unresponsive, read about it on
+            <a target="_blank" href="https://en.wikipedia.org/wiki/ReDoS#Evil_regexes" rel="nofollow noreferrer">Wikipedia</a>.
+          </p>
+
+          <div class="page-tags">
+            <b>#RegExp</b> <b>#Regex</b> <b>#JS</b>
+          </div>
         </div>
       </div>
     </div>
@@ -111,6 +120,7 @@
       (function () {
         'use strict';
         var PAGE_DB_PREFIX = 'cb-regex-',
+          RE_SPACE = /^\s+$/
           testRe = document.getElementById('source-re'),
           replacementString = document.getElementById('source-replace'),
           sourceString = document.getElementById('source-string'),
@@ -154,6 +164,7 @@
             m,
             i,
             hdr = true,
+            html = '',
             src = sourceString.value;
 
           if (event.keyCode !== undefined && event.keyCode !== 13) {
@@ -203,17 +214,20 @@
             while ((m = re.exec(src)) !== null) {
 
               if (hdr) {
-                jsResultBlock.innerHTML += '<h3>Matche(s):</h3><p>';
+                html += '<h3>Matche(s):</h3>';
                 hdr = false;
               }
 
+              html += '<div class="re-match">';
+
               for (i = 0; i < m.length; i++) {
-                jsResultBlock.innerHTML += ((i > 0)? '<b>' : '') +
-                  m[i] + ((i > 0) ? '</b>' : '') + '<br>';
+                html += getMatchHtml (i, m[i]) + '<br>';
               }
 
-              jsResultBlock.innerHTML += '</p>';
+              html += '</div>';
             }
+
+            jsResultBlock.innerHTML += html;
 
             // 3. replacement
             if (replacementString.value.length > 0) {
@@ -228,6 +242,25 @@
               '</div>';
           }
 
+        }
+
+        /**
+         * Returns html string for the match.
+         * @param {number} index the match index.
+         * @param {string} match the match text.
+         */
+        function getMatchHtml (index, match) {
+
+          var t;
+
+          if (RE_SPACE.test(match)) {
+            t = '<span class="re-space">&middot;</span>';
+          }
+          else {
+            t = match;
+          }
+          return ((index > 0)? '<b>' : '') +
+                  t + ((index > 0) ? '</b>' : '');
         }
 
         /**
