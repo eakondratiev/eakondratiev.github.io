@@ -54,6 +54,8 @@
 
     var menuBtn = document.getElementsByClassName('site-menu-btn')[0];
 
+    menuBtn.setAttribute ('title', 'Open the site menu, Ctrl+M');
+
     menu = document.getElementsByClassName('site-nav')[0];
 
     // Initialize menu items
