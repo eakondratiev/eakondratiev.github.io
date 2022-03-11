@@ -8,6 +8,7 @@
  * 2021-12-18 T.formatNumber() added.
  * 2022-02-05 The TOP_MENU structure and menu initializetion added.
  * 2022-03-02 T.Db constructor added.
+ * 2022-02-11 Keyboard support for the site menu, handles click outside of the menu.
  * 
  */
 // ==ClosureCompiler==
@@ -33,7 +34,10 @@
       items: [
         {url: 'crd-reader.htm', name: 'CRD Reader'}
       ]}
-    ];
+    ],
+    selectedItem = -1,
+    itemElements = [],
+    menu = {};
 
   // check for compatibility
   if (document.getElementsByClassName === undefined ||
@@ -48,8 +52,9 @@
   // initialize
   window.onload = function (event) {
 
-    var menuBtn = document.getElementsByClassName('site-menu-btn')[0],
-      menu = document.getElementsByClassName('site-nav')[0];
+    var menuBtn = document.getElementsByClassName('site-menu-btn')[0];
+
+    menu = document.getElementsByClassName('site-nav')[0];
 
     // Initialize menu items
     (function(m, c){
@@ -80,23 +85,81 @@
 
       c.innerHTML = html;
 
+      itemElements = document.getElementsByClassName ('site-nav-top-item');
+
     })(TOP_MENU, menu);
 
     // Handles clicks on the burger-button.
-    menuBtn.addEventListener('click', function () {
+    menuBtn.addEventListener('click', function (e) {
+      toggleMenuState ();
+      e.stopPropagation(); // prevents hiding menu by click outside function
+    });
+    
+    // Handles keyboard events
+    document.addEventListener('keyup', function (e){
 
-      if (isVisible(menu)) {
-        // hide
-        menu.style.display = 'none';
+      var key = e.key; // also e.which can be used
+
+      if (e.defaultPrevented) {
+        return; // Do nothing if the event was already processed
       }
-      else {
-        // show
-        menu.style.display = 'block';
+
+      if (e.ctrlKey && (key === 'm' || key === 'M')) {
+        // ctrl+m - show/hide menu.
+        toggleMenuState()
+      }
+
+      if (!e.altKey && !e.ctrlKey && !e.shiftKey) {
+        
+        switch (key) {
+          
+          case 'Escape':
+
+            if (isVisible(menu)) {
+              menu.style.display = 'none'; // hide
+            }
+            break;
+
+          case 'ArrowUp':
+            if (selectedItem > 0) { --selectedItem; }
+            focusItem (itemElements [selectedItem]);
+            break;
+
+          case 'ArrowDown':
+            
+            if (selectedItem < itemElements.length - 1) { ++selectedItem; }
+            focusItem (itemElements [selectedItem]);
+            break;
+        }
+
       }
 
     });
-    
+
+    /**
+     * Sets the focus on the menu item.
+     * @param {any} itemContainer
+     */
+    function focusItem(itemContainer) {
+
+      itemContainer.getElementsByTagName('a')[0].focus();
+
+    }
+
   };
+
+  // click outside the menu
+  window.addEventListener("click", function(e) {
+
+    if (e.composedPath !== undefined &&
+       !e.composedPath().includes(menu)) {
+
+      if (isVisible(menu)) {
+        hideMenu();
+      }
+
+    }
+  });
 
   /**
    * Returns value indicating whether the element is visible or not.
@@ -104,6 +167,33 @@
    */
   function isVisible(element) {
     return (window.getComputedStyle(element).display !== 'none');
+  }
+
+  /**
+    * Toggles the visibility state of the site menu.
+    */
+  function toggleMenuState() {
+
+    if (isVisible(menu)) {
+      hideMenu ();
+    }
+    else {
+      // show
+      menu.style.display = 'block';
+    }
+
+  }
+
+  /**
+   * Hide the menu and resets the selected item index.
+   */
+  function hideMenu() {
+
+    // hide
+    menu.style.display = 'none';
+
+    // resets selected item
+    selectedItem = -1;
   }
 
 })();

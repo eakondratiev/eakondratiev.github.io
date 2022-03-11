@@ -44,6 +44,7 @@ header {padding: 8pt 0; display: grid; }
 .site-nav-top-item a:visited { color: #ccc; text-decoration: none; }
 .site-nav-top-item a:hover,
 .site-nav-top-item a:active { color: #fff; }
+.site-nav-top-item a:focus { color: #fff; outline: none; text-decoration: underline;}
 .site-nav-header {color: #d80; margin: 0 8pt; padding: 0;}
 
 .page-content h1 {
