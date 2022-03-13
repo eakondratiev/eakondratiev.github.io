@@ -295,7 +295,7 @@
           for (i = 0; i < cbList.length; i++) {
 
             v = db.get(PAGE_DB_PREFIX + cbList[i].value);
-            console.log ('State', v);
+
             if (v !== undefined && v !== null) {
               cbList[i].checked = (v === 'true')? true : false;
             }
