@@ -188,6 +188,10 @@
             html = '',
             src = sourceString.value;
 
+          // reset result and messages
+          testRe.style.border = '';
+          resultBlock.style.display = 'block';
+          jsResultBlock.innerHTML = '';
           messageBlock.style.display = 'none';
 
           if (event !== undefined) {
@@ -208,10 +212,6 @@
           db.set(PAGE_DB_PREFIX + 'repl', replacementString.value);
 
           // do test
-          testRe.style.border = '';
-          resultBlock.style.display = 'block';
-          jsResultBlock.innerHTML = '';
-
           if (testRe.value.length === 0) {
             testRe.style.border = '1px solid #e00';
             return;
