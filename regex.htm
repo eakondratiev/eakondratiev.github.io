@@ -125,6 +125,7 @@
           sourceString = document.getElementById('source-string'),
           jsResultBlock = document.getElementById('result'),
           resultBlock = document.getElementById('result-block'),
+          messageBlock = document.getElementById('message-block'),
           flagGlobalElement = document.getElementById('flag-global'),
           flagIgnorecaseElement = document.getElementById('flag-ignorecase'),
           flagMultilineElement = document.getElementById('flag-multiline'),
@@ -186,6 +187,8 @@
             hdr = true,
             html = '',
             src = sourceString.value;
+
+          messageBlock.style.display = 'none';
 
           if (event !== undefined) {
 
@@ -356,21 +359,37 @@
          */
         function share() {
 
+          var urlBase = location.protocol + '//' + location.host + '/regex.htm',
+            qs = '',
+            params = [];
+
           if (!navigator.clipboard) {
-            //console.log ('NO!');
-            //msgElement.innerHTML = 'This function works only on HTTPS protocol or localhost.';
-            //msgElement.style.display = 'block';
+            messageBlock.innerHTML = 'This function requires HTTPS protocol or localhost.';
+            messageBlock.style.display = 'block';
           }
           else {
+            // make
+            if (testRe.value.length > 0) {
+              params.push ('regex=' + encodeURIComponent (testRe.value));
+            }
+            if (sourceString.value.length > 0) {
+              params.push ('src=' + encodeURIComponent (sourceString.value));
+            }
+            if (replacementString.value.length > 0) {
+              params.push ('rep=' + encodeURIComponent (replacementString.value));
+            }
+
+            if (params.length > 0) {
+              qs = '?' + params.join ('&');
+            }
+
             // copy
-            //navigator.clipboard.writeText('TEST');
+            navigator.clipboard.writeText(urlBase + qs);
     
             /* Alert the copied text */
-            //msgElement.innerHTML = 'The formula and vb code copied to the clipboard.';
-            //msgElement.style.display = 'block';
-
-            // The page url was copied to the clipboard.
-            //console.log ('Copied');
+            messageBlock.innerHTML = 'The page url was copied to the clipboard:<br />' +
+              urlBase + qs.replace (/&/g, '&amp;');
+            messageBlock.style.display = 'block';
           }
 
         }
