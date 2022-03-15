@@ -26,10 +26,9 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
-    <link href="/assets/main.css?20220311" rel="stylesheet" type="text/css" />
+    <link href="/assets/main.css?20220315" rel="stylesheet" type="text/css" />
     <style>
       textarea {font-size:1rem; padding: 2pt; max-width: 95vw;}
-      .field-name {color:#444; font-size: 0.8rem; margin:2pt 0;}
       .re-flags label {margin-right: 16pt; white-space:nowrap;}
       .btns {margin: 8pt 0;}
       .match-true  {background-color: #9d7; color:#000; padding: 0 4pt;}
@@ -76,13 +75,13 @@
           <div>Javascript flavor</div>
 
           <div style="margin:16pt 0;">
-            <div class="field-name">Regular E<u>x</u>pression</div>
+            <div class="page-field-name">Regular E<u>x</u>pression</div>
             <textarea cols="55" rows="2" name="re" id="source-re" accesskey="X" title="Enter the regular expression here"></textarea>
-            <div class="field-name"><u>S</u>ource String</div>
-            <textarea cols="55" rows="2" name="ss" id="source-string" accesskey="S" title="Enter the source string here"></textarea>
-            <div class="field-name">R<u>e</u>placement String, optional</div>
+            <div class="page-field-name">S<u>o</u>urce String</div>
+            <textarea cols="55" rows="2" name="ss" id="source-string" accesskey="O" title="Enter the source string here"></textarea>
+            <div class="page-field-name">R<u>e</u>placement String, optional</div>
             <textarea cols="55" rows="2" name="rs" id="source-replace" accesskey="E" title="Optionally eneter the replacement string"></textarea>
-            <div class="field-name">Flags</div>
+            <div class="page-field-name">Flags</div>
             <div class="re-flags">
               <label><input type="checkbox" id="flag-global" accesskey="G" value="g" checked /> glo<u>b</u>al</label>
               <label><input type="checkbox" id="flag-ignorecase" accesskey="I" value="i" checked /> <u>i</u>gnore case</label>
@@ -91,8 +90,10 @@
             <div class="btns">
             <button type="button" accesskey="T" data-title="Test" id="button-test"><u>T</u>est</button>
             <button type="button" accesskey="R" data-title="Reset" id="button-reset"><u>R</u>eset</button>
+            <button type="button" accesskey="S" data-title="Share" id="button-share"><u>S</u>hare</button>
             </div>
           </div>
+          <div id="message-block" class="page-message page-message--info" style="display: none;"></div>
 
           <div id="result-block" style="display:none;">
             <h3>Result</h3>
@@ -129,6 +130,8 @@
           flagMultilineElement = document.getElementById('flag-multiline'),
           btn = document.getElementById('button-test'),
           btnReset = document.getElementById('button-reset'),
+          btnShare = document.getElementById('button-share'),
+          urlParams = T.getUrlParameters(),
           db = new T.Db();
 
         if (!Element.prototype.addEventListener) {
@@ -138,7 +141,25 @@
 
         }
 
-        initializeFromDb ();
+        if (urlParams.regex !== undefined ||
+            urlParams.src !== undefined ||
+            urlParams.rep !== undefined) {
+
+          if (urlParams.regex !== undefined) {
+            testRe.value = decodeURIComponent (urlParams.regex);
+          }
+          if (urlParams.src !== undefined) {
+            sourceString.value = decodeURIComponent (urlParams.src);
+          }
+          if (urlParams.rep !== undefined) {
+            replacementString.value = decodeURIComponent (urlParams.rep);
+          }
+
+          doTest ();
+        }
+        else {
+          initializeFromDb ();
+        }
 
         // Event handlers
         testRe.addEventListener('keyup', doTest);
@@ -146,6 +167,7 @@
         sourceString.addEventListener('keyup', doTest);
         btn.addEventListener('click', doTest);
         btnReset.addEventListener('click', reset);
+        btnShare.addEventListener('click', share);
 
         flagGlobalElement.addEventListener('change', saveFlag);
         flagIgnorecaseElement.addEventListener('change', saveFlag);
@@ -153,7 +175,7 @@
 
         /**
          * Does the regex test.
-         * @param (*} event the DOM event
+         * @param (*} event the DOM event, optional.
          */
         function doTest(event) {
 
@@ -165,18 +187,22 @@
             html = '',
             src = sourceString.value;
 
-          if (event.keyCode !== undefined && event.keyCode !== 13) {
-            // A key was pressed by not Enter
-            return;
+          if (event !== undefined) {
+
+            if (event.keyCode !== undefined && event.keyCode !== 13) {
+              // A key was pressed by not Enter
+              return;
+            }
+
+            // Cancel the default action, if needed
+            event.preventDefault();
+
           }
 
           // Save values in the browser db
           db.set(PAGE_DB_PREFIX + 'regex', testRe.value);
           db.set(PAGE_DB_PREFIX + 'src', src);
           db.set(PAGE_DB_PREFIX + 'repl', replacementString.value);
-
-          // Cancel the default action, if needed
-          event.preventDefault();
 
           // do test
           testRe.style.border = '';
@@ -322,6 +348,30 @@
           db.remove (PAGE_DB_PREFIX + 'g');
           db.remove (PAGE_DB_PREFIX + 'i');
           db.remove (PAGE_DB_PREFIX + 'm');
+
+        }
+
+        /**
+         * Copies the page url to the clipboard for sharing.
+         */
+        function share() {
+
+          if (!navigator.clipboard) {
+            //console.log ('NO!');
+            //msgElement.innerHTML = 'This function works only on HTTPS protocol or localhost.';
+            //msgElement.style.display = 'block';
+          }
+          else {
+            // copy
+            //navigator.clipboard.writeText('TEST');
+    
+            /* Alert the copied text */
+            //msgElement.innerHTML = 'The formula and vb code copied to the clipboard.';
+            //msgElement.style.display = 'block';
+
+            // The page url was copied to the clipboard.
+            //console.log ('Copied');
+          }
 
         }
 

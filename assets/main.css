@@ -63,6 +63,12 @@ header {padding: 8pt 0; display: grid; }
 .page-content a.outer-link:active,
 .page-content a.outer-link:hover {color: #000;}
 
+.page-field-name {color:#444; font-size: 0.8rem; margin:2pt 0;}
+.page-message {font-size:0.9rem; margin: 8pt 0; padding: 8pt; border-width: 1px; border-style: solid; border-radius: 3px;}
+.page-message.page-message--info {background: #def; border-color: #07a;}
+.page-message.page-message--warning {background: #fec; border-color: #a81;}
+.page-message.page-message--error {background: #fcc; border-color: #c44;}
+
 .page-tags {margin: 32pt 0 16pt 0; font-size:12px; font-size: .7rem; line-height: 2;}
 .page-tags b {color: #049; margin-right: 8pt; font-weight: normal;}
 
@@ -80,10 +86,15 @@ header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
   .page-content a:link, .page-content a:visited {color:#7bf;}
   .page-content a:active, .page-content a:hover {color:#def;}
 
+  .page-field-name {color:#999;}
   .page-content a.outer-link:link,
   .page-content a.outer-link:visited {color: #ccc;}
   .page-content a.outer-link:active,
   .page-content a.outer-link:hover {color: #aaa;}
+
+  .page-message.page-message--info {background: #048;}
+  .page-message.page-message--warning {background: #740;}
+  .page-message.page-message--error {background: #400;}
 
   .page-tags b {color: #cb8;}
 }
