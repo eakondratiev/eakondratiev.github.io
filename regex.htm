@@ -244,8 +244,8 @@
 
             re = new RegExp(testRe.value, flags);
 
-            jsResultBlock.innerHTML += '<p><code>var re = <b>/' +
-              testRe.value + '/' + flags + '</b>;</code></p>';
+            jsResultBlock.innerHTML += '<p class="code">var re = <b>/' +
+              testRe.value + '/' + flags + '</b>;</p>';
 
             // 1. isMatch
             (function(){
