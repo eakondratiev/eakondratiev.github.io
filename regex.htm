@@ -252,7 +252,7 @@
               // NOTE: the regexp is statefull witg the g (and y) flag,
               //       so another instance is created here.
               var r = new RegExp(testRe.value, flags),
-                res = '' + r.test(src); // string
+                res = '' + r.test(src); // string "true" or "false"
               jsResultBlock.innerHTML += '<p><b>Is match</b>: <span class="match-' + res + '">' + res + '</span></p>';
             })();
 
