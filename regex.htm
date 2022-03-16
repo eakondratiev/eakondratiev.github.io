@@ -96,8 +96,11 @@
           </div>
           <div id="message-block" class="page-message page-message--info" style="display: none;"></div>
           <p>
+            See
             <a href="regex.htm?regex=First_Name%3A%20(%5Cw%2B)%2C%20Last_Name%3A%20(%5Cw%2B)&src=First_Name%3A%20Jane%2C%20Last_Name%3A%20Smith&rep=Full%20name%3A%20%241%20%242">
-            See an example</a>.
+            an example</a> and
+            <a href="regex.htm?regex=First_Name%3A%20(%3F<fn>%5Cw%2B)%2C%20Last_Name%3A%20(%3F<ln>%5Cw%2B)&src=First_Name%3A%20Jane%2C%20Last_Name%3A%20Smith&rep=Full%20name%3A%20%24<fn>%20%24<ln>">
+            example with named groups</a>.
           </p>
 
           <div id="result-block" style="display:none;">
@@ -161,7 +164,8 @@
             replacementString.value = decodeURIComponent (urlParams.rep);
           }
 
-          doTest ();
+          // no call because the re can contains evil code
+          //doTest ();
         }
         else {
           initializeFromDb ();
@@ -201,6 +205,7 @@
             flags = '',
             m,
             i,
+            group,
             hdr = true,
             html = '',
             src = sourceString.value;
@@ -266,6 +271,22 @@
               }
 
               html += '</div>';
+
+              // named groups
+              if (m.groups !== undefined) {
+
+                html += '<div class="re-match">' +
+                  '<h4>Named groups</h4>';
+
+                for (group in m.groups) {
+
+                  html += '<div>' + group + ': <b>' + m.groups[group] + '</b></div>';
+                }
+
+                html += '</div>';
+
+              }
+
             }
 
             jsResultBlock.innerHTML += html;
