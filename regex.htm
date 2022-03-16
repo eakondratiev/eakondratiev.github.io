@@ -95,6 +95,10 @@
             </div>
           </div>
           <div id="message-block" class="page-message page-message--info" style="display: none;"></div>
+          <p>
+            <a href="regex.htm?regex=First_Name%3A%20(%5Cw%2B)%2C%20Last_Name%3A%20(%5Cw%2B)&src=First_Name%3A%20Jane%2C%20Last_Name%3A%20Smith&rep=Full%20name%3A%20%241%20%242">
+            See an example</a>.
+          </p>
 
           <div id="result-block" style="display:none;">
             <h3>Result</h3>
@@ -176,6 +180,18 @@
         flagMultilineElement.addEventListener('change', saveFlag);
 
         /**
+         * Clears the result text and styles, hide messages.
+         */
+        function clearResults() {
+
+          testRe.style.border = '';
+          resultBlock.style.display = 'block';
+          jsResultBlock.innerHTML = '';
+          messageBlock.style.display = 'none';
+
+        }
+
+        /**
          * Does the regex test.
          * @param (*} event the DOM event, optional.
          */
@@ -189,11 +205,7 @@
             html = '',
             src = sourceString.value;
 
-          // reset result and messages
-          testRe.style.border = '';
-          resultBlock.style.display = 'block';
-          jsResultBlock.innerHTML = '';
-          messageBlock.style.display = 'none';
+          clearResults ();
 
           if (event !== undefined) {
 
@@ -363,6 +375,8 @@
           db.remove (PAGE_DB_PREFIX + 'g');
           db.remove (PAGE_DB_PREFIX + 'i');
           db.remove (PAGE_DB_PREFIX + 'm');
+
+          clearResults ();
 
         }
 
