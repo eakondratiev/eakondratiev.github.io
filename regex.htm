@@ -434,8 +434,8 @@
             navigator.clipboard.writeText(urlBase + qs);
     
             /* Alert the copied text */
-            messageBlock.innerHTML = 'The page url was copied to the clipboard:<br />' +
-              urlBase + qs.replace (/&/g, '&amp;');
+            messageBlock.innerHTML = 'The page url was copied to the clipboard:<div style="word-break: break-all;">' +
+              urlBase + qs.replace (/&/g, '&amp;') + '</div>';
             messageBlock.style.display = 'block';
           }
 
