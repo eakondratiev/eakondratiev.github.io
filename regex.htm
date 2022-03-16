@@ -34,6 +34,7 @@
       .match-true  {background-color: #9d7; color:#000; padding: 0 4pt;}
       .match-false {background-color: #fbb; color:#000; padding: 0 4pt;}
       .re-space {background-color: #fd0; padding:0 2pt;}
+      .re-match h4 {font-weight: normal; margin-top: 8pt; opacity:0.7;}
       .err {color:#e00;}
     </style>
     <script src="/assets/web-app.js"></script>
@@ -226,7 +227,8 @@
 
             re = new RegExp(testRe.value, flags);
 
-            jsResultBlock.innerHTML += '<p><span>/' + testRe.value + '/' + flags + '</p>';
+            jsResultBlock.innerHTML += '<p><code>var re = <b>/' +
+              testRe.value + '/' + flags + '</b>;</code></p>';
 
             // 1. isMatch
             (function(){
@@ -278,16 +280,26 @@
          */
         function getMatchHtml (index, match) {
 
-          var t;
+          var t,
+            hdr = '';
 
           if (RE_SPACE.test(match)) {
+            // make space visible
             t = '<span class="re-space">&middot;</span>';
           }
           else {
             t = match;
           }
-          return ((index > 0)? '<b>' : '') +
-                  t + ((index > 0) ? '</b>' : '');
+
+          if (index === 0) {
+            hdr = '<h4>The full string of characters matched</h4>';
+          }
+          else if (index === 1) {
+            hdr = '<h4>The parenthesized substring matches</h4>';
+          }
+
+          return hdr + '<b>' + t + '</b>';
+
         }
 
         /**
