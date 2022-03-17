@@ -50,10 +50,7 @@ header {padding: 8pt 0; display: grid; }
 .site-nav-top-item a:focus { color: #fff; outline: none; text-decoration: underline;}
 .site-nav-header {color: #d80; margin: 0 8pt; padding: 0;}
 
-.page-content h1 {
-  font-weight: normal;
-  color: #07a;
-}
+.page-content h1 {font-weight: normal; color: #07a;}
 .page-content h2 {font-size: 1.2rem; color: #07a; font-weight: normal; margin: 12pt 0 0 0;}
 .page-content h3 {font-size: 1rem; margin: 8pt 0 0 0;}
 .page-content p {color: #444; margin: 8pt 0;}
@@ -71,6 +68,16 @@ header {padding: 8pt 0; display: grid; }
 .page-message.page-message--info {background: #def; border-color: #07a;}
 .page-message.page-message--warning {background: #fec; border-color: #a81;}
 .page-message.page-message--error {background: #fcc; border-color: #c44;}
+
+.form-button {background-color: #707070; color: #fff; cursor: pointer;
+  border: solid 1px #444; border-radius: 2pt; box-sizing: border-box;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.5), 1px 1px 2px 0 rgba(255,255,255,0.5) inset;
+  margin: 0 4pt; outline: none; padding: 2pt 8pt; text-align: center; width: auto;}
+.form-button:hover {background-color:#494949; color: #fff;}
+.form-button:active {background-color:#444; box-shadow: 0 0 5px 0 rgba(0,0,0,0.7), 1px 1px 2px 0 rgba(0,0,0,0.5) inset;
+  transform: translateY(1px);}
+.form-button:focus {background-color: #bbb; border-color: #777; color: #000;
+  box-shadow: 0 0 5px 1px rgba(0,0,0,0.9), 1px 1px 2px 0 rgba(255,255,255,0.5) inset;}
 
 .page-tags {margin: 32pt 0 16pt 0; font-size:12px; font-size: .7rem; line-height: 2;}
 .page-tags b {color: #049; margin-right: 8pt; font-weight: normal;}
