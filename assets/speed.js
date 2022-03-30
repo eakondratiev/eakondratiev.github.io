@@ -5,12 +5,18 @@
  *            * the options parameter added to the formatNumber().
  * 2020-12-27 * 
  * 2021-12-05 * browser compatibility check; the .dataset replaced with .getAttribute().
+ * 2021-03-30 * messages are passed via options, set css classes to the message element.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 // @output_file_name speed.min.js
 // ==/ClosureCompiler==
-function Speed() {
+/**
+ * Processes the form.
+ * @param {any} options the options.
+ * @param {[string]} options.msg the messages.
+ */
+function Speed(options) {
 
   if (document.getElementsByName === undefined) {
 
@@ -26,12 +32,7 @@ function Speed() {
     otherUnitsElement = document.getElementById('other-units'),
     comparisonElement = document.getElementById('comparison'),
     units,
-    messages = [
-      'Enter a numeric value, please.',
-      'No move at all.',
-      'Negative speed! Please stop it.',
-      'All units be advised, a suspect speeding down the virtual area.'
-    ],
+    messages = options.msg,
     distances = [
       { name: 'From Chicago to LA',
         distance: 2.808e6 }, // meters
@@ -269,28 +270,49 @@ function Speed() {
    */
   function isValid(speed) {
 
-    if (isNaN (speed)) {
-      otherUnitsElement.innerHTML = messages[0];
-      return false;
+    if (speedValueElement.value !== '') {
+
+      styleMessage ();
+
+      if (isNaN (speed)) {
+        otherUnitsElement.innerHTML = messages[0];
+        return false;
+      }
+
+      if (speed > SPEED_OF_LIGHT) {
+        otherUnitsElement.innerHTML = messages[3];
+        return false;
+      }
+
+      if (speed < 0) {
+        otherUnitsElement.innerHTML = messages[2];
+        return false;
+      }
+
+      if (Math.abs(speed) < 1e-10) {
+        otherUnitsElement.innerHTML = messages[1]; // zero
+        return false;
+      }
+
     }
 
-    if (speed > SPEED_OF_LIGHT) {
-      otherUnitsElement.innerHTML = messages[3];
-      return false;
-    }
-
-    if (speed < 0) {
-      otherUnitsElement.innerHTML = messages[2];
-      return false;
-    }
-
-    if (Math.abs(speed) < 1e-10) {
-      otherUnitsElement.innerHTML = messages[1]; // zero
-      return false;
-    }
-
+    resetMessageStyle ();
     return true;
 
+  }
+
+  /** Sets a message css classes for the message element. */
+  function styleMessage() {
+    if (otherUnitsElement.classList !== undefined) {
+      otherUnitsElement.classList.add ('page-message', 'page-message--warning');
+    }
+  }
+
+  /** Removes a message css classes for the message element. */
+  function resetMessageStyle() {
+    if (otherUnitsElement.classList !== undefined) {
+      otherUnitsElement.classList.remove ('page-message', 'page-message--warning');
+    }
   }
 
   /**

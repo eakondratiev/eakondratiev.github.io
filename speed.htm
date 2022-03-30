@@ -26,7 +26,7 @@
   
     <link href="/assets/main.css?20220317" rel="stylesheet" type="text/css" />
     <script src="/assets/menu.min.js?20220311"></script>
-    <script src="/assets/speed.min.js?20211205"></script>
+    <script src="/assets/speed.min.js?20220330"></script>
     <style>
       .speed-value {font-size: 1rem; padding:4pt;}
       .speed-units {font-size: .8rem; margin:4pt 0 16pt 0;}
@@ -113,7 +113,12 @@
       imperfect <b>tools</b>
     </div>
     <script>
-      Speed();
+      Speed({msg:  [
+        'Enter a numeric value, please.',
+        'No move at all.',
+        'Negative speed. Moving backward?',
+        'Faster than the speed of light!'
+      ]});
     </script>
   </body>
 </html>
