@@ -29,7 +29,14 @@
     <style>
       .tool-no-wrap {white-space: nowrap;}
       .tool-download-arr {font-weight: bold; text-decoration: underline; margin: 0 4pt;}
-      .tool-download {font-weight: bold;}
+      a.tool-download:link {display: inline-block;
+        background: #04a; color: #e7e9e9; border-radius: 3pt;
+        font-size: 0.9rem;
+        padding: 4pt 8pt; text-decoration: none; text-align: center;
+        min-width: 160pt;}
+      a.tool-download:hover, a.tool-download:active {
+        background-color: #06c; color: #fff; }
+      a.tool-download:focus { outline: 4px solid #39f; }
     </style>
 
     <script><!-- Clarity tracking code -->
@@ -78,13 +85,15 @@
           </p>
 
           <h2>Download <b class="tool-download-arr">&darr;</b></h2>
-          <div style="margin: 12pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">Linux version</a>
-            <b class="tool-no-wrap">15 KB</b> unpacked.
+          <div style="margin: 14pt 0;">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">
+            <b>Download for Linux</b> 64-bit</a>
+            tar, <b class="tool-no-wrap">15 KB</b> unpacked.
           </div>
-          <div style="margin: 12pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">Windows version</a>
-            <b class="tool-no-wrap">19 KB</b> unpacked.
+          <div style="margin: 14pt 0;">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">
+            <b>Download for Windows</b> 64-bit</a>
+            zip, <b class="tool-no-wrap">19 KB</b> unpacked.
           </div>
 
           <h2>Usage</h2>
