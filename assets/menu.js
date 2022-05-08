@@ -25,9 +25,11 @@
       items: [
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'regex.htm', name: 'Test Regular Expressions'},
-        {url: 'ws.htm',      name: 'White Spaces'},
+        {url: 'roman-numerals.htm', name: 'Roman Numerals Converter'},
         {url: 'floating-point-representation.htm', name: 'FP32/64'},
-        {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'}
+        {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'},
+        {url: 'speed.htm',   name: 'Speed &amp; Distance'},
+        {url: 'ws.htm',      name: 'White Spaces'}
       ]},
     {
       header: 'Console Tools',
