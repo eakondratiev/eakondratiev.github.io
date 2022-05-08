@@ -1,0 +1,265 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Roman Numerals Converter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="Tool" />
+    <meta name="application-name" content="Tool" />
+
+    <meta property="og:title" content="Tool">
+    <meta name="description" content="Test your regular expressions">
+    <meta property="og:description" content="Test your regular expressions">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/">
+    <meta name="google-site-verification" content="DG8CDSi7XJOTIAp-BDhrgPccz9Js2GR8G1EKSbn_Dek" />
+    <meta name="msvalidate.01" content="8DEC6FAF984E8A6C5DC915A0BABC8B19" />
+    <link rel="canonical" href="https://eakondratiev.github.io/regex.htm">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20220317" rel="stylesheet" type="text/css" />
+    <style>
+      .input-field {font-size:1rem; padding: 2pt;}
+      p.note {color: #000; font-size: 0.9rem; margin: 2pt 0 8pt 0;}
+      .btns {margin: 8pt 0;}
+      .err {color:#e00;}
+    </style>
+    <script src="/assets/web-app.js"></script>
+    <script src="/assets/menu.min.js?20220311"></script>
+    <script><!-- Clarity tracking code -->
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "amp2on3c4r");
+    </script>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <ul>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">FP32/64</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <div id="incompatible-browser">Please, update yopur browser.</div>
+
+          <h1>Roman Numerals Converter</h1>
+
+          <div style="margin:16pt 0;">
+            <div class="page-field-name"><u>R</u>oman Number</div>
+            <input class="input-field" type="text" name="roman-number" id="roman-number" accesskey="R" title="Enter a Roman number" value="" />
+            <p class="note">Enter a Roman number.</p>
+            <div class="btns">
+            <button type="button" class="form-button" accesskey="N" id="button-to-number">Convert to <u>N</u>umber</button>
+            </div>
+          </div>
+          <div id="message-block" class="page-message page-message--info" style="display: none;"></div>
+
+          <div id="result-block" style="display:none;">
+            <div id="result"></div>
+          </div>
+
+          <div class="page-tags">
+            <b>#Numbers</b>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      imperfect <b>tools</b>
+    </div>
+    <script>
+      (function () {
+        'use strict';
+        var inputRomanNumber = document.getElementById('roman-number'),
+          resultElement = document.getElementById('result'),
+          resultBlock = document.getElementById('result-block'),
+          messageBlock = document.getElementById('message-block'),
+          btnRomanToNumber = document.getElementById('button-to-number'),
+          urlParams = T.getUrlParameters(),
+          db = new T.Db();
+
+        if (!Element.prototype.addEventListener) {
+
+          document.getElementById('incompatible-browser').style.display = 'block';
+          return;
+
+        }
+
+        if (urlParams.roman !== undefined) {
+
+          inputRomanNumber.value = decodeURIComponent (urlParams.roman);
+          convertRomanToNumber ();
+
+        }
+
+        // Event handlers
+        inputRomanNumber.addEventListener('keyup', convertRomanToNumber);
+        btnRomanToNumber.addEventListener('click', convertRomanToNumber);
+
+        /**
+         * Clears the result text and styles, hide messages.
+         */
+        function clearResults() {
+
+          resultBlock.style.display = 'block';
+          resultElement.innerHTML = '';
+          messageBlock.style.display = 'none';
+
+        }
+
+        /**
+         * Converts a roman number to integer number.
+         * @param (*} event the DOM event, optional.
+         */
+        function convertRomanToNumber(event) {
+
+          var romanNumber,
+            number,
+            html = '';
+
+          clearResults ();
+
+          if (event !== undefined) {
+
+            if (event.keyCode !== undefined && event.keyCode !== 13) {
+              // A key was pressed by not Enter
+              return;
+            }
+
+            // Cancel the default action, if needed
+            event.preventDefault();
+
+          }
+
+          // validate
+          if (inputRomanNumber.value.length === 0) {
+            inputRomanNumber.style.border = '1px solid #e00';
+            return;
+          }
+
+          // convert
+          romanNumber = inputRomanNumber.value;
+          number = romanToInt (romanNumber);
+
+          // output
+          if (isNaN(number)) {
+            html = 'The string "' + romanNumber +'" is not a roman number.';
+          }
+          else {
+            html = '<b>' + romanNumber + '</b> is <b>' + number + '</b>';
+          }
+
+          resultElement.innerHTML = html;
+
+        }
+
+        /**
+         * Copies the page url to the clipboard for sharing.
+         */
+        function share() {
+
+          var urlBase = location.protocol + '//' + location.host + '/roman-numerals.htm',
+            qs = '',
+            params = [];
+
+          if (!navigator.clipboard) {
+            messageBlock.innerHTML = 'This function requires HTTPS protocol or localhost.';
+            messageBlock.style.display = 'block';
+          }
+          else {
+            // make
+            if (testRe.value.length > 0) {
+              params.push ('roman=' + encodeURIComponent (inputRomanNumber.value));
+            }
+
+            if (params.length > 0) {
+              qs = '?' + params.join ('&');
+            }
+
+            // copy
+            navigator.clipboard.writeText(urlBase + qs);
+    
+            /* Alert the copied text */
+            messageBlock.innerHTML = 'The page url was copied to the clipboard:<div style="word-break: break-all;">' +
+              urlBase + qs.replace (/&/g, '&amp;') + '</div>';
+            messageBlock.style.display = 'block';
+          }
+
+        }
+
+        /**
+         * Returns a number converted from the Roman number string or NaN.
+         * @param {string} s The Roman number
+         * @return {number}
+         */
+        function romanToInt (s) {
+        
+            let R = {
+                I: 1,
+                V: 5,
+                X: 10,
+                L: 50,
+                C: 100,
+                D: 500,
+                M: 1000
+            };
+
+            let prevCharValue = 0;
+            let number = 0;
+
+            for (let i = s.length - 1; i >= 0; i--) {
+
+              let c = s.charAt(i).toUpperCase();
+          
+              if (R[c] === undefined) {
+                return NaN;
+              }
+
+              let v = parseInt (R[c], 10);
+
+              if (prevCharValue <= v) {
+                number += v;
+              }
+              else {
+                number -= v;
+              }
+
+              prevCharValue = v;
+
+            }
+        
+            return number;
+        };
+  
+
+
+      })();
+    </script>
+  </body>
+</html>
