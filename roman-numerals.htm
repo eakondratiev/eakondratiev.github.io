@@ -73,7 +73,11 @@
           <div style="margin:16pt 0;">
             <div class="page-field-name"><u>R</u>oman Number</div>
             <input class="input-field" type="text" name="roman-number" id="roman-number" accesskey="R" title="Enter a Roman number" value="" />
-            <p class="note">Enter a Roman number.</p>
+            <p class="note">Enter a Roman number. For example:
+              <a href="roman-numerals.htm?roman=VII">VII</a>,
+              <a href="roman-numerals.htm?roman=DCCLXXXIX">DCCLXXXIX</a>,
+              <a href="roman-numerals.htm?roman=MMXXII">MMXXII</a>.
+            </p>
             <div class="btns">
             <button type="button" class="form-button" accesskey="N" id="button-to-number">Convert to <u>N</u>umber</button>
             </div>
@@ -101,8 +105,7 @@
           resultBlock = document.getElementById('result-block'),
           messageBlock = document.getElementById('message-block'),
           btnRomanToNumber = document.getElementById('button-to-number'),
-          urlParams = T.getUrlParameters(),
-          db = new T.Db();
+          urlParams = T.getUrlParameters();
 
         if (!Element.prototype.addEventListener) {
 
@@ -140,7 +143,7 @@
         function convertRomanToNumber(event) {
 
           var romanNumber,
-            number,
+            result,
             html = '';
 
           clearResults ();
@@ -165,14 +168,25 @@
 
           // convert
           romanNumber = inputRomanNumber.value;
-          number = romanToInt (romanNumber);
+          result = romanToInt (romanNumber);
 
           // output
-          if (isNaN(number)) {
-            html = 'The string "' + romanNumber +'" is not a roman number.';
-          }
-          else {
-            html = '<b>' + romanNumber + '</b> is <b>' + number + '</b>';
+          switch (result.error) {
+            case 0:
+              html = '<b>' + romanNumber + '</b> = <b>' + result.n + '</b>';
+              break;
+
+            case 1:
+              html = 'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman number.';
+              break;
+
+            case 2:
+              html = 'Only integer numbers from 1 to 3999 are supported.';
+              break;
+
+            default:
+              html = 'Unexpected value.';
+              break;
           }
 
           resultElement.innerHTML = html;
@@ -214,9 +228,10 @@
         }
 
         /**
-         * Returns a number converted from the Roman number string or NaN.
+         * Returns structure with converted number and an error code.
+         * Error codes: 0 - ok, 1 - not a Roman number, 2 - the value not supported.
          * @param {string} s The Roman number
-         * @return {number}
+         * @return { {n:number, error:number} }
          */
         function romanToInt (s) {
         
@@ -238,7 +253,7 @@
               let c = s.charAt(i).toUpperCase();
           
               if (R[c] === undefined) {
-                return NaN;
+                return {n: NaN, error: 1};
               }
 
               let v = parseInt (R[c], 10);
@@ -253,8 +268,12 @@
               prevCharValue = v;
 
             }
+
+          if (number < 1 || number > 3999) {
+            return {n:NaN, error: 2};
+          }
         
-            return number;
+          return {n:number, error: 0};
         };
   
 
