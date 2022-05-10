@@ -9,7 +9,7 @@ Web Tools
 * [whitespace and non-ASCII characters highlighter](https://eakondratiev.github.io/ws.htm), 
 * [IP v4 range calculator](https://eakondratiev.github.io/iprange.htm),
 * [Regex tester](https://eakondratiev.github.io/regex.htm),
-* [Roman numerals](https://eakondratiev.github.io/riman-numerals.htm),
+* [Roman numerals](https://eakondratiev.github.io/roman-numerals.htm),
 * [reducing accumulated error in floating-point summation](https://eakondratiev.github.io/floating-point-summation.htm), 
 * [speed and distance](https://eakondratiev.github.io/speed.htm), 
 etc.
