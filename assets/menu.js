@@ -9,6 +9,7 @@
  * 2022-02-05 The TOP_MENU structure and menu initializetion added.
  * 2022-03-02 T.Db constructor added.
  * 2022-02-11 Keyboard support for the site menu, handles click outside of the menu.
+ * 2022-05-10 T.MessageLevel enum and T.Message class added.
  * 
  */
 // ==ClosureCompiler==
@@ -304,7 +305,7 @@
    * then the number.toString() result is returned.
    * @param {number} n The number.
    * @param {string} locales Optional. A string with a BCP 47 language tag, or an array of such strings. 
-   * @param {*} options Optional . An object with some or all of the supported properties.
+   * @param {*} options Optional. An object with some or all of the supported properties.
    * @returns {string}
    */
   T.formatNumber = function (n, locales, options) {
@@ -342,7 +343,56 @@
 
     }
 
-  }
+  };
+
+  /**
+   * A message level: informational, warning, error.
+   */
+  T.MessageLevel = {
+    INFO:    'page-message--info',
+    WARNING: 'page-message--warning',
+    ERROR:   'page-message--error'
+  };
+
+  /**
+   * @constructor
+   * Shows and hides messages using the message element.
+   * @param {any} options the options.
+   * @param {DOMElement} options.element the message element.
+   */
+  T.Message = function (options) {
+
+    var messageElement = options.element;
+
+    return {
+
+      show: function (text, cssClass) {
+      
+        removeCss();
+
+        if (cssClass !== undefined) {
+          messageElement.classList.add (cssClass);
+        }
+
+        messageElement.innerHTML = text;
+        messageElement.style.display = 'block';
+
+      },
+
+      hide: function () {
+        removeCss();
+        messageElement.innerHTML = '';
+        messageElement.style.display = 'none';
+      }
+
+    };
+
+    /** Remove CSS classes from the message element. */
+    function removeCss() {
+      messageElement.classList.remove ('page-message--info', 'page-message--warning', 'page-message--error');
+    }
+
+  };
 
 }(window.T = window.T || {}));
 

@@ -1,6 +1,7 @@
 ﻿/*
  * File: roman-numerals.js
  * 2022-05-08
+ * 2022-05-10 errors handling added.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -13,12 +14,16 @@ function RomanNumerals() {
 
   'use strict';
 
-  var inputRomanNumber = document.getElementById('roman-number'),
+  var MAX_INPUT_LENGTH = 15, // characters
+    inputRomanNumber = document.getElementById('roman-number'),
     resultElement = document.getElementById('result'),
     resultBlock = document.getElementById('result-block'),
     messageBlock = document.getElementById('message-block'),
     btnRomanToNumber = document.getElementById('button-to-number'),
+    message = new T.Message ({element: document.getElementById('message-block')}),
     urlParams = T.getUrlParameters();
+
+  //test ();
 
   if (!Element.prototype.addEventListener) {
 
@@ -45,7 +50,7 @@ function RomanNumerals() {
 
     resultBlock.style.display = 'block';
     resultElement.innerHTML = '';
-    messageBlock.style.display = 'none';
+    message.hide ();
 
   }
 
@@ -57,7 +62,8 @@ function RomanNumerals() {
 
     var romanNumber,
       result,
-      html = '';
+      html = '',
+      inputBorderStyle = '';
 
     clearResults ();
 
@@ -73,15 +79,9 @@ function RomanNumerals() {
 
     }
 
-    // validate
-    if (inputRomanNumber.value.length === 0) {
-      inputRomanNumber.style.border = '1px solid #e00';
-      return;
-    }
-
     // convert
     romanNumber = inputRomanNumber.value;
-    result = romanToInt (romanNumber);
+    result = romanToInt (romanNumber, MAX_INPUT_LENGTH);
 
     // output
     switch (result.error) {
@@ -90,18 +90,31 @@ function RomanNumerals() {
         break;
 
       case 1:
-        html = 'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman number.';
+        message.show (
+          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman number.',
+          T.MessageLevel.WARNING);
         break;
 
       case 2:
-        html = 'Only integer numbers from 1 to 3999 are supported.';
+        message.show ('Only integer numbers from 1 to 3999 are supported.', T.MessageLevel.WARNING);
+        break;
+
+      case 3:
+        // no input value, its ok
+        break;
+
+      case 4:
+        message.show ('The Roman number is too long. Maximum length is ' +
+          MAX_INPUT_LENGTH + ' characters.', T.MessageLevel.WARNING);
         break;
 
       default:
-        html = 'Unexpected value.';
+        inputBorderStyle = '1px solid #e00';
+        message.show ('Unexpected value.', T.MessageLevel.ERROR);
         break;
     }
 
+    inputRomanNumber.style.border = inputBorderStyle;
     resultElement.innerHTML = html;
 
   }
@@ -142,24 +155,38 @@ function RomanNumerals() {
 
   /**
     * Returns structure with converted number and an error code.
-    * Error codes: 0 - ok, 1 - not a Roman number, 2 - the value not supported.
+    * Error codes: 0 - ok, 1 - not a Roman number, 2 - the value not supported,
+    *   3 - no input data, 4 - the string is too long.
     * @param {string} s The Roman number
+    * @param {number} maxLength The input string maximum length in characters.
     * @return { {n:number, error:number} }
     */
-  function romanToInt (s) {
+  function romanToInt (s, maxLength) {
         
-      let R = {
-          I: 1,
-          V: 5,
-          X: 10,
-          L: 50,
-          C: 100,
-          D: 500,
-          M: 1000
-      };
+    let R = {
+        I: 1,
+        V: 5,
+        X: 10,
+        L: 50,
+        C: 100,
+        D: 500,
+        M: 1000
+    };
 
-      let prevCharValue = 0;
-      let number = 0;
+    if (maxLength === undefined) {
+      maxLength = 15;
+    }
+
+    if (s === undefined || s.length === 0) {
+      return { n: NaN, error: 3 };
+    }
+
+    if (s.length > maxLength) {
+      return { n: NaN, error: 4 };
+    }
+
+    let prevCharValue = 0;
+    let number = 0;
 
       for (let i = s.length - 1; i >= 0; i--) {
 
@@ -201,10 +228,11 @@ function RomanNumerals() {
       {R: 'MMXXII', Expected:    2022},
       {R: 'DLXX', Expected:      570},
       {R: 'MMMDLXXIV', Expected: 3574},
+      {R: 'IIIIIVVVVVXXXXXLLLLL', Expected: NaN},
       {R: 'abc', Expected: NaN}];
 
     for (let i = 0; i < T.length; i++) {
-      let actual = romanToInt (T[i].R);
+      let actual = romanToInt (T[i].R, MAX_INPUT_LENGTH);
       console.log (T[i].R, actual.n,
         (Object.is (actual.n, T[i].Expected))? 'Test passed' : 'Test FAILED, expected: ' + T[i].Expected);
     }
