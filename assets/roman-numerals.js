@@ -2,6 +2,7 @@
  * File: roman-numerals.js
  * 2022-05-08
  * 2022-05-10 errors handling added.
+ * 2022-05-11 keyboard handler and other corrections.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -63,13 +64,14 @@ function RomanNumerals() {
     var romanNumber,
       result,
       html = '',
-      inputBorderStyle = '';
-
-    clearResults ();
+      inputBorderStyle = '',
+      key;
 
     if (event !== undefined) {
 
-      if (event.keyCode !== undefined && event.keyCode !== 13) {
+      key = event.keyCode;
+
+      if (key !== undefined && key !== 13) {
         // A key was pressed by not Enter
         return;
       }
@@ -79,8 +81,10 @@ function RomanNumerals() {
 
     }
 
+    clearResults ();
+
     // convert
-    romanNumber = inputRomanNumber.value;
+    romanNumber = inputRomanNumber.value.replace (/^\s+|\s+$/gm, ''); // get text adt trim spaces
     result = romanToInt (romanNumber, MAX_INPUT_LENGTH);
 
     // output
