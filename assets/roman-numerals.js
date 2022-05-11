@@ -16,6 +16,7 @@ function RomanNumerals() {
   'use strict';
 
   var MAX_INPUT_LENGTH = 15, // characters
+    reValid = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i, // thanks to https://stackoverflow.com/a/267405
     inputRomanNumber = document.getElementById('roman-number'),
     resultElement = document.getElementById('result'),
     resultBlock = document.getElementById('result-block'),
@@ -95,7 +96,7 @@ function RomanNumerals() {
 
       case 1:
         message.show (
-          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman number.',
+          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman numeral.',
           T.MessageLevel.WARNING);
         break;
 
@@ -110,6 +111,12 @@ function RomanNumerals() {
       case 4:
         message.show ('The Roman number is too long. Maximum length is ' +
           MAX_INPUT_LENGTH + ' characters.', T.MessageLevel.WARNING);
+        break;
+
+      case 5:
+        message.show (
+          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a valid roman numeral.',
+          T.MessageLevel.WARNING);
         break;
 
       default:
@@ -160,7 +167,7 @@ function RomanNumerals() {
   /**
     * Returns structure with converted number and an error code.
     * Error codes: 0 - ok, 1 - not a Roman number, 2 - the value not supported,
-    *   3 - no input data, 4 - the string is too long.
+    *   3 - no input data, 4 - the string is too long, 5 - invalid sequence.
     * @param {string} s The Roman number
     * @param {number} maxLength The input string maximum length in characters.
     * @return { {n:number, error:number} }
@@ -193,6 +200,7 @@ function RomanNumerals() {
     let number = 0;
 
       for (let i = s.length - 1; i >= 0; i--) {
+        // from right (less significant) to left (most significant)
 
         let c = s.charAt(i).toUpperCase();
           
@@ -202,10 +210,17 @@ function RomanNumerals() {
 
         let v = parseInt (R[c], 10);
 
+        // valildate the same symbol sequence size
+        if (!s.match(reValid)) {
+          return {n: NaN, error: 5};
+        }
+
         if (prevCharValue <= v) {
           number += v;
         }
         else {
+
+          // the value must preceed previous number in the alphabet
           number -= v;
         }
 
