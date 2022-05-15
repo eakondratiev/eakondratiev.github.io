@@ -3,6 +3,7 @@
  * 2022-05-08
  * 2022-05-10 errors handling added.
  * 2022-05-11 keyboard handler and other corrections.
+ * 2022-05-15 romanToInt - validation code moved.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -196,6 +197,10 @@ function RomanNumerals() {
       return { n: NaN, error: 4 };
     }
 
+    if (!s.match(reValid)) {
+      return {n: NaN, error: 5};
+    }
+
     let prevCharValue = 0;
     let number = 0;
 
@@ -209,11 +214,6 @@ function RomanNumerals() {
         }
 
         let v = parseInt (R[c], 10);
-
-        // valildate the same symbol sequence size
-        if (!s.match(reValid)) {
-          return {n: NaN, error: 5};
-        }
 
         if (prevCharValue <= v) {
           number += v;
