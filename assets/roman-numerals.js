@@ -414,6 +414,43 @@ function RomanNumerals() {
    */
   function test() {
 
+    var fn = intToRoman,
+      fails = [];
+
+    // TESTS:
+    console.group ('Tests 1');
+    // timing
+    var startTime = new Date();
+    for (let i = 1; i <= 3999; i++) {
+      let roman = fn (i);
+    }
+    console.log ('Lapse:', (new Date() - startTime) +  " ms.");
+
+    // test
+    for (let i = 1; i <= 3999; i++) {
+      let roman = fn (i);
+      let int = romanToInt (roman.roman, MAX_INPUT_LENGTH);
+
+      if (int.n !== i) {
+        //console.log (`Failed i: ${i}, roman: ${roman.roman}`);
+        fails.push ({i: i, Roman: roman.roman});
+      }
+      else {
+        //console.log (`OK i: ${i}, roman: ${roman.roman}`);
+      }
+
+    }
+
+    if (fails.length > 0) {
+      console.error (`Failed ${fails.length} tests:`, fails);
+    }
+    else {
+      console.log ('Tests passed');
+    }
+
+    console.groupEnd();
+    console.group ('Tests 2');
+
     const T = [
       {R: 'III', Expected:       3},
       {R: 'LVIII', Expected:     58},
@@ -429,6 +466,7 @@ function RomanNumerals() {
       console.log (T[i].R, actual.n,
         (Object.is (actual.n, T[i].Expected))? 'Test passed' : 'Test FAILED, expected: ' + T[i].Expected);
     }
+    console.groupEnd();
 
   }
 
