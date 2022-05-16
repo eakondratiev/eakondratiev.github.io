@@ -9,8 +9,8 @@
     <meta name="application-name" content="Tool" />
 
     <meta property="og:title" content="Tool">
-    <meta name="description" content="Convert Roman numeral to a number">
-    <meta property="og:description" content="Convert Roman numeral to a number">
+    <meta name="description" content="Convert Roman numeral to a number or a number to Roman numeral">
+    <meta property="og:description" content="Convert Roman numeral to a number and vise versa">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/">
@@ -74,7 +74,7 @@
           <h1>Roman Numerals Converter</h1>
 
           <div class="calc-block">
-            <h2>Convert Roman numeral to a number</h2>
+            <h2>Convert Roman Numerals to Numbers</h2>
             <div class="page-field-name"><u>R</u>oman Number</div>
             <input class="input-field" type="text" name="roman-number" id="roman-number" accesskey="R" title="Enter a Roman number" value="" />
             <p class="note">Enter a Roman numeral.
@@ -93,6 +93,23 @@
             </div>
           </div>
 
+          <div class="calc-block">
+            <h2>Convert numbers to Roman Numerals</h2>
+            <div class="page-field-name">N<u>u</u>mber</div>
+            <input class="input-field" type="text" name="integer-number" id="integer-number" accesskey="U" title="Enter a number" value="" />
+            <p class="note">Enter a number, integer, from 1 to 3999.
+              For example: how to write
+              <a href="roman-numerals.htm?number=2022">2022</a> in Roman numerals?
+            </p>
+            <div class="btns">
+            <button type="button" class="form-button" accesskey="O" id="button-to-roman">Convert to R<u>o</u>man numeral</button>
+            </div>
+            <div id="message-block-n2r" class="page-message page-message--warning" style="display: none;"></div>
+            <div id="result-block-n2r" style="display:none;">
+              <div id="result-n2r"></div>
+            </div>
+          </div>
+
           <h3>Symbols</h3>
           <div class="symbols">
             <div><a href="roman-numerals.htm?roman=I">I</a> =    1</div>
@@ -105,7 +122,7 @@
           </div>
 
           <div class="page-tags">
-            <b>#Numbers</b> <b>#Calculator</b> <b>#js</b>
+            <b>#Numbers</b> <b>#Integer</b> <b>#Calculator</b> <b>#js</b>
           </div>
         </div>
       </div>
@@ -113,7 +130,7 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/roman-numerals.min.js?20220515"></script>
+    <script src="/assets/roman-numerals.js?20220515"></script>
     <script>
       RomanNumerals();
     </script>
