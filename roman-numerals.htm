@@ -28,6 +28,8 @@
   
     <link href="/assets/main.css?20220317" rel="stylesheet" type="text/css" />
     <style>
+      .calc-block {border: solid 1px #aaa; padding: 4pt; margin: 8pt 0;}
+      .calc-block h2 {font-size: 0.9rem; margin: 0 0 8pt 0;}
       .input-field {font-size:1rem; padding: 2pt;}
       p.note {color: #000; font-size: 0.9rem; margin: 2pt 0 8pt 0;}
       .btns {margin: 8pt 0;}
@@ -70,13 +72,14 @@
           <div id="incompatible-browser">Please, update yopur browser.</div>
 
           <h1>Roman Numerals Converter</h1>
-          <p>Convert Roman numeral to a number in the range from I to
-          <a href="roman-numerals.htm?roman=MMMCMXCIX">MMMCMXCIX</a> (1...3999).</p>
 
-          <div style="margin:16pt 0;">
+          <div class="calc-block">
+            <h2>Convert Roman numeral to a number</h2>
             <div class="page-field-name"><u>R</u>oman Number</div>
             <input class="input-field" type="text" name="roman-number" id="roman-number" accesskey="R" title="Enter a Roman number" value="" />
-            <p class="note">Enter a Roman numeral. For example: what are
+            <p class="note">Enter a Roman numeral.
+              Range from I to <a href="roman-numerals.htm?roman=MMMCMXCIX">MMMCMXCIX</a> (1...3999).
+              For example: what are
               <a href="roman-numerals.htm?roman=VII">VII</a>,
               <a href="roman-numerals.htm?roman=DCCLXXXIX">DCCLXXXIX</a>,
               <a href="roman-numerals.htm?roman=MMXXII">MMXXII</a> numbers?
@@ -84,11 +87,10 @@
             <div class="btns">
             <button type="button" class="form-button" accesskey="N" id="button-to-number">Convert to <u>N</u>umber</button>
             </div>
-          </div>
-          <div id="message-block" class="page-message page-message--warning" style="display: none;"></div>
-
-          <div id="result-block" style="display:none;">
-            <div id="result"></div>
+            <div id="message-block" class="page-message page-message--warning" style="display: none;"></div>
+            <div id="result-block" style="display:none;">
+              <div id="result"></div>
+            </div>
           </div>
 
           <h3>Symbols</h3>
