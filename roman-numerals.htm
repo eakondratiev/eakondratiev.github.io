@@ -31,10 +31,13 @@
       .calc-block {border: solid 1px #aaa; padding: 4pt; margin: 8pt 0;}
       .calc-block h2 {font-size: 0.9rem; margin: 0 0 8pt 0;}
       .input-field {font-size:1rem; padding: 2pt;}
-      p.note {color: #000; font-size: 0.9rem; margin: 2pt 0 8pt 0;}
+      p.note {font-size: 0.9rem; margin: 2pt 0 8pt 0;}
       .btns {margin: 8pt 0;}
-      .err {color:#e00;}
+      .err {color:#b00; font-weight: bold;}
       .symbols div {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; margin: 4pt 0; white-space:pre;}
+      @media (prefers-color-scheme: dark) {
+        .err {color:#fb9;}
+      }
     </style>
     <script src="/assets/web-app.js"></script>
     <script src="/assets/menu.min.js?20220510"></script>
@@ -130,7 +133,7 @@
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/roman-numerals.min.js?20220516"></script>
+    <script src="/assets/roman-numerals.min.js?20220519"></script>
     <script>
       RomanNumerals();
     </script>

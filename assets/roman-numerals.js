@@ -129,7 +129,7 @@ function RomanNumerals() {
 
       case 1:
         message.show (
-          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a roman numeral.',
+          'The string "<span class="err">' + romanNumber +'</span>" is not a roman numeral.',
           T.MessageLevel.WARNING);
         break;
 
@@ -148,7 +148,7 @@ function RomanNumerals() {
 
       case 5:
         message.show (
-          'The string "<span style="color:#c00;">' + romanNumber +'</span>" is not a valid roman numeral.',
+          'The string "<span class="err">' + romanNumber +'</span>" is not a valid roman numeral.',
           T.MessageLevel.WARNING);
         break;
 
@@ -208,7 +208,7 @@ function RomanNumerals() {
 
       case 1:
         messageN2r.show (
-          'The text "<span style="color:#c00;">' + inputText +'</span>" is not a number.',
+          'The text "<span class="err">' + inputText +'</span>" is not a number.',
           T.MessageLevel.WARNING);
         break;
 
@@ -218,7 +218,7 @@ function RomanNumerals() {
 
       case 3:
         messageN2r.show (
-          'The text "<span style="color:#c00;">' + inputText +'</span>" is not recognized as an integer number.',
+          'The text "<span class="err">' + inputText +'</span>" is not recognized as an integer number.',
           T.MessageLevel.WARNING);
         break;
 
