@@ -5,6 +5,7 @@
  * 2022-05-11 keyboard handler and other corrections.
  * 2022-05-15 romanToInt - validation code moved.
  * 2022-05-16 number to Roman numeral conversion added.
+ * 2022-05-20 one form, detect entered value type and do calculations.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -19,21 +20,16 @@ function RomanNumerals() {
 
   var MAX_INPUT_LENGTH = 15, // characters
     reValid = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i, // thanks to https://stackoverflow.com/a/267405
-    inputRomanNumber = document.getElementById('roman-number'),
+    inputValue = document.getElementById('value-to-convert'),
     resultBlock = document.getElementById('result-block'),
     resultElement = document.getElementById('result'),
     messageBlock = document.getElementById('message-block'),
     btnRomanToNumber = document.getElementById('button-to-number'),
     message = new T.Message ({element: document.getElementById('message-block')}),
 
-    inputIntegerNumber = document.getElementById ('integer-number'),
-    resultBlockN2r = document.getElementById ('result-block-n2r'),
-    resultElementN2r = document.getElementById ('result-n2r'),
-    messageBlogN2r = document.getElementById ('message-block-n2r'),
-    btnNumberToRoman = document.getElementById ('button-to-roman'),
-    messageN2r = new T.Message ({element: document.getElementById('message-block-n2r')}),
-
     urlParams = T.getUrlParameters();
+
+    inputValue.maxLength = MAX_INPUT_LENGTH;
 
   //test ();
 
@@ -44,32 +40,22 @@ function RomanNumerals() {
 
   }
 
-  if (urlParams.roman !== undefined) {
+  if (urlParams.value !== undefined) {
 
-    inputRomanNumber.value = decodeURIComponent (urlParams.roman);
-    convertRomanToNumber ();
-
-  }
-
-  if (urlParams.number !== undefined) {
-
-    inputIntegerNumber.value = decodeURIComponent (urlParams.number);
-    convertNumberToRoman ();
+    inputValue.value = decodeURIComponent (urlParams.value);
+    convert ();
 
   }
 
   // Event handlers
-  inputRomanNumber.addEventListener('keyup', convertRomanToNumber);
-  btnRomanToNumber.addEventListener('click', convertRomanToNumber);
-
-  inputIntegerNumber.addEventListener('keyup', convertNumberToRoman);
-  btnNumberToRoman.addEventListener('click', convertNumberToRoman);
+  inputValue.addEventListener('keyup', convert);
+  btnRomanToNumber.addEventListener('click', convert);
 
   /**
     * Clears the result text and styles and hide messages
     * in the Roman to number block.
     */
-  function clearResultsR2N() {
+  function clearResults() {
 
     resultBlock.style.display = 'block';
     resultElement.innerHTML = '';
@@ -78,27 +64,14 @@ function RomanNumerals() {
   }
 
   /**
-    * Clears the result text and styles and hide messages
-    * in the Number to Roman block.
-    */
-  function clearResultsN2R() {
-
-    resultBlockN2r.style.display = 'block';
-    resultElementN2r.innerHTML = '';
-    messageN2r.hide ();
-
-  }
-
-  /**
     * Converts a roman numeral to an integer number.
     * @param (*} event the DOM event, optional.
     */
-  function convertRomanToNumber(event) {
+  function convert(event) {
 
-    var romanNumber,
-      result,
-      html = '',
-      inputBorderStyle = '',
+    var RE_ROMAN = /^[IVXLCDM]+$/gi,
+      RE_INTEGER = /^\d+$/gi,
+      value,
       key;
 
     if (event !== undefined) {
@@ -115,10 +88,45 @@ function RomanNumerals() {
 
     }
 
-    clearResultsR2N ();
+    clearResults ();
+
+    // get value
+    value = inputValue.value.replace (/^\s+|\s+$/gm, ''); // get text and trim spaces
+
+    // validate
+    if (value.length === 0) {
+      // nothing to convert, ok
+      return;
+    }
+
+    // detect
+    if (RE_ROMAN.test(value)) {
+      convertRomanToNumber (value);
+    }
+    else if (RE_INTEGER.test(value)) {
+      convertNumberToRoman (value);
+    }
+    else {
+      message.show (
+        'The text "<span class="err">' + value +'</span>" is not recognized as a Roman numeral or an integer number.',
+        T.MessageLevel.WARNING);
+    }
+
+  }
+
+  /**
+    * Converts a roman numeral to an integer number.
+    * @param {string} value the roman numeral.
+    */
+  function convertRomanToNumber(value) {
+
+    var romanNumber,
+      result,
+      html = '',
+      inputBorderStyle = '';
 
     // convert
-    romanNumber = inputRomanNumber.value.replace (/^\s+|\s+$/gm, ''); // get text and trim spaces
+    romanNumber = value;
     result = romanToInt (romanNumber, MAX_INPUT_LENGTH);
 
     // output
@@ -158,42 +166,25 @@ function RomanNumerals() {
         break;
     }
 
-    inputRomanNumber.style.border = inputBorderStyle;
+    inputValue.style.border = inputBorderStyle;
     resultElement.innerHTML = html;
 
   }
 
   /**
     * Converts a number to Roman numeral.
-    * @param (*} event the DOM event, optional.
+    * @param {string} stringValue the input value as string.
     */
-  function convertNumberToRoman(event) {
+  function convertNumberToRoman(stringValue) {
 
     var integerNumber,
       inputText,
       result,
       html = '',
-      inputBorderStyle = '',
-      key;
-
-    if (event !== undefined) {
-
-      key = event.keyCode;
-
-      if (key !== undefined && key !== 13) {
-        // A key was pressed by not Enter
-        return;
-      }
-
-      // Cancel the default action, if needed
-      event.preventDefault();
-
-    }
-
-    clearResultsN2R ();
+      inputBorderStyle = '';
 
     // convert
-    inputText = inputIntegerNumber.value
+    inputText = stringValue
         .replace (/^\s+|\s+$/gm, '') // get text and trim spaces
         .replace (/[,]/g, '.');      // replace the decimal delimiter to a dot
 
@@ -207,29 +198,29 @@ function RomanNumerals() {
         break;
 
       case 1:
-        messageN2r.show (
+        message.show (
           'The text "<span class="err">' + inputText +'</span>" is not a number.',
           T.MessageLevel.WARNING);
         break;
 
       case 2:
-        messageN2r.show ('Only integer numbers from 1 to 3999 are supported.', T.MessageLevel.WARNING);
+        message.show ('Only integer numbers from 1 to 3999 are supported.', T.MessageLevel.WARNING);
         break;
 
       case 3:
-        messageN2r.show (
+        message.show (
           'The text "<span class="err">' + inputText +'</span>" is not recognized as an integer number.',
           T.MessageLevel.WARNING);
         break;
 
       default:
         inputBorderStyle = '1px solid #e00';
-        messageN2r.show ('Unexpected value.', T.MessageLevel.ERROR);
+        message.show ('Unexpected value.', T.MessageLevel.ERROR);
         break;
     }
 
-    inputIntegerNumber.style.border = inputBorderStyle;
-    resultElementN2r.innerHTML = html;
+    inputValue.style.border = inputBorderStyle;
+    resultElement.innerHTML = html;
   }
 
   /**
@@ -248,7 +239,7 @@ function RomanNumerals() {
     else {
       // make
       if (testRe.value.length > 0) {
-        params.push ('roman=' + encodeURIComponent (inputRomanNumber.value));
+        params.push ('roman=' + encodeURIComponent (inputValue.value));
       }
 
       if (params.length > 0) {
