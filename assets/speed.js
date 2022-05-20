@@ -44,6 +44,8 @@ function Speed(options) {
         distance: 1.391e9},
       { name: 'From Sun to Earth',
         distance: 1.496e11},
+      { name: 'From Sun to Voyager 1 (straight-line)',
+        distance: 2.34023304e13},
       { name: 'Milky Way galaxy diameter',
         distance: 1.85e21}
     ];

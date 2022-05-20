@@ -72,6 +72,7 @@ function RomanNumerals() {
     var RE_ROMAN = /^[IVXLCDM]+$/gi,
       RE_INTEGER = /^\d+$/gi,
       value,
+      result,
       key;
 
     if (event !== undefined) {
@@ -101,15 +102,22 @@ function RomanNumerals() {
 
     // detect
     if (RE_ROMAN.test(value)) {
+
+      // Roman to number
       convertRomanToNumber (value);
     }
     else if (RE_INTEGER.test(value)) {
-      convertNumberToRoman (value);
+
+      // number to Roman
+      value = value.replace (/[,]/g, '.'); // replace the decimal delimiter to a dot
+      convertNumberToRoman (parseFloat (value)); // convert to float, the function will test is in integer or float
     }
     else {
       message.show (
         'The text "<span class="err">' + value +'</span>" is not recognized as a Roman numeral or an integer number.',
         T.MessageLevel.WARNING);
+
+      return;
     }
 
   }
@@ -173,9 +181,9 @@ function RomanNumerals() {
 
   /**
     * Converts a number to Roman numeral.
-    * @param {string} stringValue the input value as string.
+    * @param {string} floatValue the input value.
     */
-  function convertNumberToRoman(stringValue) {
+  function convertNumberToRoman(floatValue) {
 
     var integerNumber,
       inputText,
@@ -183,13 +191,7 @@ function RomanNumerals() {
       html = '',
       inputBorderStyle = '';
 
-    // convert
-    inputText = stringValue
-        .replace (/^\s+|\s+$/gm, '') // get text and trim spaces
-        .replace (/[,]/g, '.');      // replace the decimal delimiter to a dot
-
-    integerNumber = parseFloat (inputText); // convert to float, the function will test is in integer or float
-    result = intToRoman (integerNumber);
+    result = intToRoman (floatValue);
 
     // output
     switch (result.error) {
