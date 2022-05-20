@@ -73,6 +73,7 @@ function RomanNumerals() {
       RE_INTEGER = /^\d+$/gi,
       value,
       result,
+      html,
       key;
 
     if (event !== undefined) {
@@ -100,19 +101,30 @@ function RomanNumerals() {
       return;
     }
 
+    if (value.length > MAX_INPUT_LENGTH) {
+      message.show ('The input value is too long. Maximum length is ' +
+        MAX_INPUT_LENGTH + ' characters.', T.MessageLevel.WARNING);
+      return;
+    }
+
     // detect
     if (RE_ROMAN.test(value)) {
 
       // Roman to number
-      convertRomanToNumber (value);
+      result = romanToInt (value, MAX_INPUT_LENGTH);
+      result.isRomanToNumber = true;
     }
     else if (RE_INTEGER.test(value)) {
 
       // number to Roman
-      value = value.replace (/[,]/g, '.'); // replace the decimal delimiter to a dot
-      convertNumberToRoman (parseFloat (value)); // convert to float, the function will test is in integer or float
+      value = value.replace (/[,]/g, '.'); // replace the decimal delimiter with a dot
+
+      // convert to float, the function will test is in integer or float
+      result = intToRoman (parseFloat (value));
+      result.isRomanToNumber = false;
     }
     else {
+
       message.show (
         'The text "<span class="err">' + value +'</span>" is not recognized as a Roman numeral or an integer number.',
         T.MessageLevel.WARNING);
@@ -120,109 +132,41 @@ function RomanNumerals() {
       return;
     }
 
-  }
-
-  /**
-    * Converts a roman numeral to an integer number.
-    * @param {string} value the roman numeral.
-    */
-  function convertRomanToNumber(value) {
-
-    var romanNumber,
-      result,
-      html = '',
-      inputBorderStyle = '';
-
-    // convert
-    romanNumber = value;
-    result = romanToInt (romanNumber, MAX_INPUT_LENGTH);
-
-    // output
+    // Process result and errors
     switch (result.error) {
       case 0:
-        html = '<b>' + romanNumber + '</b> = <b>' + result.n + '</b>';
+        // ok
+        if (result.isRomanToNumber) {
+          html = '<b>' + result.roman + '</b> = <b>' + result.number + '</b>';
+        }
+        else {
+          html = '<b>' + result.number + '</b> = <b>' + result.roman + '</b>';
+        }
         break;
 
       case 1:
-        message.show (
-          'The string "<span class="err">' + romanNumber +'</span>" is not a roman numeral.',
-          T.MessageLevel.WARNING);
-        break;
-
-      case 2:
         message.show ('Only integer numbers from 1 to 3999 are supported.', T.MessageLevel.WARNING);
         break;
 
+      // case 2: skipped, initial validation is done
       case 3:
-        // no input value, its ok
-        break;
+        if (result.isRomanToNumber) {
+          message.show (
+            'The string "<span class="err">' + result.roman +'</span>" is not a valid roman numeral.',
+            T.MessageLevel.WARNING);
+        }
+        else {
+          message.show (
+            'The value "<span class="err">' + inputText +'</span>" is not recognized as an integer number.',
+            T.MessageLevel.WARNING);
+        }
 
-      case 4:
-        message.show ('The Roman number is too long. Maximum length is ' +
-          MAX_INPUT_LENGTH + ' characters.', T.MessageLevel.WARNING);
-        break;
-
-      case 5:
-        message.show (
-          'The string "<span class="err">' + romanNumber +'</span>" is not a valid roman numeral.',
-          T.MessageLevel.WARNING);
-        break;
-
-      default:
-        inputBorderStyle = '1px solid #e00';
-        message.show ('Unexpected value.', T.MessageLevel.ERROR);
-        break;
     }
 
-    inputValue.style.border = inputBorderStyle;
+    console.log ('res', result);
+
     resultElement.innerHTML = html;
 
-  }
-
-  /**
-    * Converts a number to Roman numeral.
-    * @param {string} floatValue the input value.
-    */
-  function convertNumberToRoman(floatValue) {
-
-    var integerNumber,
-      inputText,
-      result,
-      html = '',
-      inputBorderStyle = '';
-
-    result = intToRoman (floatValue);
-
-    // output
-    switch (result.error) {
-      case 0:
-        html = '<b>' + integerNumber + '</b> = <b>' + result.roman + '</b>';
-        break;
-
-      case 1:
-        message.show (
-          'The text "<span class="err">' + inputText +'</span>" is not a number.',
-          T.MessageLevel.WARNING);
-        break;
-
-      case 2:
-        message.show ('Only integer numbers from 1 to 3999 are supported.', T.MessageLevel.WARNING);
-        break;
-
-      case 3:
-        message.show (
-          'The text "<span class="err">' + inputText +'</span>" is not recognized as an integer number.',
-          T.MessageLevel.WARNING);
-        break;
-
-      default:
-        inputBorderStyle = '1px solid #e00';
-        message.show ('Unexpected value.', T.MessageLevel.ERROR);
-        break;
-    }
-
-    inputValue.style.border = inputBorderStyle;
-    resultElement.innerHTML = html;
   }
 
   /**
@@ -260,16 +204,16 @@ function RomanNumerals() {
   }
 
   /**
-    * Returns structure with converted number and an error code.
-    * Error codes: 0 - ok, 1 - not a Roman number, 2 - the value not supported,
-    *   3 - no input data, 4 - the string is too long, 5 - invalid sequence.
-    * @param {string} s The Roman number
+    * Returns structure with converted numeral and an error code.
+    * Error codes: 0 - ok, 1 - not in range, 2 - not a roman numeral,
+    *   3 - not recognized, 4 - no input, 5 - too long.
+    * @param {string} s The Roman numeral.
     * @param {number} maxLength The input string maximum length in characters.
-    * @return { {n:number, error:number} }
+    * @return { {roman:string, number:number, error:number} }
     */
   function romanToInt (s, maxLength) {
         
-    let R = {
+    var R = {
         I: 1,
         V: 5,
         X: 10,
@@ -279,62 +223,71 @@ function RomanNumerals() {
         M: 1000
     };
 
+    var prevCharValue = 0;
+    var number = 0;
+    var i;
+    var c;
+    var v;
+    var result = {roman: s, number: NaN, error: 0};
+
     if (maxLength === undefined) {
       maxLength = 15;
     }
 
     if (s === undefined || s.length === 0) {
-      return { n: NaN, error: 3 };
+      result.error = 4; // no input
+      return result; 
     }
 
     if (s.length > maxLength) {
-      return { n: NaN, error: 4 };
+      result.error = 5; // too long
+      return result;
     }
 
     if (!s.match(reValid)) {
-      return {n: NaN, error: 5};
+      result.error = 3; // not recognized
+      return result;
     }
 
-    let prevCharValue = 0;
-    let number = 0;
+    for (i = s.length - 1; i >= 0; i--) {
+      // from right (less significant) to left (most significant)
 
-      for (let i = s.length - 1; i >= 0; i--) {
-        // from right (less significant) to left (most significant)
-
-        let c = s.charAt(i).toUpperCase();
+      c = s.charAt(i).toUpperCase();
           
-        if (R[c] === undefined) {
-          return {n: NaN, error: 1};
-        }
-
-        let v = parseInt (R[c], 10);
-
-        if (prevCharValue <= v) {
-          number += v;
-        }
-        else {
-
-          // the value must preceed previous number in the alphabet
-          number -= v;
-        }
-
-        prevCharValue = v;
-
+      if (R[c] === undefined) {
+        result.error = 2; // not a Roman numeral
+        return result;
       }
 
+      v = parseInt (R[c], 10);
+
+      if (prevCharValue <= v) {
+        number += v;
+      }
+      else {
+
+        // the value must preceed previous number in the alphabet
+        number -= v;
+      }
+
+      prevCharValue = v;
+
+    }
+
     if (number < 1 || number > 3999) {
-      return {n:NaN, error: 2};
+      result.error = 1; // not in range
+      return result;
     }
         
-    return {n:number, error: 0};
+    result.number = number;
+    return result; // ok, no errors
   }
 
   /**
     * Returns the structure with the Roman numeral and an error code.
-    * Error codes: 0 - ok, 1 - not a number, 2 - Not in range 1...3999,
-    *   3 - Not integer
+    * Error codes: 0 - ok, 1 - not in range, 2 - not a number, 3 - not integer
     * @param {number} n the input value, a number.
-    * @return { {roman:string, error:number} }
+    * @return { {roman:string, number:number, error:number} }
     */
   function intToRoman (n) {
 
@@ -343,19 +296,22 @@ function RomanNumerals() {
       chars,
       i,
       digit,
-      result = '';
+      result = {roman: '', number: n, error: 0};;
 
     // validation
     if (typeof (n) !== 'number' || isNaN (n)) {
-      return { roman:'', error: 1 }; // Not a number
+      result.error = 2; // Not a number
+      return result;
     }
 
     if (n < 1 || n > 3999) {
-      return { roman:'', error: 2 }; // Not in range 1...3999
+      result.error = 1; // Not in range 1...3999
+      return result; 
     }
 
     if (n !== Math.floor (n)) {
-      return { roman:'', error: 3 }; // Not integer
+      result.error = 3; // Not integer
+      return result;
     }
 
     chars = n.toString().split('');
@@ -366,31 +322,31 @@ function RomanNumerals() {
 
       switch (digit) {
       case 1:
-        result = symbols[index] + result;
+        result.roman = symbols[index] + result.roman;
         break;
       case 2:
-        result = symbols[index] + symbols[index] + result;
+        result.roman = symbols[index] + symbols[index] + result.roman;
         break;
       case 3:
-        result = symbols[index] + symbols[index] + symbols[index] + result;
+        result.roman = symbols[index] + symbols[index] + symbols[index] + result.roman;
         break;
       case 4:
-        result = symbols[index] + symbols[index + 1] + result;
+        result.roman = symbols[index] + symbols[index + 1] + result.roman;
         break;
       case 5:
-        result = symbols[index + 1] + result;
+        result.roman = symbols[index + 1] + result.roman;
         break;
       case 6:
-        result = symbols[index + 1] + symbols[index] + result;
+        result.roman = symbols[index + 1] + symbols[index] + result.roman;
         break;
       case 7:
-        result = symbols[index + 1] + symbols[index] + symbols[index] + result;
+        result.roman = symbols[index + 1] + symbols[index] + symbols[index] + result.roman;
         break;
       case 8:
-        result = symbols[index + 1] + symbols[index] + symbols[index] + symbols[index] + result;
+        result.roman = symbols[index + 1] + symbols[index] + symbols[index] + symbols[index] + result.roman;
         break;
       case 9:
-        result = symbols[index] + symbols[index + 2] + result;
+        result.roman = symbols[index] + symbols[index + 2] + result.roman;
         break;
 
       }
@@ -399,7 +355,7 @@ function RomanNumerals() {
 
     }
 
-    return { roman: result, error: 0 };
+    return result; // ok, no errors
   }
 
   /**
