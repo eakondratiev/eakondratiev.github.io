@@ -163,8 +163,6 @@ function RomanNumerals() {
 
     }
 
-    console.log ('res', result);
-
     resultElement.innerHTML = html;
 
   }
