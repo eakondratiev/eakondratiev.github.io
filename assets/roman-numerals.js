@@ -5,7 +5,7 @@
  * 2022-05-11 keyboard handler and other corrections.
  * 2022-05-15 romanToInt - validation code moved.
  * 2022-05-16 number to Roman numeral conversion added.
- * 2022-05-20 one form, detect entered value type and do calculations.
+ * 2022-05-20 one form, detect entered value type and do calculations, result block on top.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -21,7 +21,6 @@ function RomanNumerals() {
   var MAX_INPUT_LENGTH = 15, // characters
     reValid = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i, // thanks to https://stackoverflow.com/a/267405
     inputValue = document.getElementById('value-to-convert'),
-    resultBlock = document.getElementById('result-block'),
     resultElement = document.getElementById('result'),
     messageBlock = document.getElementById('message-block'),
     btnRomanToNumber = document.getElementById('button-to-number'),
@@ -29,7 +28,8 @@ function RomanNumerals() {
 
     urlParams = T.getUrlParameters();
 
-    inputValue.maxLength = MAX_INPUT_LENGTH;
+  inputValue.maxLength = MAX_INPUT_LENGTH;
+  inputValue.focus();
 
   //test ();
 
@@ -57,7 +57,6 @@ function RomanNumerals() {
     */
   function clearResults() {
 
-    resultBlock.style.display = 'block';
     resultElement.innerHTML = '';
     message.hide ();
 
@@ -137,10 +136,10 @@ function RomanNumerals() {
       case 0:
         // ok
         if (result.isRomanToNumber) {
-          html = '<b>' + result.roman + '</b> = <b>' + result.number + '</b>';
+          html = formatResult (result.roman, result.number);
         }
         else {
-          html = '<b>' + result.number + '</b> = <b>' + result.roman + '</b>';
+          html = formatResult (result.number, result.roman);
         }
         break;
 
@@ -354,6 +353,17 @@ function RomanNumerals() {
     }
 
     return result; // ok, no errors
+  }
+
+  /**
+   * Returns html formatted string with the input value and result.
+   * @param {string} input
+   * @param {string} result
+   * @returns {string}
+   */
+  function formatResult(input, result) {
+
+    return '<span>' + input + ' = </span><div>' + result + '</div>';
   }
 
   /**

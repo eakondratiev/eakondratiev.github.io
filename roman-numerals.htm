@@ -9,8 +9,8 @@
     <meta name="application-name" content="Tool" />
 
     <meta property="og:title" content="Tool">
-    <meta name="description" content="Convert Roman numeral to a number or a number to Roman numeral">
-    <meta property="og:description" content="Convert Roman numeral to a number and vise versa">
+    <meta name="description" content="Convert Roman numeral to a number or a number to Roman numeral.">
+    <meta property="og:description" content="Convert Roman numeral to a number and vise versa.">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/">
@@ -28,6 +28,9 @@
   
     <link href="/assets/main.css?20220317" rel="stylesheet" type="text/css" />
     <style>
+      .result-block {border: 1px solid #ccc; margin: 8pt 0; padding: 4pt; height: 90px;}
+      .result-block span {color: #606060;}
+      .result-block div {font-size: 2.5rem;}
       .input-field {font-size:1rem; padding: 2pt;}
       p.note {font-size: 0.9rem; margin: 2pt 0 8pt 0;}
       .btns {margin: 8pt 0;}
@@ -74,6 +77,8 @@
 
           <h1>Roman Numerals Converter</h1>
 
+          <div class="result-block" id="result"></div>
+
           <div style="margin: 16pt 0;">
             <div class="page-field-name"><u>R</u>oman Numeral or Integer number</div>
             <input class="input-field" type="text" name="value-to-convert" id="value-to-convert" accesskey="R" title="Enter a Roman numeral or an integer number" value="" maxlength="15" />
@@ -84,9 +89,6 @@
             <button type="button" class="form-button" accesskey="N" id="button-to-number">Convert to <u>N</u>umber</button>
             </div>
             <div id="message-block" class="page-message page-message--warning" style="display: none;"></div>
-            <div id="result-block" style="display:none;">
-              <div id="result"></div>
-            </div>
           </div>
 
           <h3>Some Examples</h3>
