@@ -74,14 +74,14 @@
           <p>Shows representation of the floating-point numbers in binary formats.</p>
 
           <div class="fp-form">
-            <input type="text" id="input-fp-number" placeholder="0.1" value="" aria-label="Enter a floating point number">
+            <input type="text" id="input-fp-number" accesskey="N" placeholder="Enter a number" value="" aria-label="Enter a floating point number">
             <button type="button" id="btn-show-rep" accesskey="S"><u>S</u>how</button>
           </div>
-          <div class="note">Enter a floating point number.</div>
+          <div class="note">Enter a floating point <u>n</u>umber.</div>
           <div class="note">Examples:
             <a href="floating-point-representation.htm?n=0.1">0.1</a>,
             <a href="floating-point-representation.htm?n=-2.0">-2.0</a>,
-            <a href="floating-point-representation.htm?n=6.0">6.0</a>,
+            <a href="floating-point-representation.htm?n=6.0">6.0</a>
           </div>
           <div class="fp-representation"></div>
 
@@ -145,6 +145,8 @@
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
          window.fetch === undefined ||
+         typeof WebAssembly !== "object" ||
+         typeof WebAssembly.instantiate !== "function" ||
          !Element.prototype.addEventListener ||
          !Array.prototype.map ||
          !Array.prototype.reduce) {
