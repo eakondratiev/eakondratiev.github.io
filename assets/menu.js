@@ -10,6 +10,7 @@
  * 2022-03-02 T.Db constructor added.
  * 2022-02-11 Keyboard support for the site menu, handles click outside of the menu.
  * 2022-05-10 T.MessageLevel enum and T.Message class added.
+ * 2022-06-22 The Install App button added.
  * 
  */
 // ==ClosureCompiler==
@@ -37,8 +38,9 @@
       items: [
         {url: 'crd-reader.htm', name: 'CRD Reader'}
       ]}
-    ],
-    selectedItem = -1,
+    ];
+
+  var selectedItem = -1,
     itemElements = [],
     menu = {};
 
@@ -87,6 +89,11 @@
         html += '</ul>';
 
       }
+
+      // the Install App button
+      html += '<div class="install-app-block" style="display:none;">' +
+        '<button type="button">Install App</button>' +
+        '</div>';
 
       c.innerHTML = html;
 
