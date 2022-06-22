@@ -10,6 +10,7 @@ table { border-collapse:collapse; border-spacing:0; }
 pre {margin: 12pt 0;}
 code, .code {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; font-size: 10pt;
   background-color: #f3f3f3; border: solid 1px #ddd; border-radius: 2pt; padding: 2pt 4pt;}
+noscript div {border: solid 1px #c20; color: #c20; margin: 0 0 8pt 0; padding: 8pt;}
 h1 { color: #222; font-size:1.2rem; }
 textarea { font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; }
 button { background: #eee; border: solid 1px #aaa; border-radius: 3px; color: #333; padding: 2pt 4pt; }
@@ -87,6 +88,7 @@ header.content {grid-template-columns: 35px 1fr; padding-top: 8pt;}
 
 @media (prefers-color-scheme: dark) {
   body {background: #222;}
+  noscript div {color: #faa; border-color: #f44;}
   code, .code {background-color: #505050; color: #eee; border-color: #606060;}
   button { background: #555; border-color: #777; color: #eee; }
   button:hover { background: #777; color: #fff; border-color: #999; }
