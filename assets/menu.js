@@ -148,7 +148,7 @@
 
     });
 
-    // TODO: remove comment and compile
+    // Log the page was loaded
     T.log ("Page load");
 
     /**
