@@ -148,7 +148,8 @@
 
     });
 
-    T.log ("Page load");
+    // TODO: remove comment and compile
+    //T.log ("Page load");
 
     /**
      * Sets the focus on the menu item.
