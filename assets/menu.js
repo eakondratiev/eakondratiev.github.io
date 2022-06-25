@@ -148,6 +148,8 @@
 
     });
 
+    log ("Page load");
+
     /**
      * Sets the focus on the menu item.
      * @param {any} itemContainer
@@ -206,6 +208,43 @@
 
     // resets selected item
     selectedItem = -1;
+  }
+
+  /**
+   * Logs the event using external web-service.
+   * @param {string} eventName the event name.
+   */
+  function log (eventName){
+
+    var url = 'https://kleit.ru/tool/?';
+
+    // check used functions
+    if (window.fetch === undefined) {
+      return;
+    }
+
+    // 1. collect
+    var data = [
+      'e=' + eventName,
+      'p=' + encodeURIComponent (window.location.pathname),
+      'q=' + encodeURIComponent (window.location.search)];
+
+    if (document.referrer !== '') {
+      data.push('r=' + encodeURIComponent (document.referrer));
+    }
+
+    // 2. send
+    fetch(url + data.join('&'), {method:'GET'})
+      .then(function (response) {
+        if (!response.ok) { console.log ('HTTP error. Status: ' + response.status); }
+          return response.text();
+        }
+      )
+      .then(function (text) { 
+        console.log ('GOT ' + text);
+      })
+      .catch(console.error);  
+
   }
 
 })();
