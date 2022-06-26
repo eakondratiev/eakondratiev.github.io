@@ -95,12 +95,12 @@
 
           <h2>Download ReadCrd <b class="tool-download-arr">&darr;</b></h2>
           <div style="margin: 14pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-linux-x86-64.tar" download rel="noreferrer" data-t="Linux">
             <b>Download for Linux</b> 64-bit</a>
             <span class="tool-no-wrap">tar, <b>15 KB</b> unpacked.</span>
           </div>
           <div style="margin: 14pt 0;">
-          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer">
+          <a class="tool-download" href="https://github.com/eakondratiev/ReadCrd/releases/download/1.0.6/ReadCrd-Windows-x86-64.zip" download rel="noreferrer" data-t="Windows">
             <b>Download for Windows</b> 64-bit</a>
             <span class="tool-no-wrap">zip, <b>19 KB</b> unpacked.</span>
           </div>
@@ -165,7 +165,7 @@ ReadCrd.exe Contacts.CRD</pre>
         var i;
         for (i = 0; i < a.length; i++) {
           a[i].addEventListener('click', function(){
-            T.log ('Download for ' + (i == 0? 'Linux' : 'Windows'));
+            T.log ('Download for ' + this.getAttribute('data-t');
           });
         }
       })();
