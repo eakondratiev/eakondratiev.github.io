@@ -154,5 +154,21 @@ ReadCrd.exe Contacts.CRD</pre>
     <div class="page-wide footer">
       imperfect <b>tools</b>
     </div>
+    <script>
+      (function(){
+        'use strict';
+        if (!Element.prototype.addEventListener || !Element.prototype.getElementsByClassName) {
+          console.log ('no');
+          return;
+        }
+        var a = document.getElementsByClassName('tool-download');
+        var i;
+        for (i = 0; i < a.length; i++) {
+          a[i].addEventListener('click', function(){
+            T.log ('Download for ' + (i == 0? 'Linux' : 'Windows'));
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
