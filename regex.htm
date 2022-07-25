@@ -36,6 +36,7 @@
       .re-space {background-color: #fd0; padding:0 2pt;}
       .re-match h4 {font-weight: normal; margin-top: 8pt; opacity:0.7;}
       .err {color:#e00;}
+      .code-label {opacity: 0.7; font-size:0.8rem; margin-bottom: -4pt;}
     </style>
     <script src="/assets/menu.min.js?20220625"></script>
     <script src="/assets/web-app.js"></script>
@@ -81,7 +82,7 @@
           <div id="incompatible-browser">Please, update yopur browser.</div>
 
           <h1>Test your regular expressions</h1>
-          <div>Javascript flavor</div>
+          <div>The tool for programmers</div>
 
           <div style="margin:16pt 0;">
             <div class="page-field-name">Regular E<u>x</u>pression</div>
@@ -255,8 +256,12 @@
 
             re = new RegExp(testRe.value, flags);
 
-            jsResultBlock.innerHTML += '<p class="code">var re = <b>/' +
-              testRe.value + '/' + flags + '</b>;</p>';
+            jsResultBlock.innerHTML +=
+              '<div class="code-label">Javascript code:</div>' +
+              '<p class="code">' +
+              'var re = <b>/' +
+              testRe.value.replace (/([/])/gi, '\\$1') +
+              '/' + flags + '</b>;</p>';
 
             // 1. isMatch
             (function(){
