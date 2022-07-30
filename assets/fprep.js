@@ -56,10 +56,10 @@ function processFloatingPointValue(inputElement, resultElement) {
       const arr32 = new Int32Array(memory.buffer, 0, 32);
       const arr64 = new Int32Array(memory.buffer, 0, 64);
 
-      getFloatBits(arr32.byteOffser, number);
+      getFloatBits(arr32.byteOffset, number);
       resultElement.innerHTML += getResults (arr32, number);
 
-      getDoubleBits(arr64.byteOffser, number);
+      getDoubleBits(arr64.byteOffset, number);
       resultElement.innerHTML += getResults (arr64, number);
 
       resultElement.innerHTML += '<p>The javascript representation is 64-bits</p>' +
