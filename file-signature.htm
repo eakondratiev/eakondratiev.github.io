@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
     <link href="/assets/main.css?20220622" rel="stylesheet" type="text/css" />
-    <script src="/assets/menu.min.js?20220625"></script>
+    <script src="/assets/menu.min.js?20220730"></script>
     <script src="/assets/web-app.js"></script>
     <style>
       .file-signature {font-size:0.8rem; margin: 16pt 0; color:#333;}
@@ -86,6 +86,8 @@
     </div>
     <script>
       'use strict';
+
+      var _ToolNoLogs = true; // TODO: remove on prod
 
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
@@ -163,19 +165,7 @@
                 table: new WebAssembly.Table({
                     initial: 0,
                     element: 'anyfunc',
-                }),
-                printf: index=> {
-                    let s = "";
-                    while(true){
-                        if(buffer[index] !== 0){
-                            s += String.fromCharCode(buffer[index]);
-                            index++;
-                        }else{
-                            console.log(s);
-                            return;
-                        }
-                    }
-                }
+                })
             }          
           };
 
@@ -189,13 +179,12 @@
             var instance = results.instance;
 
             const { memory, getFileSignature } = instance.exports;
+            const mem = new Uint8Array(memory.buffer, 0);
 
-            const arr32 = new Uint8Array(memory.buffer, 0);
-
-            var r = getFileSignature (fileData, arr32.byteOffset);
+            var r = getFileSignature (fileData, mem.byteOffset);
             resultElement.innerHTML += ' * WASM? R=' + r.toString() +
-              ' OUTPUT: ' + getStringFromBuffer(arr32);
-            //console.log ('RES', arr32);
+              ' OUTPUT: ' + getStringFromBuffer(mem);
+            //console.log ('RES', mem);
 
           })
           .catch(err => {

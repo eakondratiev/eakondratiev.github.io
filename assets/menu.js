@@ -12,6 +12,7 @@
  * 2022-05-10 T.MessageLevel enum and T.Message class added.
  * 2022-06-22 The Install App button added.
  * 2022-06-25 T.log() added.
+ * 2022-07-30 conditionnal logging.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -149,7 +150,9 @@
     });
 
     // Log the page was loaded
-    T.log ("Page load");
+    if (typeof _ToolNoLogs === 'undefined' || _ToolNoLogs !== true) {
+      T.log ("Page load");
+    }
 
     /**
      * Sets the focus on the menu item.
