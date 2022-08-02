@@ -116,6 +116,10 @@
             showSignature(fileElement, resultElement);
           }
         });
+
+        fileElement.addEventListener('change', function(e) {
+          showSignature(fileElement, resultElement);
+        });
       }
 
       function showSignature(fileElement, resultElement) {
@@ -138,8 +142,6 @@
 
           reader.onload = function (e) {
             getSignatue (e.target.result, resultElement);
-            resultElement.innerHTML += ' * Read';
-            console.log ('Read', e.target.result);
           };
 
           reader.onerror = function (e) {
@@ -179,13 +181,32 @@
             var instance = results.instance;
 
             const { memory, getFileSignature } = instance.exports;
-            const mem = new Uint8Array(memory.buffer, 0);
 
-            var r = getFileSignature (fileData, mem.byteOffset);
-            resultElement.innerHTML += ' * WASM? R=' + r.toString() +
-              ' OUTPUT: ' + getStringFromBuffer(mem);
-            //console.log ('RES', mem);
+            // create input and output arrays
+            let allZeroes = a => {
+              for (let i = 0; i < a.length; i++) {a[i] = 0;}
+            };
 
+            // input
+            const ARRAY_SIZE = 24
+            let offset = 0
+
+            const fileBytes = new Uint8Array(memory.buffer, offset, ARRAY_SIZE);
+            allZeroes (fileBytes);
+            fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, ARRAY_SIZE)));
+
+            // result
+            offset += ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
+            const resultBytes = new Uint8Array(memory.buffer, offset, ARRAY_SIZE);
+            allZeroes (resultBytes);
+
+            var r = getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, ARRAY_SIZE);
+
+            resultElement.innerHTML += 'Signature: ' + getStringFromBuffer(resultBytes);
+
+            console.log ('RES', {fileBytes, resultBytes});
+
+            
           })
           .catch(err => {
             resultElement.innerHTML += ' * ERR: ' + err.toString();
