@@ -112,21 +112,26 @@
         var calcBtn = document.getElementById('btn-show');
 
         calcBtn.addEventListener('click', function () {
-          showSignature(fileElement, resultElement);
+          showFileProperties(fileElement, resultElement);
         });
 
         fileElement.addEventListener('keypress', function(e) { 
           if (e.key === 'Enter') {
-            showSignature(fileElement, resultElement);
+            showFileProperties(fileElement, resultElement);
           }
         });
 
         fileElement.addEventListener('change', function(e) {
-          showSignature(fileElement, resultElement);
+          showFileProperties(fileElement, resultElement);
         });
       }
 
-      function showSignature(fileElement, resultElement) {
+      /**
+       * Appends the file properties to the result element.
+       * @param {*} fileElement
+       * @param {*} resultElement
+       */
+      function showFileProperties(fileElement, resultElement) {
 
         var r = '';
         var file;
@@ -145,6 +150,8 @@
             getResultProperty ('File MIME type', file.type) +
             getResultProperty ('File size', formatFileSize (file.size));
 
+          reader.readAsArrayBuffer (file);
+
           reader.onload = function (e) {
             getSignatue (e.target.result, resultElement);
           };
@@ -153,7 +160,6 @@
             console.log ('Read error', e.type);
           }
 
-          reader.readAsArrayBuffer (file);
         }
 
         resultElement.innerHTML = r;
@@ -297,7 +303,7 @@
         }
 
         if (SIGNATURES[key] === undefined) {
-          return 'unknown file ' + key;
+          return 'unknown signature ' + key;
         }
 
         return SIGNATURES[key].description;
