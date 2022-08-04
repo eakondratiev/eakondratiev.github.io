@@ -28,7 +28,7 @@
     <script src="/assets/menu.min.js?20220730"></script>
     <script src="/assets/web-app.js"></script>
     <style>
-      .file-signature {font-size:0.8rem; margin: 16pt 0; color:#333;}
+      .file-signature {font-size:0.9rem; margin: 16pt 0; color:#333;}
       .file-prop {display: flex;}
       .file-prop-name {width: 75pt;}
       .file-prop-value {
@@ -76,7 +76,7 @@
 
           <div class="file-signature"></div>
 
-          <p style="font-size:0.8;">
+          <p style="font-size:0.8rem;">
             Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, WIkipedia.org</a>
           </p>
           <div class="page-tags">
@@ -128,11 +128,9 @@
 
       function showSignature(fileElement, resultElement) {
 
-        var FMT = {minimumFractionDigits: 0, maximumFractionDigits: 1};
         var r = '';
         var file;
         var reader = new FileReader();
-        var fsize = '';
 
         if (fileElement.files === undefined ||
             fileElement.files.length === 0) {
@@ -142,15 +140,10 @@
         else {
           file = fileElement.files[0];
 
-          if (file.size > 1024) {
-            fsize = T.formatNumber(file.size/1024, 'en-US', FMT) + ' KB, ';
-          }
-          fsize += file.size + ' byte(s)';
-
           r =
             getResultProperty ('File name', file.name) +
             getResultProperty ('File MIME type', file.type) +
-            getResultProperty ('File size', fsize);
+            getResultProperty ('File size', formatFileSize (file.size));
 
           reader.onload = function (e) {
             getSignatue (e.target.result, resultElement);
@@ -245,6 +238,33 @@
             '<span class="file-prop-name">' + name + '</span>' +
             '<span class="file-prop-value">' + value + '</span>' +
             '</div>';
+      }
+
+      /**
+       * Returns string with the file size.
+       * @param {number} size
+       */
+      function formatFileSize(size) {
+
+        var FMT = {minimumFractionDigits: 0, maximumFractionDigits: 1};
+        var KB = 1024;       // 2^10
+        var MB = 1048576;    // 2^20
+        var GB = 1073741824; // 2^30
+        var t = '';
+
+        if (size >= GB) {
+          t = T.formatNumber(size/GB, 'en-US', FMT) + ' KB, ';
+        }
+        else if (size >= MB) {
+          t = T.formatNumber(size/MB, 'en-US', FMT) + ' KB, ';
+        }
+        else if (size >= KB) {
+          t = T.formatNumber(size/KB, 'en-US', FMT) + ' KB, ';
+        }
+
+        t += size + ' byte(s)';
+
+        return t;
       }
 
       /**
