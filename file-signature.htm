@@ -31,8 +31,8 @@
       .file-signature {font-size:0.9rem; margin: 16pt 0; color:#333;}
       .file-prop {display: flex; margin: 8pt;}
       .file-prop-name {width: 75pt;}
-      .file-prop-value {
-        font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
+      .file-prop-value {font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
+      .list-all {font-size:0.9rem;}
     </style>
   <body>
     <div class="main-content">
@@ -75,7 +75,7 @@
           </div>
 
           <div class="file-signature"></div>
-          <div id="list-all"></div>
+          <div class="list-all"></div>
 
           <p style="font-size:0.8rem;">
             Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, WIkipedia.org</a>
@@ -177,7 +177,7 @@
         var resultElement = document.getElementsByClassName('file-signature')[0];
         var calcBtn = document.getElementById('btn-show');
 
-        var listAll = document.getElementById('list-all').innerHTML = listAllDescriptions(SIGNATURES);
+        var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
         calcBtn.addEventListener('click', function () {
           showFileProperties(fileElement, resultElement);
@@ -392,7 +392,8 @@
           html += '<li>' + list[keys[i]].description + '</li>';
         }
 
-        return '<ul>' + html + '</ul>';
+        return '<p>Formats supported: <b>' + keys.length + '</b></p>' +
+          '<ul>' + html + '</ul>';
       }
     </script>
   </body>
