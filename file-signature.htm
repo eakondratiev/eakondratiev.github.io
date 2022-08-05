@@ -29,7 +29,7 @@
     <script src="/assets/web-app.js"></script>
     <style>
       .file-signature {font-size:0.9rem; margin: 16pt 0; color:#333;}
-      .file-prop {display: flex;}
+      .file-prop {display: flex; margin: 8pt;}
       .file-prop-name {width: 75pt;}
       .file-prop-value {
         font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
@@ -75,6 +75,7 @@
           </div>
 
           <div class="file-signature"></div>
+          <div id="list-all"></div>
 
           <p style="font-size:0.8rem;">
             Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, WIkipedia.org</a>
@@ -93,6 +94,71 @@
 
       var _ToolNoLogs = true; // TODO: remove on prod
 
+      /** Definitions */
+      var SIGNATURES = {
+        'OracleVMDisk': {description: 'VirtualBox Virtual Hard Disk'},
+        'PuTTY-key2': {description: 'PuTTY private key file version 2'},
+        'PuTTY-key3': {description: 'PuTTY private key file version 3'},
+        'pem-crt': {description: 'PEM encoded X.509 certificate'},
+        'pem-csr': {description: 'PEM encoded X.509 Certificate Signing Request'},
+        'pem-key': {description: 'PEM encoded X.509 PKCS#8 private key'},
+        'pem-DSAkey': {description: 'PEM encoded X.509 PKCS#1 DSA private key'},
+        'pem-RSAkey': {description: 'PEM encoded X.509 PKCS#1 RSA private key'},
+        'AppleWorks5': {description: 'AppleWorks 5 document'},
+        'AppleWorks6': {description: 'AppleWorks 6 document'},
+        'EPS3.0': {description: 'Encapsulated PostScript file version 3.0'},
+        'EPS3.1': {description: 'Encapsulated PostScript file version 3.1'},
+        'SQLite3': {description: 'SQLite Database'},
+        'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
+        'DJVU': {description: 'DjVu document'},
+        'AIFF': {description: 'AIFF, Audio Interchange File Format'},
+        'wav':  {description: 'wav, Waveform Audio File Format'},
+        'avi':  {description: 'avi, Audio Video Interleave video format'},
+        'webp': {description: 'Google WebP image file'},
+        'ani':  {description: 'Animated cursor'},
+        'dcr':  {description: 'Adobe Shockwave file'},
+        'dir':  {description: 'Macromedia Director file'},
+        'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
+        'JPEG2000': {description: 'JPEG 2000 file'},
+        'WinHtmlHelp': {description: 'chm, Microsoft Windows HtmlHelp file'},
+        'CanonRAW': {description: 'Canon RAW Format Version 2'},
+        'vhd':  {description: 'Windows Virtual PC Virtual Hard Disk'},
+        'vhdx': {description: 'Windows Virtual PC Windows 8 Virtual Hard Disk file'},
+        'evtx': {description: 'Windows Event Viewer XML file'},
+        'TAR': {description: 'tar archive'},
+        'deb': {description: 'Linux deb file'},
+        'mp4': {description: 'ISO Base Media file (MPEG-4)'},
+        'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
+                  ' It can contain the equivalent of files and directories.' +
+                  ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
+        'MS-SDI': {description: 'SDI, System Deployment Image, a disk image format used by Microsoft'},
+        'PNG': {description: 'png, Image encoded in the Portable Network Graphics format'},
+        'RAR1.5': {description: 'rar, Roshal ARchive compressed archive v1.50 onwards'},
+        'RAR5':   {description: 'rar, Roshal ARchive compressed archive v5.00 onwards'},
+        'WinUpdDelta': {description: 'Windows Update Binary Delta Compression file'},
+        'xcf': {description: 'XCF file, GIMP native'},
+        'GIF87a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF87a)'},
+        'GIF89a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF89a)'},
+        '7z': {description: '7-Zip File Format'},
+        'xz': {description: 'xz, tar.xz - XZ compressed file, LZMA2 compression'},
+        'ftyp3g': {description: '3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files'},
+        'PDF': {description: 'PDF document'},
+        'iso-sdi': {description: 'cdi, CD-i CD image file'},
+        'ttf': {description: 'TrueType font'},
+        'ico': {description: 'Computer icon encoded in ICO file format'},
+        'elf': {description: 'Executable and Linkable Format'},
+        'OGGS': {description: 'Ogg, an open source media container format'},
+        'PSD': {description: 'Adobe Photoshop\'s native file'},
+        'Mach-O32': {description: 'Mach-O binary, 32-bit'},
+        'Mach-O64': {description: 'Mach-O binary, 64-bit'},
+        'Mach-O32rev': {description: 'Mach-O binary, reverse byte ordering scheme, 32-bit'},
+        'Mach-O64rev': {description: 'Mach-O binary, reverse byte ordering scheme, 64-bit'},
+        'ZIP': {description: 'zip file format and formats based on it, such as EPUB, JAR, ODF, OOXML'},
+        'LZIP': {description: 'lzip compressed file'},
+        'LZ4': {description: ' 	LZ4 compressed file'},
+
+      };
+
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
          window.fetch === undefined ||
@@ -110,6 +176,8 @@
         var fileElement = document.getElementById ('input-file');
         var resultElement = document.getElementsByClassName('file-signature')[0];
         var calcBtn = document.getElementById('btn-show');
+
+        var listAll = document.getElementById('list-all').innerHTML = listAllDescriptions(SIGNATURES);
 
         calcBtn.addEventListener('click', function () {
           showFileProperties(fileElement, resultElement);
@@ -204,19 +272,20 @@
             };
 
             // input
-            const ARRAY_SIZE = 300; // some signatures uses an offset
+            const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
+            const RESULT_ARRAY_SIZE = 45;
             let offset = 0;
 
-            const fileBytes = new Uint8Array(memory.buffer, offset, ARRAY_SIZE);
+            const fileBytes = new Uint8Array(memory.buffer, offset, FILE_ARRAY_SIZE);
             allZeroes (fileBytes);
-            fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, ARRAY_SIZE)));
+            fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
 
             // result
-            offset += ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
-            const resultBytes = new Uint8Array(memory.buffer, offset, ARRAY_SIZE);
+            offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
+            const resultBytes = new Uint8Array(memory.buffer, offset, RESULT_ARRAY_SIZE);
             allZeroes (resultBytes);
 
-            var r = getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, ARRAY_SIZE);
+            var r = getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
             resultElement.innerHTML += getResultProperty ('Description', getDescription (getStringFromBuffer(resultBytes)));
 
@@ -308,11 +377,23 @@
 
         return SIGNATURES[key].description;
       }
-    
-      var SIGNATURES = {
-        JPEG: {description: 'JPEG raw or in the JFIF or Exif'}
-        };
-    
+
+      /**
+       * Returns the html list of all supported file descriptions.
+       * @param list
+       */
+      function listAllDescriptions(list) {
+        
+        var keys = Object.keys (list);
+        var i;
+        var html = '';
+
+        for (i = 0; i < keys.length; i++) {
+          html += '<li>' + list[keys[i]].description + '</li>';
+        }
+
+        return '<ul>' + html + '</ul>';
+      }
     </script>
   </body>
 </html>
