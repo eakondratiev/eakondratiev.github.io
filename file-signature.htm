@@ -33,6 +33,7 @@
       .file-prop-name {width: 75pt;}
       .file-prop-value {font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
       .list-all {font-size:0.9rem;}
+      .file-bytes {font-style: normal;}
     </style>
   <body>
     <div class="main-content">
@@ -71,7 +72,6 @@
 
           <div class="fp-form">
             <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file">
-            <button type="button" id="btn-show" accesskey="S"><u>S</u>how</button>
           </div>
 
           <div class="file-signature"></div>
@@ -196,8 +196,23 @@
         'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, RRG card file'},
         'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, MGC card file'},
         'SWF': {description: 'swf, Adobe Flash'},
-        'mp3': {description: 'MP3 audio file'},
-
+        'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
+        'mp3': {description: 'MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag'},
+        'bmp': {description: 'BMP file, a bitmap format used mostly in the Windows world'},
+        'UTF16LE': {description: 'Text file with UTF-16LE byte order mark'},
+        'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'},
+        'DosMZ': {description: 'DOS MZ executable and its descendants (including NE and PE)'},
+        'DosZM': {description: 'DOS ZM executable and its descendants (rare)'},
+        'Shebang': {description: 'Script or data to be passed to the program following the shebang (#!)'},
+        'tar-LZW': {description: 'Compressed file (often tar zip) using Lempel-Ziv-Welch algorithm'},
+        'tar-LZH': {description: 'Compressed file (often tar zip) using LZH algorithm'},
+        'gz': {description: 'GZIP compressed file'},
+        'arj': {description: 'ARJ compressed file'},
+        'CPM3': {description: 'com, executable file, CP/M 3 and higher with overlays'},
+        'PIC-PIF-SEA-OCR': {description: 'PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File)' +
+                           ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
+        'MPEG-Transport': {description: 'ts, tsv, tsa, mpg, mpeg - MPEG Transport Stream (MPEG-2 Part 1)'},
+        'MOV': {description: 'QuickTime MOV, a video container'}
 
       };
 
@@ -217,13 +232,10 @@
 
         var fileElement = document.getElementById ('input-file');
         var resultElement = document.getElementsByClassName('file-signature')[0];
-        var calcBtn = document.getElementById('btn-show');
 
         var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
-        calcBtn.addEventListener('click', function () {
-          showFileProperties(fileElement, resultElement);
-        });
+        showFileProperties(fileElement, resultElement);
 
         fileElement.addEventListener('keypress', function(e) { 
           if (e.key === 'Enter') {
@@ -250,7 +262,7 @@
         if (fileElement.files === undefined ||
             fileElement.files.length === 0) {
 
-          r = 'SELECT A FILE!';
+          r = 'Please, select a file.';
         }
         else {
           file = fileElement.files[0];
@@ -263,7 +275,7 @@
           reader.readAsArrayBuffer (file);
 
           reader.onload = function (e) {
-            getSignatue (e.target.result, resultElement);
+            getSignatue (e.target.result, file, resultElement);
           };
 
           reader.onerror = function (e) {
@@ -278,9 +290,10 @@
       /**
        * Processes the file bytes and appends the file description to the result element.
        * @param {*} fileData
+       * @param {FILE} file
        * @param {*} resultElement
        */
-      function getSignatue(fileData, resultElement) {
+      function getSignatue(fileData, file, resultElement) {
 
         // https://wasdk.github.io/WasmFiddle/
         // move -Force C:\Users\ekond\Downloads\program.wasm D:\MyStuff\EA\eakondratiev.github.io\assets\filesignature.wasm
@@ -316,6 +329,8 @@
             // input
             const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
             const RESULT_ARRAY_SIZE = 45;
+            var MAX_SHOWN_BYTES = 16;
+
             let offset = 0;
 
             const fileBytes = new Uint8Array(memory.buffer, offset, FILE_ARRAY_SIZE);
@@ -327,16 +342,23 @@
             const resultBytes = new Uint8Array(memory.buffer, offset, RESULT_ARRAY_SIZE);
             allZeroes (resultBytes);
 
-            var r = getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
+            getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
-            resultElement.innerHTML += getResultProperty ('Description', getDescription (getStringFromBuffer(resultBytes)));
+            var description = getDescription (getStringFromBuffer(resultBytes), resultBytes);
 
-            console.log ('RES', {fileBytes, resultBytes});
+            resultElement.innerHTML += getResultProperty ('Description', description);
 
+            if (description === 'unknown signature n/a') {
+              resultElement.innerHTML += getResultProperty (
+                  'First bytes',
+                  getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
+            }
+
+            //console.log ('RES', {fileBytes, resultBytes});
             
           })
           .catch(err => {
-            resultElement.innerHTML += ' * ERR: ' + err.toString();
+            resultElement.innerHTML += '<div class="page-message page-message--error">' + err.toString() + "</div>";
             console.log(err);
             }
           );
@@ -406,8 +428,9 @@
       /**
        * Returns the file description by the key.
        * @param {string} key
+       * @param {[]} fileBytes
        */
-      function getDescription(key) {
+      function getDescription(key, fileBytes) {
 
         if (key === '') {
           return 'signature not found';
@@ -436,6 +459,47 @@
 
         return '<p>Formats supported: <b>' + keys.length + '</b></p>' +
           '<ul>' + html + '</ul>';
+      }
+    
+      /**
+       * Returns html code with the first bytes of the array.
+       * @param fileBytes
+       * @param size
+       */
+      function getFirstBytes(fileBytes, size) {
+
+        console.log ('BYTES', fileBytes);
+
+        var i;
+        var hex = '';
+        var ascii = '';
+
+        for (i = 0; i < size; i++) {
+          hex += fileBytes[i].toString(16) + ' ';
+
+          if (32 < fileBytes[i] && fileBytes[i] < 127) {
+            // printable characters
+            ascii += encodeChar (String.fromCharCode (fileBytes[i]));
+          }
+          else {
+            ascii += '&middot;'
+          }
+        }
+
+        return '<div class="code file-bytes">' +
+          '<h4>Hex</h4>' + hex +
+          '<h4>ASCII</h4>' + ascii +
+          '</div>';
+      }
+
+      function encodeChar(char) {
+
+        switch (char) {
+          case '<': return '&lt;';
+          case '>': return '&gt;';
+          case '&': return '&amp;';
+          default: return char;
+        }
       }
     </script>
   </body>
