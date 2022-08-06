@@ -344,15 +344,15 @@
 
             getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
-            var description = getDescription (getStringFromBuffer(resultBytes), resultBytes);
+            var description = getDescription (getStringFromBuffer(resultBytes));
 
             resultElement.innerHTML += getResultProperty ('Description', description);
 
-            if (description === 'unknown signature n/a') {
+            // todo: if (description.match ('^unknown signature')) {
               resultElement.innerHTML += getResultProperty (
                   'First bytes',
                   getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
-            }
+            //}
 
             //console.log ('RES', {fileBytes, resultBytes});
             
@@ -428,9 +428,8 @@
       /**
        * Returns the file description by the key.
        * @param {string} key
-       * @param {[]} fileBytes
        */
-      function getDescription(key, fileBytes) {
+      function getDescription(key) {
 
         if (key === '') {
           return 'signature not found';
@@ -475,7 +474,7 @@
         var ascii = '';
 
         for (i = 0; i < size; i++) {
-          hex += fileBytes[i].toString(16) + ' ';
+          hex += formatHex (fileBytes[i]) + ' ';
 
           if (32 < fileBytes[i] && fileBytes[i] < 127) {
             // printable characters
@@ -492,6 +491,10 @@
           '</div>';
       }
 
+      /**
+       * Return html code.
+       * @param char
+       */
       function encodeChar(char) {
 
         switch (char) {
@@ -500,6 +503,19 @@
           case '&': return '&amp;';
           default: return char;
         }
+      }
+
+      /**
+       * Formats the hexademical value
+       */
+      function formatHex(n) {
+
+        var hex = n.toString(16);
+
+        if (n < 10) {
+          return '0' + hex;
+        }
+        return hex;
       }
     </script>
   </body>
