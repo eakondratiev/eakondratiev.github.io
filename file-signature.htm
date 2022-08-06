@@ -32,7 +32,9 @@
       .file-prop {display: flex; margin: 8pt;}
       .file-prop-name {width: 75pt;}
       .file-prop-value {font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
-      .list-all {font-size:0.9rem;}
+      .supported-types {font-size:0.9rem;}
+      .supported-types ul {margin: 8pt 0; padding: 0;}
+      .supported-types li {margin: 8pt 0 0 10pt; padding: 0;}
       .file-bytes {font-style: normal;}
     </style>
   <body>
@@ -68,20 +70,145 @@
           <noscript><div>This site uses javascript. Please, turn it on in your browser settings.</div></noscript>
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>File Signature</h1>
-          <p>Shows a file size, MIME type and description. The file processed locally by your computer/device.</p>
+          <p>
+            Shows a file size, MIME type and description. The file processed locally by your computer/device.
+            More than one hundred file types supported.
+          </p>
 
           <div class="fp-form">
             <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file">
           </div>
 
           <div class="file-signature"></div>
-          <div class="list-all"></div>
+
+          <h3>
+            Supported File Types
+            <span style="background:#04c; color:#fff; padding: 1pt 4pt; border-radius: 2pt; font-size:0.8rem;">115</span>
+          </h3>
+          <div class="supported-types">
+            <ul>
+<li>JPEG raw or in the JFIF or Exif</li>
+<li>JPEG 2000 file</li>
+<li>png, Image encoded in the Portable Network Graphics format</li>
+<li>Google WebP image file</li>
+<li>Animated cursor</li>
+<li>Canon RAW Format Version 2</li>
+<li>XCF file, GIMP native</li>
+<li>gif, Image file encoded in the Graphics Interchange Format (GIF87a)</li>
+<li>gif, Image file encoded in the Graphics Interchange Format (GIF89a)</li>
+<li>TrueType font</li>
+<li>Computer icon encoded in ICO file format</li>
+<li>Adobe Photoshop's native file</li>
+<li>Apple Icon Image format</li>
+<li>TIFF, Tagged Image File Format, little-endian</li>
+<li>TIFF, Tagged Image File Format, big-endian</li>
+<li>BMP file, a bitmap format used mostly in the Windows world</li>
+<li>wmf, Windows Metafile, image file</li>
+<li>OpenEXR image</li>
+<li>Better Portable Graphics format</li>
+<li>Kodak Cineon image</li>
+<li>Free Lossless Image Format</li>
+<li>FreeHand 8 document</li>
+<li>FreeHand 9 document</li>
+<li>Encapsulated PostScript file version 3.0</li>
+<li>Encapsulated PostScript file version 3.1</li>
+<li>PostScript document</li>
+<li>Open source portable voxel file</li>
+<li>OpenType font</li>
+<li>WOFF File Format 1.0</li>
+<li>WOFF File Format 2.0</li>
+<li>icm, ICC profile, color correction</li>
+<li>swf, Adobe Flash</li>
+<li>MP3 file with an ID3v2 container</li>
+<li>MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag</li>
+<li>Free Lossless Audio Codec</li>
+<li>AIFF, Audio Interchange File Format</li>
+<li>wav, Waveform Audio File Format</li>
+<li>Ogg, an open source media container format</li>
+<li>MIDI sound file</li>
+<li>avi, Audio Video Interleave video format</li>
+<li>mkv, mka, mks, mk3d, webm - Matroska media container, including WebM</li>
+<li>asf, wma, wmv - Advanced Systems Format</li>
+<li>ISO Base Media file (MPEG-4)</li>
+<li>3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files</li>
+<li>Canon Magic Lantern Video file</li>
+<li>MPEG Program Stream</li>
+<li>MPEG-1 video and MPEG-2 video</li>
+<li>ts, tsv, tsa, mpg, mpeg - MPEG Transport Stream (MPEG-2 Part 1)</li>
+<li>QuickTime MOV, a video container</li>
+<li>flv, Flash Video file</li>
+<li>PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File) or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)</li>
+<li>PDF document</li>
+<li>DjVu document</li>
+<li>Compound File Binary Format, a container format defined by Microsoft COM. It can contain the equivalent of files and directories. It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.</li>
+<li>AppleWorks 5 document</li>
+<li>AppleWorks 6 document</li>
+<li>SQLite Database</li>
+<li>Adobe Shockwave file</li>
+<li>Macromedia Director file</li>
+<li>chm, Microsoft Windows HtmlHelp file</li>
+<li>VirtualBox Virtual Hard Disk</li>
+<li>Windows Virtual PC Virtual Hard Disk</li>
+<li>Windows Virtual PC Windows 8 Virtual Hard Disk file</li>
+<li>Windows Event Viewer XML file</li>
+<li>PuTTY private key file version 2</li>
+<li>PuTTY private key file version 3</li>
+<li>PEM encoded X.509 certificate</li>
+<li>PEM encoded X.509 Certificate Signing Request</li>
+<li>PEM encoded X.509 PKCS#8 private key</li>
+<li>PEM encoded X.509 PKCS#1 DSA private key</li>
+<li>PEM encoded X.509 PKCS#1 RSA private key</li>
+<li>ARJ compressed file</li>
+<li>zip file format and formats based on it, such as EPUB, JAR, ODF, OOXML</li>
+<li>lzip compressed file</li>
+<li>7-Zip File Format</li>
+<li>GZIP compressed file</li>
+<li>rar, Roshal ARchive compressed archive v1.50 onwards</li>
+<li>rar, Roshal ARchive compressed archive v5.00 onwards</li>
+<li>xz, tar.xz - XZ compressed file, LZMA2 compression</li>
+<li>LZ4 compressed file</li>
+<li>xar, eXtensible ARchive format</li>
+<li>tar archive</li>
+<li>Compressed file (often tar zip) using Lempel-Ziv-Welch algorithm</li>
+<li>Compressed file (often tar zip) using LZH algorithm</li>
+<li>Linux deb file</li>
+<li>RedHat Package Manager (RPM) package</li>
+<li>SDI, System Deployment Image, a disk image format used by Microsoft</li>
+<li>Windows Update Binary Delta Compression file</li>
+<li>cdi, CD-i CD image file</li>
+<li>Executable and Linkable Format</li>
+<li>DOS MZ executable and its descendants (including NE and PE)</li>
+<li>DOS ZM executable and its descendants (rare)</li>
+<li>com, executable file, CP/M 3 and higher with overlays</li>
+<li>Script or data to be passed to the program following the shebang (#!)</li>
+<li>Mach-O binary, 32-bit</li>
+<li>Mach-O binary, 64-bit</li>
+<li>Mach-O binary, reverse byte ordering scheme, 32-bit</li>
+<li>Mach-O binary, reverse byte ordering scheme, 64-bit</li>
+<li>Telegram Desktop File</li>
+<li>Telegram Desktop Encrypted File</li>
+<li>Java class file, Mach-O Fat Binary</li>
+<li>Google Chrome extension or packaged app</li>
+<li>Nintendo Entertainment System ROM file</li>
+<li>cab, Microsoft Cabinet file</li>
+<li>Lua bytecode</li>
+<li>WebAssembly binary format</li>
+<li>PGP file</li>
+<li>cab, InstallShield CAB Archive File</li>
+<li>evt, Windows Event Viewer file</li>
+<li>dat, Windows Registry file</li>
+<li>crd, Microsoft Windows Cardfile Database Format, RRG card file</li>
+<li>crd, Microsoft Windows Cardfile Database Format, MGC card file</li>
+<li>UTF-8 byte order mark, commonly seen in text files</li>
+<li>Text file with UTF-16LE byte order mark</li>
+<li>Text file with UTF-16BE byte order mark</li></ul>
+          </div>
 
           <p style="font-size:0.8rem;">
             Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, WIkipedia.org</a>
           </p>
           <div class="page-tags">
-            <b>#Tool</b>
+            <b>#Files</b>, <b>#WASM</b>, <b>#Online</b>
           </div>
         </div>
       </div>
@@ -93,6 +220,8 @@
       'use strict';
 
       var _ToolNoLogs = true; // TODO: remove on prod
+
+      // TODO: progress indicator, file selector - drag&drop
 
       /** Definitions */
       var SIGNATURES = {
@@ -247,7 +376,8 @@
         var fileElement = document.getElementById ('input-file');
         var resultElement = document.getElementsByClassName('file-signature')[0];
 
-        var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
+        // <div class="list-all"></div>
+        // var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
         showFileProperties(fileElement, resultElement);
 
