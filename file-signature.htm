@@ -9,8 +9,8 @@
     <meta name="application-name" content="File Signature" />
 
     <meta property="og:title" content="File Signature">
-    <meta name="description" content="This online utility app will show a file signature.">
-    <meta property="og:description" content="This online utility app will show a file signature.">
+    <meta name="description" content="Shows a file size, MIME type and description. The file processed locally by your computer/device.">
+    <meta property="og:description" content="Shows a file size, MIME type and description. The file processed locally by your computer/device.">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/file-signature.htm">
@@ -68,7 +68,7 @@
           <noscript><div>This site uses javascript. Please, turn it on in your browser settings.</div></noscript>
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>File Signature</h1>
-          <p>This online utility app shows a file signature.</p>
+          <p>Shows a file size, MIME type and description. The file processed locally by your computer/device.</p>
 
           <div class="fp-form">
             <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file">
@@ -96,7 +96,82 @@
 
       /** Definitions */
       var SIGNATURES = {
+
+        // graphics
+        'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
+        'JPEG2000': {description: 'JPEG 2000 file'},
+        'PNG': {description: 'png, Image encoded in the Portable Network Graphics format'},
+        'webp': {description: 'Google WebP image file'},
+        'ani':  {description: 'Animated cursor'},
+        'CanonRAW': {description: 'Canon RAW Format Version 2'},
+        'xcf': {description: 'XCF file, GIMP native'},
+        'GIF87a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF87a)'},
+        'GIF89a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF89a)'},
+        'ttf': {description: 'TrueType font'},
+        'ico': {description: 'Computer icon encoded in ICO file format'},
+        'PSD': {description: 'Adobe Photoshop\'s native file'},
+        'AppleIcon': {description: 'Apple Icon Image format'},
+        'TIFF(le)': {description: 'TIFF, Tagged Image File Format, little-endian'},
+        'TIFF(be)': {description: 'TIFF, Tagged Image File Format, big-endian'},
+        'bmp': {description: 'BMP file, a bitmap format used mostly in the Windows world'},
+        'wmf': {description: 'wmf, Windows Metafile, image file'},
+        'OpenEXR': {description: 'OpenEXR image'},
+        'BPG': {description: 'Better Portable Graphics format'},
+        'Cineon': {description: 'Kodak Cineon image'},
+        'FLIF': {description: 'Free Lossless Image Format'},
+        'FH8': {description: 'FreeHand 8 document'},
+        'FH9': {description: 'FreeHand 9 document'},
+        'EPS3.0': {description: 'Encapsulated PostScript file version 3.0'},
+        'EPS3.1': {description: 'Encapsulated PostScript file version 3.1'},
+        'PostScript': {description: 'PostScript document'},
+        'TOX': {description: 'Open source portable voxel file'},
+        'otf': {description: 'OpenType font'},
+        'woff': {description: 'WOFF File Format 1.0'},
+        'woff2': {description: 'WOFF File Format 2.0'},
+        'icm': {description: 'icm, ICC profile, color correction'},
+        'SWF': {description: 'swf, Adobe Flash'},
+
+        // audio
+        'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
+        'mp3': {description: 'MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag'},
+        'FLAC': {description: 'Free Lossless Audio Codec'},
+        'AIFF': {description: 'AIFF, Audio Interchange File Format'},
+        'wav':  {description: 'wav, Waveform Audio File Format'},
+        'OGGS': {description: 'Ogg, an open source media container format'},
+        'MIDI': {description: 'MIDI sound file'},
+
+        // video
+        'avi':  {description: 'avi, Audio Video Interleave video format'},
+        'MKV': {description: 'mkv, mka, mks, mk3d, webm - Matroska media container, including WebM'},
+        'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
+        'mp4': {description: 'ISO Base Media file (MPEG-4)'},
+        'ftyp3g': {description: '3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files'},
+        'MLV': {description: 'Canon Magic Lantern Video file'},
+        'MPEG-Stream': {description: 'MPEG Program Stream'},
+        'MPEG-Video': {description: 'MPEG-1 video and MPEG-2 video'},
+        'MPEG-Transport': {description: 'ts, tsv, tsa, mpg, mpeg - MPEG Transport Stream (MPEG-2 Part 1)'},
+        'MOV': {description: 'QuickTime MOV, a video container'},
+        'FLV': {description: 'flv, Flash Video file'},
+        'PIC-PIF-SEA-OCR': {description: 'PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File)' +
+                           ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
+
+        //other
+        'PDF': {description: 'PDF document'},
+        'DJVU': {description: 'DjVu document'},
+        'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
+                  ' It can contain the equivalent of files and directories.' +
+                  ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
+        'AppleWorks5': {description: 'AppleWorks 5 document'},
+        'AppleWorks6': {description: 'AppleWorks 6 document'},
+
+        'SQLite3': {description: 'SQLite Database'},
+        'dcr':  {description: 'Adobe Shockwave file'},
+        'dir':  {description: 'Macromedia Director file'},
+        'WinHtmlHelp': {description: 'chm, Microsoft Windows HtmlHelp file'},
         'OracleVMDisk': {description: 'VirtualBox Virtual Hard Disk'},
+        'vhd':  {description: 'Windows Virtual PC Virtual Hard Disk'},
+        'vhdx': {description: 'Windows Virtual PC Windows 8 Virtual Hard Disk file'},
+        'evtx': {description: 'Windows Event Viewer XML file'},
         'PuTTY-key2': {description: 'PuTTY private key file version 2'},
         'PuTTY-key3': {description: 'PuTTY private key file version 3'},
         'pem-crt': {description: 'PEM encoded X.509 certificate'},
@@ -104,115 +179,54 @@
         'pem-key': {description: 'PEM encoded X.509 PKCS#8 private key'},
         'pem-DSAkey': {description: 'PEM encoded X.509 PKCS#1 DSA private key'},
         'pem-RSAkey': {description: 'PEM encoded X.509 PKCS#1 RSA private key'},
-        'AppleWorks5': {description: 'AppleWorks 5 document'},
-        'AppleWorks6': {description: 'AppleWorks 6 document'},
-        'EPS3.0': {description: 'Encapsulated PostScript file version 3.0'},
-        'EPS3.1': {description: 'Encapsulated PostScript file version 3.1'},
-        'SQLite3': {description: 'SQLite Database'},
-        'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
-        'DJVU': {description: 'DjVu document'},
-        'AIFF': {description: 'AIFF, Audio Interchange File Format'},
-        'wav':  {description: 'wav, Waveform Audio File Format'},
-        'avi':  {description: 'avi, Audio Video Interleave video format'},
-        'webp': {description: 'Google WebP image file'},
-        'ani':  {description: 'Animated cursor'},
-        'dcr':  {description: 'Adobe Shockwave file'},
-        'dir':  {description: 'Macromedia Director file'},
-        'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
-        'JPEG2000': {description: 'JPEG 2000 file'},
-        'WinHtmlHelp': {description: 'chm, Microsoft Windows HtmlHelp file'},
-        'CanonRAW': {description: 'Canon RAW Format Version 2'},
-        'vhd':  {description: 'Windows Virtual PC Virtual Hard Disk'},
-        'vhdx': {description: 'Windows Virtual PC Windows 8 Virtual Hard Disk file'},
-        'evtx': {description: 'Windows Event Viewer XML file'},
-        'TAR': {description: 'tar archive'},
-        'deb': {description: 'Linux deb file'},
-        'mp4': {description: 'ISO Base Media file (MPEG-4)'},
-        'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
-                  ' It can contain the equivalent of files and directories.' +
-                  ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
-        'MS-SDI': {description: 'SDI, System Deployment Image, a disk image format used by Microsoft'},
-        'PNG': {description: 'png, Image encoded in the Portable Network Graphics format'},
+
+        'arj': {description: 'ARJ compressed file'},
+        'ZIP': {description: 'zip file format and formats based on it, such as EPUB, JAR, ODF, OOXML'},
+        'LZIP': {description: 'lzip compressed file'},
+        '7z': {description: '7-Zip File Format'},
+        'gz': {description: 'GZIP compressed file'},
         'RAR1.5': {description: 'rar, Roshal ARchive compressed archive v1.50 onwards'},
         'RAR5':   {description: 'rar, Roshal ARchive compressed archive v5.00 onwards'},
-        'WinUpdDelta': {description: 'Windows Update Binary Delta Compression file'},
-        'xcf': {description: 'XCF file, GIMP native'},
-        'GIF87a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF87a)'},
-        'GIF89a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF89a)'},
-        '7z': {description: '7-Zip File Format'},
         'xz': {description: 'xz, tar.xz - XZ compressed file, LZMA2 compression'},
-        'ftyp3g': {description: '3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files'},
-        'PDF': {description: 'PDF document'},
+        'LZ4': {description: 'LZ4 compressed file'},
+        'XAR': {description: 'xar, eXtensible ARchive format'},
+        'TAR': {description: 'tar archive'},
+        'tar-LZW': {description: 'Compressed file (often tar zip) using Lempel-Ziv-Welch algorithm'},
+        'tar-LZH': {description: 'Compressed file (often tar zip) using LZH algorithm'},
+
+        'deb': {description: 'Linux deb file'},
+        'rpm': {description: 'RedHat Package Manager (RPM) package'},
+        'MS-SDI': {description: 'SDI, System Deployment Image, a disk image format used by Microsoft'},
+        'WinUpdDelta': {description: 'Windows Update Binary Delta Compression file'},
         'iso-sdi': {description: 'cdi, CD-i CD image file'},
-        'ttf': {description: 'TrueType font'},
-        'ico': {description: 'Computer icon encoded in ICO file format'},
         'elf': {description: 'Executable and Linkable Format'},
-        'OGGS': {description: 'Ogg, an open source media container format'},
-        'PSD': {description: 'Adobe Photoshop\'s native file'},
+        'DosMZ': {description: 'DOS MZ executable and its descendants (including NE and PE)'},
+        'DosZM': {description: 'DOS ZM executable and its descendants (rare)'},
+        'CPM3': {description: 'com, executable file, CP/M 3 and higher with overlays'},
+        'Shebang': {description: 'Script or data to be passed to the program following the shebang (#!)'},
         'Mach-O32': {description: 'Mach-O binary, 32-bit'},
         'Mach-O64': {description: 'Mach-O binary, 64-bit'},
         'Mach-O32rev': {description: 'Mach-O binary, reverse byte ordering scheme, 32-bit'},
         'Mach-O64rev': {description: 'Mach-O binary, reverse byte ordering scheme, 64-bit'},
-        'ZIP': {description: 'zip file format and formats based on it, such as EPUB, JAR, ODF, OOXML'},
-        'LZIP': {description: 'lzip compressed file'},
-        'LZ4': {description: 'LZ4 compressed file'},
         'TDF': {description: 'Telegram Desktop File'},
         'TDEF': {description: 'Telegram Desktop Encrypted File'},
-        'AppleIcon': {description: 'Apple Icon Image format'},
-        'PostScript': {description: 'PostScript document'},
-        'TIFF(le)': {description: 'TIFF, Tagged Image File Format, little-endian'},
-        'TIFF(be)': {description: 'TIFF, Tagged Image File Format, big-endian'},
-        'OpenEXR': {description: 'OpenEXR image'},
-        'BPG': {description: 'Better Portable Graphics format'},
-        'Cineon': {description: 'Kodak Cineon image'},
+
         'JavaClass': {description: 'Java class file, Mach-O Fat Binary'},
-        'FLAC': {description: 'Free Lossless Audio Codec'},
-        'FLIF': {description: 'Free Lossless Image Format'},
-        'MKV': {description: 'mkv, mka, mks, mk3d, webm - Matroska media container, including WebM'},
-        'MIDI': {description: 'MIDI sound file'},
         'CRX': {description: 'Google Chrome extension or packaged app'},
-        'FH8': {description: 'FreeHand 8 document'},
-        'FH9': {description: 'FreeHand 9 document'},
-        'XAR': {description: 'xar, eXtensible ARchive format'},
         'NES-ROM': {description: 'Nintendo Entertainment System ROM file'},
-        'TOX': {description: 'Open source portable voxel file'},
-        'MLV': {description: 'Canon Magic Lantern Video file'},
         'CAB': {description: 'cab, Microsoft Cabinet file'},
         'luac': {description: 'Lua bytecode'},
-        'woff': {description: 'WOFF File Format 1.0'},
-        'woff2': {description: 'WOFF File Format 2.0'},
         'wasm': {description: 'WebAssembly binary format'},
-        'MPEG-Stream': {description: 'MPEG Program Stream'},
-        'MPEG-Video': {description: 'MPEG-1 video and MPEG-2 video'},
         'PGP': {description: 'PGP file'},
         'cab': {description: 'cab, InstallShield CAB Archive File'},
-        'wmf': {description: 'wmf, Windows Metafile, image file'},
         'evt': {description: 'evt, Windows Event Viewer file'},
-        'icm': {description: 'icm, ICC profile, color correction'},
         'dat-reg': {description: 'dat, Windows Registry file'},
-        'otf': {description: 'OpenType font'},
-        'UTF8': {description: 'UTF-8 byte order mark, commonly seen in text files'},
-        'FLV': {description: 'flv, Flash Video file'},
         'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, RRG card file'},
         'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, MGC card file'},
-        'SWF': {description: 'swf, Adobe Flash'},
-        'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
-        'mp3': {description: 'MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag'},
-        'bmp': {description: 'BMP file, a bitmap format used mostly in the Windows world'},
+
+        'UTF8': {description: 'UTF-8 byte order mark, commonly seen in text files'},
         'UTF16LE': {description: 'Text file with UTF-16LE byte order mark'},
-        'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'},
-        'DosMZ': {description: 'DOS MZ executable and its descendants (including NE and PE)'},
-        'DosZM': {description: 'DOS ZM executable and its descendants (rare)'},
-        'Shebang': {description: 'Script or data to be passed to the program following the shebang (#!)'},
-        'tar-LZW': {description: 'Compressed file (often tar zip) using Lempel-Ziv-Welch algorithm'},
-        'tar-LZH': {description: 'Compressed file (often tar zip) using LZH algorithm'},
-        'gz': {description: 'GZIP compressed file'},
-        'arj': {description: 'ARJ compressed file'},
-        'CPM3': {description: 'com, executable file, CP/M 3 and higher with overlays'},
-        'PIC-PIF-SEA-OCR': {description: 'PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File)' +
-                           ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
-        'MPEG-Transport': {description: 'ts, tsv, tsa, mpg, mpeg - MPEG Transport Stream (MPEG-2 Part 1)'},
-        'MOV': {description: 'QuickTime MOV, a video container'}
+        'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'}
 
       };
 
@@ -348,11 +362,11 @@
 
             resultElement.innerHTML += getResultProperty ('Description', description);
 
-            // todo: if (description.match ('^unknown signature')) {
+            if (description.match ('^unknown signature')) {
               resultElement.innerHTML += getResultProperty (
                   'First bytes',
                   getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
-            //}
+            }
 
             //console.log ('RES', {fileBytes, resultBytes});
             
