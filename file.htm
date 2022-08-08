@@ -28,10 +28,15 @@
     <script src="/assets/menu.min.js?20220730"></script>
     <script src="/assets/web-app.js"></script>
     <style>
+      .file-selector-container {border: dotted 2pt #28c; border-radius: 5pt; cursor: pointer;
+        font-size:0.9rem; padding: 16pt 8pt;
+        min-width:230px;
+        display: flex; justify-content: center; align-items: center;}
+      .file-selector-container:hover, .drop-ready {box-shadow: 0 0 3px 2px rgba(0,128,255,0.5);}
       .file-signature {font-size:0.9rem; margin: 16pt 0; color:#333;}
       .file-prop {display: flex; margin: 8pt;}
       .file-prop-name {width: 75pt;}
-      .file-prop-value {font-style: italic; max-width: 250pt; text-overflow: ellipsis;}
+      .file-prop-value {font-style: italic; text-overflow: ellipsis;}
       .supported-types {font-size:0.9rem;}
       .supported-types ul {margin: 8pt 0; padding: 0;}
       .supported-types li {margin: 8pt 0 0 10pt; padding: 0;}
@@ -71,13 +76,16 @@
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>File Signature</h1>
           <p>
-            Shows a file size, MIME type and description. The file processed by your computer/device.
+            Shows a file size, MIME type and description. All files are processed by your computer/device.
             The file type description is based on its content, not extension.
             More than one hundred file types supported.
           </p>
 
           <div class="fp-form">
-            <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file">
+            <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file" style="display:none">
+            <div class="file-selector-container" id="file-target" onclick="document.getElementById('input-file').click();">
+              Click, tap or drag and drop a file here.
+            </div>
           </div>
 
           <div class="file-signature"></div>
@@ -221,8 +229,9 @@
       'use strict';
 
       var _ToolNoLogs = true; // TODO: remove on prod
+      var DROP_READY_CSS = 'drop-ready';
 
-      // TODO: progress indicator, file selector - drag&drop
+      // TODO: progress indicator
 
       /** Definitions */
       var SIGNATURES = {
@@ -374,43 +383,79 @@
       }
       else {
 
+        var fileDropZone = document.getElementById ('file-target');
         var fileElement = document.getElementById ('input-file');
         var resultElement = document.getElementsByClassName('file-signature')[0];
 
         // <div class="list-all"></div>
         // var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
-        showFileProperties(fileElement, resultElement);
+        showFileProperties(fileElement.files, resultElement);
 
+        // event listeners
         fileElement.addEventListener('keypress', function(e) { 
           if (e.key === 'Enter') {
-            showFileProperties(fileElement, resultElement);
+            showFileProperties(fileElement.files, resultElement);
           }
         });
 
         fileElement.addEventListener('change', function(e) {
-          showFileProperties(fileElement, resultElement);
+          showFileProperties(fileElement.files, resultElement);
         });
+
+        // drag-and-drop events
+        fileDropZone.addEventListener ('dragenter', function(e){
+          e.stopPropagation();
+          e.preventDefault();
+          fileDropZone.classList.add(DROP_READY_CSS);
+        });
+
+        fileDropZone.addEventListener ('dragleave', function(e){
+          e.stopPropagation();
+          e.preventDefault();
+          fileDropZone.classList.remove(DROP_READY_CSS);
+        });
+
+        fileDropZone.addEventListener ('dragover', function(e){
+          e.stopPropagation();
+          e.preventDefault();
+        });
+      
+        fileDropZone.addEventListener ('drop', function(e){
+
+          var dt = e.dataTransfer;
+
+          e.stopPropagation();
+          e.preventDefault();
+
+          fileDropZone.classList.remove(DROP_READY_CSS);
+
+          showFileProperties(dt.files, resultElement);
+
+        });
+
+
       }
 
       /**
        * Appends the file properties to the result element.
-       * @param {*} fileElement
+       * @param {*} files
        * @param {*} resultElement
        */
-      function showFileProperties(fileElement, resultElement) {
+      function showFileProperties(files, resultElement) {
 
         var r = '';
         var file;
         var reader = new FileReader();
 
-        if (fileElement.files === undefined ||
-            fileElement.files.length === 0) {
+        if (files === undefined ||
+            files.length === 0) {
 
           r = 'Please, select a file.';
         }
         else {
-          file = fileElement.files[0];
+          file = files[0];
+          console.log ('FILES', files);
 
           r =
             getResultProperty ('File name', file.name) +
