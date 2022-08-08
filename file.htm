@@ -434,7 +434,6 @@
 
         });
 
-
       }
 
       /**
@@ -442,7 +441,7 @@
        * @param {*} files list of selected files.
        * @param {*} resultElement
        */
-      function showFileProperties(files, resultElement) {
+      async function showFileProperties(files, resultElement) {
 
         var r = '';
         var file;
@@ -456,21 +455,26 @@
         else {
           file = files[0];
 
-          r +=
-            getResultProperty ('File name', file.name) +
-            getResultProperty ('File MIME type', file.type) +
-            getResultProperty ('File size', formatFileSize (file.size));
+          var f = async (file) => {
 
-          reader.readAsArrayBuffer (file);
+            r +=
+              getResultProperty ('File name', file.name) +
+              getResultProperty ('File MIME type', file.type) +
+              getResultProperty ('File size', formatFileSize (file.size));
 
-          reader.onload = function (e) {
-            var f = file;
-            getSignatue (e.target.result, f, resultElement);
+            await reader.readAsArrayBuffer (file);
+
+            reader.onload = function (e) {
+              getSignatue (e.target.result, file, resultElement);
+            };
+
+            reader.onerror = function (e) {
+              console.log ('Read error', e.type);
+            }
+
           };
 
-          reader.onerror = function (e) {
-            console.log ('Read error', e.type);
-          }
+          await f (file);
 
         }
 
