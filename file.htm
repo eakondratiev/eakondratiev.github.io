@@ -231,7 +231,7 @@
       var _ToolNoLogs = true; // TODO: remove on prod
       var DROP_READY_CSS = 'drop-ready';
 
-      // TODO: progress indicator
+      // TODO: progress indicator, process file list
 
       /** Definitions */
       var SIGNATURES = {
@@ -439,7 +439,7 @@
 
       /**
        * Appends the file properties to the result element.
-       * @param {*} files
+       * @param {*} files list of selected files.
        * @param {*} resultElement
        */
       function showFileProperties(files, resultElement) {
@@ -455,9 +455,8 @@
         }
         else {
           file = files[0];
-          console.log ('FILES', files);
 
-          r =
+          r +=
             getResultProperty ('File name', file.name) +
             getResultProperty ('File MIME type', file.type) +
             getResultProperty ('File size', formatFileSize (file.size));
@@ -465,7 +464,8 @@
           reader.readAsArrayBuffer (file);
 
           reader.onload = function (e) {
-            getSignatue (e.target.result, file, resultElement);
+            var f = file;
+            getSignatue (e.target.result, f, resultElement);
           };
 
           reader.onerror = function (e) {
