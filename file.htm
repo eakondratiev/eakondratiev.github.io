@@ -82,9 +82,9 @@
           </p>
 
           <div class="fp-form">
-            <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file" style="display:none">
+            <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file" style="display:none" disabled>
             <div class="file-selector-container" id="file-target" onclick="document.getElementById('input-file').click();">
-              Click, tap or drag and drop a file here.
+              ...<!--Click, tap or drag and drop a file here.-->
             </div>
           </div>
 
@@ -214,7 +214,7 @@
           </div>
 
           <p style="font-size:0.8rem;">
-            Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, WIkipedia.org</a>
+            Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, Wikipedia.org</a>
           </p>
           <div class="page-tags">
             <b>#Files</b>, <b>#WASM</b>, <b>#Online</b>
@@ -229,7 +229,12 @@
       'use strict';
 
       var _ToolNoLogs = true; // TODO: remove on prod
+      var WASM_URL = '/assets/filesignature.wasm';
       var DROP_READY_CSS = 'drop-ready';
+      var DROP_ZONE_TEXT = 'Click, tap or drag and drop a file here.';
+
+      var _getFileSignature;
+      var _memory;
 
       // TODO: progress indicator, process file list
 
@@ -390,7 +395,41 @@
         // <div class="list-all"></div>
         // var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
-        showFileProperties(fileElement.files, resultElement);
+        // load WASM module
+        (async () => {
+
+          const params = {
+              env: {
+                  memory_base: 0,
+                  table_base: 0,
+                  memory : new WebAssembly.Memory({ initial: 1}), // initial - in units of WebAssembly pages, one page 65536 bytes.
+                  table: new WebAssembly.Table({
+                      initial: 0,
+                      element: 'anyfunc',
+                  })
+              }          
+            };
+
+          try {
+            const response = await fetch(WASM_URL);
+            const bytes = await response.arrayBuffer();
+            const module = await WebAssembly.instantiate(bytes, params)
+            const instance = module.instance;
+            _memory = instance.exports.memory;
+            _getFileSignature = instance.exports.getFileSignature;
+            console.log ('Loaded', _memory, _getFileSignature);
+
+            fileDropZone.innerHTML = DROP_ZONE_TEXT;
+            fileElement.disabled = false;
+
+            showFileProperties(fileElement.files, resultElement); // from prev session if any
+          }
+          catch (err) {
+            console.log ('NOT Loaded', err);
+            resultElement.innerHTML += '<div class="page-message page-message--error">' + err.toString() + "</div>";
+          }
+
+        })();
 
         // event listeners
         fileElement.addEventListener('keypress', function(e) { 
@@ -492,72 +531,49 @@
         // https://wasdk.github.io/WasmFiddle/
         // move -Force C:\Users\ekond\Downloads\program.wasm D:\MyStuff\EA\eakondratiev.github.io\assets\filesignature.wasm
 
-        const params = {
-            env: {
-                memory_base: 0,
-                table_base: 0,
-                memory : new WebAssembly.Memory({ initial: 256}),
-                table: new WebAssembly.Table({
-                    initial: 0,
-                    element: 'anyfunc',
-                })
-            }          
-          };
+        // create input and output arrays
+        // input
+        const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
+        const RESULT_ARRAY_SIZE = 45;
+        var MAX_SHOWN_BYTES = 16;
 
-        fetch('/assets/filesignature.wasm')
-          .then(response =>
-            response.arrayBuffer()
-          )
-          .then(bytes => WebAssembly.instantiate(bytes, params))
-          .then(results => {
+        let offset = 0;
 
-            var instance = results.instance;
+        const fileBytes = new Uint8Array(_memory.buffer, offset, FILE_ARRAY_SIZE);
+        memAllZeroes (fileBytes);
+        fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
 
-            const { memory, getFileSignature } = instance.exports;
+        // result
+        offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
+        const resultBytes = new Uint8Array(_memory.buffer, offset, RESULT_ARRAY_SIZE);
+        memAllZeroes (resultBytes);
 
-            // create input and output arrays
-            let allZeroes = a => {
-              for (let i = 0; i < a.length; i++) {a[i] = 0;}
-            };
+        _getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
-            // input
-            const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
-            const RESULT_ARRAY_SIZE = 45;
-            var MAX_SHOWN_BYTES = 16;
+        var description = getDescription (getStringFromBuffer(resultBytes));
 
-            let offset = 0;
+        resultElement.innerHTML += getResultProperty ('Description', description);
 
-            const fileBytes = new Uint8Array(memory.buffer, offset, FILE_ARRAY_SIZE);
-            allZeroes (fileBytes);
-            fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
+        if (description.match ('^unknown signature')) {
+          resultElement.innerHTML += getResultProperty (
+              'First bytes',
+              getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
+        }
 
-            // result
-            offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
-            const resultBytes = new Uint8Array(memory.buffer, offset, RESULT_ARRAY_SIZE);
-            allZeroes (resultBytes);
-
-            getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
-
-            var description = getDescription (getStringFromBuffer(resultBytes));
-
-            resultElement.innerHTML += getResultProperty ('Description', description);
-
-            if (description.match ('^unknown signature')) {
-              resultElement.innerHTML += getResultProperty (
-                  'First bytes',
-                  getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
-            }
-
-            //console.log ('RES', {fileBytes, resultBytes});
-            
-          })
-          .catch(err => {
-            resultElement.innerHTML += '<div class="page-message page-message--error">' + err.toString() + "</div>";
-            console.log(err);
-            }
-          );
+        return;
 
       }
+
+      /**
+       * Puts zeroes in the memory buffer.
+       * @param {[*]} mem
+       */
+      function memAllZeroes (mem) {
+        var i;
+        for (i = 0; i < mem.length; i++) {
+          mem[i] = 0;
+        }
+      };
 
       /**
        * Returns html formatted file property.
