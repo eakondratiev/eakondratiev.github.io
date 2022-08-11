@@ -33,14 +33,15 @@
         min-width:230px;
         display: flex; justify-content: center; align-items: center;}
       .file-selector-container:hover, .drop-ready {box-shadow: 0 0 3px 2px rgba(0,128,255,0.5);}
-      .file-signature {font-size:0.9rem; margin: 16pt 0; color:#333;}
+      .file-signature {font-size:0.9rem; margin: 16pt 0;}
       .file-prop {display: flex; margin: 8pt;}
       .file-prop-name {width: 75pt;}
       .file-prop-value {font-style: italic; text-overflow: ellipsis;}
       .supported-types {font-size:0.9rem;}
       .supported-types ul {margin: 8pt 0; padding: 0;}
       .supported-types li {margin: 8pt 0 0 10pt; padding: 0;}
-      .file-bytes {font-style: normal;}
+      .file-bytes {font-style: normal; display:flex; flex-wrap:wrap; gap: 8pt;}
+      .file-bytes h4 {margin-bottom: 4pt;}
       .eight-bytes {white-space:nowrap;}
       .eight-bytes:nth-of-type(odd) {margin-right: 4pt;}
 
@@ -706,9 +707,9 @@
 
         for (i = 0; i < size; i++) {
 
-          eightBytes += '<span style="margin-right:0.1em;">' + formatHex (fileBytes[i]) + '</span>';
+          eightBytes += '<span style="margin-right:0.3em;">' + formatHex (fileBytes[i]) + '</span>';
 
-          if (32 < fileBytes[i] && fileBytes[i] < 127) {
+          if (31 < fileBytes[i] && fileBytes[i] < 127) {
             // printable characters
             ascii += encodeChar (String.fromCharCode (fileBytes[i]));
           }
@@ -730,8 +731,11 @@
         }
 
         return '<div class="code file-bytes">' +
+          '<div>' +
           '<h4>Hex</h4>' + hex +
+          '</div><div>' +
           '<h4>ASCII</h4>' + ascii +
+          '</div>' +
           '</div>';
       }
 
