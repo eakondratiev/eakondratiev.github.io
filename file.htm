@@ -232,9 +232,7 @@
       var WASM_URL = '/assets/filesignature.wasm';
       var DROP_READY_CSS = 'drop-ready';
       var DROP_ZONE_TEXT = 'Click, tap or drag and drop a file here.';
-
-      var _getFileSignature;
-      var _memory;
+      var _wasmModule = {};
 
       // TODO: progress indicator, process file list
 
@@ -395,38 +393,19 @@
         // <div class="list-all"></div>
         // var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
 
-        // load WASM module
-        (async () => {
+        // load WASM module, synchronous
+        (async function(){
+          _wasmModule = await loadWasmModule (WASM_URL);
 
-          const params = {
-              env: {
-                  memory_base: 0,
-                  table_base: 0,
-                  memory : new WebAssembly.Memory({ initial: 1}), // initial - in units of WebAssembly pages, one page 65536 bytes.
-                  table: new WebAssembly.Table({
-                      initial: 0,
-                      element: 'anyfunc',
-                  })
-              }          
-            };
-
-          try {
-            const response = await fetch(WASM_URL);
-            const bytes = await response.arrayBuffer();
-            const module = await WebAssembly.instantiate(bytes, params)
-            const instance = module.instance;
-            _memory = instance.exports.memory;
-            _getFileSignature = instance.exports.getFileSignature;
-            console.log ('Loaded', _memory, _getFileSignature);
-
+          if (_wasmModule.memory !== undefined) {
+            // the module was loaded
             fileDropZone.innerHTML = DROP_ZONE_TEXT;
             fileElement.disabled = false;
-
             showFileProperties(fileElement.files, resultElement); // from prev session if any
           }
-          catch (err) {
-            console.log ('NOT Loaded', err);
-            resultElement.innerHTML += '<div class="page-message page-message--error">' + err.toString() + "</div>";
+          else {
+            // the module was not loaded
+            resultElement.innerHTML += '<div class="page-message page-message--error">' + _wasmModule.error + "</div>";
           }
 
         })();
@@ -473,6 +452,44 @@
 
         });
 
+      }
+
+      /**
+       * Loads WASM module
+       * @param {string} url The WASM file url.
+       */
+      async function loadWasmModule (url) {
+
+        var ret = {};
+        var params = {
+            env: {
+                memory_base: 0,
+                table_base: 0,
+                memory : new WebAssembly.Memory({ initial: 1}), // initial - in units of WebAssembly pages, one page 65536 bytes.
+                table: new WebAssembly.Table({
+                    initial: 0,
+                    element: 'anyfunc',
+                })
+            }          
+          };
+
+        try {
+          var response = await fetch(url);
+          var bytes = await response.arrayBuffer();
+          var module = await WebAssembly.instantiate(bytes, params)
+          var instance = module.instance;
+
+          ret = {
+            memory: instance.exports.memory,
+            getFileSignature: instance.exports.getFileSignature
+          };
+
+        }
+        catch (err) {
+          ret.error = err.toString();
+        }
+
+        return ret;
       }
 
       /**
@@ -539,16 +556,16 @@
 
         let offset = 0;
 
-        const fileBytes = new Uint8Array(_memory.buffer, offset, FILE_ARRAY_SIZE);
+        const fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
         memAllZeroes (fileBytes);
         fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
 
         // result
         offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
-        const resultBytes = new Uint8Array(_memory.buffer, offset, RESULT_ARRAY_SIZE);
+        const resultBytes = new Uint8Array (_wasmModule._memory.buffer, offset, RESULT_ARRAY_SIZE);
         memAllZeroes (resultBytes);
 
-        _getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
+        _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
         var description = getDescription (getStringFromBuffer(resultBytes));
 
