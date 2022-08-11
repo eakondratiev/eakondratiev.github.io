@@ -13,6 +13,7 @@
  * 2022-06-22 The Install App button added.
  * 2022-06-25 T.log() added.
  * 2022-07-30 conditionnal logging.
+ * 2022-08-11 menu keyboard handling corrections.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -41,7 +42,7 @@
       ]}
     ];
 
-  var selectedItem = -1,
+  var selectedItem = 0,
     itemElements = [],
     menu = {};
 
@@ -119,7 +120,11 @@
 
       if (e.ctrlKey && (key === 'm' || key === 'M')) {
         // ctrl+m - show/hide menu.
-        toggleMenuState()
+        toggleMenuState();
+
+        if (isVisible(menu)) {
+          focusItem (itemElements [selectedItem]);
+        }
       }
 
       if (!e.altKey && !e.ctrlKey && !e.shiftKey) {
@@ -129,19 +134,22 @@
           case 'Escape':
 
             if (isVisible(menu)) {
-              menu.style.display = 'none'; // hide
+              hideMenu ();
             }
             break;
 
           case 'ArrowUp':
-            if (selectedItem > 0) { --selectedItem; }
-            focusItem (itemElements [selectedItem]);
+            if (isVisible(menu) && selectedItem >= 0) {
+              if (selectedItem > 0) { --selectedItem; }
+              focusItem (itemElements [selectedItem]);
+            }
             break;
 
           case 'ArrowDown':
-            
-            if (selectedItem < itemElements.length - 1) { ++selectedItem; }
-            focusItem (itemElements [selectedItem]);
+            if (isVisible(menu) && selectedItem < itemElements.length - 1) {
+              ++selectedItem;
+              focusItem (itemElements [selectedItem]);
+            }
             break;
         }
 
@@ -211,7 +219,7 @@
     menu.style.display = 'none';
 
     // resets selected item
-    selectedItem = -1;
+    selectedItem = 0;
   }
 
 })();
