@@ -552,7 +552,7 @@
         // input
         const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
         const RESULT_ARRAY_SIZE = 45;
-        var MAX_SHOWN_BYTES = 16;
+        var MAX_SHOWN_BYTES = 32;
 
         let offset = 0;
 
@@ -694,14 +694,19 @@
        */
       function getFirstBytes(fileBytes, size) {
 
-        console.log ('BYTES', fileBytes);
-
         var i;
+        var eightBytes = '';
         var hex = '';
         var ascii = '';
 
         for (i = 0; i < size; i++) {
-          hex += formatHex (fileBytes[i]) + ' ';
+
+          eightBytes += formatHex (fileBytes[i]) + ' ';
+
+          if (i % 8 === 0 || i === size - 1) {
+            hex += eightBytes;
+            eightBytes = '';
+          }
 
           if (32 < fileBytes[i] && fileBytes[i] < 127) {
             // printable characters
