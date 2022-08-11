@@ -88,7 +88,7 @@
           <div class="fp-form">
             <input type="file" id="input-file" accesskey="F" placeholder="Select a file" value="" aria-label="Select a file" style="display:none" disabled>
             <div class="file-selector-container" id="file-target" onclick="document.getElementById('input-file').click();">
-              ...<!--Click, tap or drag and drop a file here.-->
+              ...
             </div>
           </div>
 
@@ -519,8 +519,8 @@
 
             r +=
               getResultProperty ('File name', file.name) +
-              getResultProperty ('File MIME type', file.type) +
-              getResultProperty ('File size', formatFileSize (file.size));
+              getResultProperty ('File size', formatFileSize (file.size)) +
+              getResultProperty ('File MIME type', file.type);
 
             await reader.readAsArrayBuffer (file);
 
