@@ -41,6 +41,8 @@
       .supported-types ul {margin: 8pt 0; padding: 0;}
       .supported-types li {margin: 8pt 0 0 10pt; padding: 0;}
       .file-bytes {font-style: normal;}
+      .eight-bytes {white-space:nowrap;}
+      .eight-bytes:nth-of-type(odd) {margin-right: 4pt;}
     </style>
   <body>
     <div class="main-content">
@@ -217,7 +219,7 @@
             Source: <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noreferrer">List of file signatures, Wikipedia.org</a>
           </p>
           <div class="page-tags">
-            <b>#Files</b>, <b>#WASM</b>, <b>#Online</b>
+            <b>#Files</b>, <b>#File signature</b>, <b>#WASM</b>, <b>#Online</b>
           </div>
         </div>
       </div>
@@ -572,9 +574,10 @@
         resultElement.innerHTML += getResultProperty ('Description', description);
 
         if (description.match ('^unknown signature')) {
-          resultElement.innerHTML += getResultProperty (
-              'First bytes',
-              getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)));
+          resultElement.innerHTML += '<div style="margin: 8pt;">' +
+            '<div>First bytes</div>' +
+            getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)) +
+            '</div>';
         }
 
         return;
@@ -638,15 +641,15 @@
        * @param buf
        */
       function getStringFromBuffer (buf) {
-        let s = "";
-        let index = 0;
+        var s = "";
+        var index = 0;
         while(true){
-            if(buf[index] !== 0){
-                s += String.fromCharCode(buf[index]);
-                index++;
-            }else{
-                return s;
-            }
+          if(buf[index] !== 0){
+            s += String.fromCharCode(buf[index]);
+            index++;
+          }else{
+            return s;
+          }
         }
 
         return '';
@@ -703,11 +706,6 @@
 
           eightBytes += formatHex (fileBytes[i]) + ' ';
 
-          if (i % 8 === 0 || i === size - 1) {
-            hex += eightBytes;
-            eightBytes = '';
-          }
-
           if (32 < fileBytes[i] && fileBytes[i] < 127) {
             // printable characters
             ascii += encodeChar (String.fromCharCode (fileBytes[i]));
@@ -715,6 +713,18 @@
           else {
             ascii += '&middot;'
           }
+
+          if (i > 0 && (i + 1) % 8 === 0 || i === size - 1) {
+
+            hex += '<span class="eight-bytes">' + eightBytes + '</span>';
+
+            if ((i + 1) % 16 === 0 && i !== size - 1) {
+              hex += '<br />';
+              ascii += '<br />';
+            }
+            eightBytes = '';
+          }
+
         }
 
         return '<div class="code file-bytes">' +
