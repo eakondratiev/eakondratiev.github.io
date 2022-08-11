@@ -562,7 +562,7 @@
 
         // result
         offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
-        const resultBytes = new Uint8Array (_wasmModule._memory.buffer, offset, RESULT_ARRAY_SIZE);
+        const resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
         memAllZeroes (resultBytes);
 
         _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
