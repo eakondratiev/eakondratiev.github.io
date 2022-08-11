@@ -44,6 +44,7 @@
       .file-bytes h4 {margin-bottom: 4pt;}
       .eight-bytes {white-space:nowrap;}
       .eight-bytes:nth-of-type(odd) {margin-right: 4pt;}
+      .byte-hex {margin-right:0.35em;}
     </style>
   <body>
     <div class="main-content">
@@ -705,7 +706,7 @@
 
         for (i = 0; i < size; i++) {
 
-          eightBytes += '<span style="margin-right:0.3em;">' + formatHex (fileBytes[i]) + '</span>';
+          eightBytes += '<span class="byte-hex">' + formatHex (fileBytes[i]) + '</span>';
 
           if (31 < fileBytes[i] && fileBytes[i] < 127) {
             // printable characters
