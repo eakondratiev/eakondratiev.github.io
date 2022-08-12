@@ -427,7 +427,7 @@ function fileTypePage(options) {
       }
     }
 
-    return '';
+    return ''; // todo: unreachable
   }
 
   /**
