@@ -301,7 +301,7 @@ function fileTypePage(options) {
         };
 
         reader.onerror = function (e) {
-          console.log ('Read error', e.type);
+          console.log ('Read error', e.toString());
           loader.hide();
         }
 
@@ -397,10 +397,10 @@ function fileTypePage(options) {
     var t = '';
 
     if (size >= GB) {
-      t = T.formatNumber(size/GB, 'en-US', FMT) + ' KB, ';
+      t = T.formatNumber(size/GB, 'en-US', FMT) + ' GB, ';
     }
     else if (size >= MB) {
-      t = T.formatNumber(size/MB, 'en-US', FMT) + ' KB, ';
+      t = T.formatNumber(size/MB, 'en-US', FMT) + ' MB, ';
     }
     else if (size >= KB) {
       t = T.formatNumber(size/KB, 'en-US', FMT) + ' KB, ';
