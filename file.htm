@@ -45,6 +45,15 @@
       .eight-bytes {white-space:nowrap;}
       .eight-bytes:nth-of-type(odd) {margin-right: 4pt;}
       .byte-hex {margin-right:0.35em;}
+
+      .loader-linear {border: solid 1px #28c; border-radius: 5pt; min-width:230px; height: 4pt; padding: 0;
+         margin:8pt 0; overflow: hidden;}
+      .loader-linear div {width: 100%; height:100%; background: #28c; padding: 0;
+         animation: 3s linear 0s infinite normal moveleft;}
+      @keyframes moveleft {
+        from {margin-left: -100%;}
+        to {margin-left: 100%;}
+      }
     </style>
   <body>
     <div class="main-content">
@@ -91,7 +100,7 @@
               ...
             </div>
           </div>
-
+          <div class="loader-linear" style="display:none;"><div></div></div>
           <div class="file-signature"></div>
 
           <h3>
@@ -252,7 +261,8 @@
         fileTypePage ({
           wasmUrl: '/assets/filetype.wasm',
           dropReadyCss: 'drop-ready',
-          dropZoneText: 'Click, tap or drag and drop a file here.'
+          dropZoneText: 'Click, tap or drag and drop a file here.',
+          loaderCss: 'loader-linear'
           });
 
       }

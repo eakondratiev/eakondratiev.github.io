@@ -1,9 +1,21 @@
-﻿/**
+﻿/*
  * Javascript code for the file.htm page.
  * 
  * 2022-08-12
  */
+
+/**
+ * Initialization, event handlers and all functions.
+ * @param {*} options
+ */
 function fileTypePage(options) {
+
+  'use strict';
+
+  var fileDropZone = document.getElementById ('file-target');
+  var fileElement = document.getElementById ('input-file');
+  var resultElement = document.getElementsByClassName('file-signature')[0];
+  var loader = new Loader(options.loaderCss);
 
   var wasmUrl = options.wasmUrl;
   var dropReadyCss = options.dropReadyCss;
@@ -13,6 +25,13 @@ function fileTypePage(options) {
   // TODO: progress indicator, process file list
 
   /** Definitions */
+  /*
+   * When the list changed uncomment the listAllDescriptions function and use this code to generate html code:
+   * 
+   * <div class="list-all"></div>
+   * var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
+   *
+   */
   var SIGNATURES = {
 
     // graphics
@@ -148,13 +167,6 @@ function fileTypePage(options) {
 
   };
 
-  var fileDropZone = document.getElementById ('file-target');
-  var fileElement = document.getElementById ('input-file');
-  var resultElement = document.getElementsByClassName('file-signature')[0];
-
-  // <div class="list-all"></div>
-  // var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
-
   // load WASM module, synchronous
   (async function(){
     _wasmModule = await loadWasmModule (wasmUrl);
@@ -269,7 +281,10 @@ function fileTypePage(options) {
       r = 'Please, select a file.';
     }
     else {
+
       file = files[0];
+
+      loader.show();
 
       var f = async (file) => {
 
@@ -282,10 +297,12 @@ function fileTypePage(options) {
 
         reader.onload = function (e) {
           getSignatue (e.target.result, file, resultElement);
+          loader.hide();
         };
 
         reader.onerror = function (e) {
           console.log ('Read error', e.type);
+          loader.hide();
         }
 
       };
@@ -434,6 +451,7 @@ function fileTypePage(options) {
     * Returns the html list of all supported file descriptions.
     * @param list
     */
+  /*
   function listAllDescriptions(list) {
         
     var keys = Object.keys (list);
@@ -447,7 +465,8 @@ function fileTypePage(options) {
     return '<p>Formats supported: <b>' + keys.length + '</b></p>' +
       '<ul>' + html + '</ul>';
   }
-    
+  */
+
   /**
     * Returns html code with the first bytes of the array.
     * @param fileBytes
@@ -519,6 +538,29 @@ function fileTypePage(options) {
       return '0' + hex;
     }
     return hex;
+  }
+
+  /**
+   * Constructor, shows and hides the loader (linear spinner) element.
+   * @param {String} css The loader CSS class name.
+   */
+  function Loader(css) {
+
+    var _loader = document.getElementsByClassName (css)[0];
+
+    if (_loader) {
+      return {
+        show: function() { _loader.style.display = 'block'; },
+        hide: function() { _loader.style.display = 'none'; }
+        };
+    }
+    else {
+      return {
+        show: function(){},
+        hide: function(){}
+      };
+
+    }
   }
 
 }
