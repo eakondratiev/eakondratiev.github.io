@@ -2,6 +2,7 @@
  * Javascript code for the file.htm page.
  * 
  * 2022-08-12
+ * 2022-08-13 isTextFile() added, fix for empty files.
  */
 
 /**
@@ -327,28 +328,53 @@ function fileTypePage(options) {
 
     // create input and output arrays
     // input
-    const FILE_ARRAY_SIZE = 300; // some signatures uses an offset
-    const RESULT_ARRAY_SIZE = 45;
+    var FILE_ARRAY_SIZE = 300; // some signatures uses an offset
+    var RESULT_ARRAY_SIZE = 45;
     var MAX_SHOWN_BYTES = 32;
+    var DESCR_TITLE = 'Description';
+    var UNKNOWN = 'n/a'; // value returned by the WASM function if the type was not determined.
 
-    let offset = 0;
+    var offset = 0;
 
-    const fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
+    var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
     memAllZeroes (fileBytes);
     fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
 
+    if (fileData.byteLength === 0) {
+      resultElement.innerHTML += getResultProperty (DESCR_TITLE, 'Empty file');
+      return;
+    }
+
     // result
     offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
-    const resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
+    var resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
     memAllZeroes (resultBytes);
 
     _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
 
-    var description = getDescription (getStringFromBuffer(resultBytes));
+    var resultText = getStringFromBuffer(resultBytes);
+    var description = '';
+    var isText = true;
 
-    resultElement.innerHTML += getResultProperty ('Description', description);
+    if (resultText === UNKNOWN) {
 
-    if (description.match ('^unknown signature')) {
+      isText = isTextFile(fileData);
+
+      if (isText) {
+        description = 'ASCII text file';
+      }
+      else {
+        description = 'A binary file, type not detected';
+      }
+    }
+    else {
+      description = getDescription (resultText);
+    }
+
+    resultElement.innerHTML += getResultProperty (DESCR_TITLE, description);
+
+    if (resultText === UNKNOWN && isText === false) {
+      // for unknown binary files show its first bytes
       resultElement.innerHTML += '<div style="margin: 8pt 0;">' +
         '<div>First bytes</div>' +
         getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)) +
@@ -538,6 +564,35 @@ function fileTypePage(options) {
       return '0' + hex;
     }
     return hex;
+  }
+
+  /**
+   * Returns true if the bytes does not contains binary data
+   * or false otherwise.
+   * @param {ArrayBuffer} bytes
+   */
+  function isTextFile(bytes) {
+
+    var MAX_SIZE = 10485760, // 10 MB
+      i,
+      byte,
+      view = new Uint8Array(bytes, 0, MAX_SIZE);
+
+    for (i = 0; i < Math.min (MAX_SIZE, bytes.byteLength); i++) {
+
+      byte = view[i];
+
+      if (byte < 7 ||
+          byte > 13 && byte < 27 ||
+          byte > 27 && byte < 32 ||
+          byte > 126) {
+
+        return false; // binary
+      }
+    }
+
+    return true; // text
+
   }
 
   /**
