@@ -574,11 +574,12 @@ function fileTypePage(options) {
   function isTextFile(bytes) {
 
     var MAX_SIZE = 10485760, // 10 MB
+      chunkSize = Math.min (MAX_SIZE, bytes.byteLength),
       i,
       byte,
-      view = new Uint8Array(bytes, 0, MAX_SIZE);
+      view = new Uint8Array(bytes, 0, chunkSize);
 
-    for (i = 0; i < Math.min (MAX_SIZE, bytes.byteLength); i++) {
+    for (i = 0; i < chunkSize; i++) {
 
       byte = view[i];
 
