@@ -362,7 +362,7 @@ function fileTypePage(options) {
       isText = isTextFile(fileData);
 
       if (isText) {
-        description = 'ASCII text file';
+        description = 'A text file';
       }
       else {
         description = 'A binary file, type not detected';
