@@ -3,6 +3,7 @@
  * 
  * 2022-08-12
  * 2022-08-13 isTextFile() added, fix for empty files.
+ * 2022-08-14 code corrections.
  */
 
 /**
@@ -586,8 +587,8 @@ function fileTypePage(options) {
       if (byte < 7 ||
           byte > 13 && byte < 27 ||
           byte > 27 && byte < 32 ||
-          byte > 126) {
-
+          byte == 127) {
+        // 128 and next can be extended ascii text files
         return false; // binary
       }
     }
