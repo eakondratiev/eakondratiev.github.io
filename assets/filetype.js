@@ -3,7 +3,7 @@
  * 
  * 2022-08-12
  * 2022-08-13 isTextFile() added, fix for empty files.
- * 2022-08-14 code corrections.
+ * 2022-08-14 code corrections, wasm function parameter added.
  */
 
 /**
@@ -24,7 +24,7 @@ function fileTypePage(options) {
   var dropZoneText = options.dropZoneText;
   var _wasmModule = {};
 
-  // TODO: progress indicator, process file list
+  // TODO: process file list
 
   /** Definitions */
   /*
@@ -163,9 +163,12 @@ function fileTypePage(options) {
     'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, RRG card file'},
     'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, MGC card file'},
 
+    // text
     'UTF8': {description: 'UTF-8 byte order mark, commonly seen in text files'},
     'UTF16LE': {description: 'Text file with UTF-16LE byte order mark'},
-    'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'}
+    'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'},
+    'HTML': {description: 'HTML file'},
+    'XML': {description: 'XML file'}
 
   };
 
@@ -333,13 +336,14 @@ function fileTypePage(options) {
     var RESULT_ARRAY_SIZE = 45;
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = 'Description';
-    var UNKNOWN = 'n/a'; // value returned by the WASM function if the type was not determined.
+    var UNKNOWN = ''; // value returned by the WASM function if the type was not determined.
 
+    var fileBufferSize = Math.min (fileData.byteLength, FILE_ARRAY_SIZE);
     var offset = 0;
 
     var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
     memAllZeroes (fileBytes);
-    fileBytes.set(new Uint8Array (fileData, 0, Math.min (fileData.byteLength, FILE_ARRAY_SIZE)));
+    fileBytes.set(new Uint8Array (fileData, 0, fileBufferSize));
 
     if (fileData.byteLength === 0) {
       resultElement.innerHTML += getResultProperty (DESCR_TITLE, 'Empty file');
@@ -351,9 +355,9 @@ function fileTypePage(options) {
     var resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
     memAllZeroes (resultBytes);
 
-    _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset);
+    _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, fileBufferSize);
 
-    var resultText = getStringFromBuffer(resultBytes);
+    var resultText = getStringFromBuffer(resultBytes, fileBufferSize);
     var description = '';
     var isText = true;
 
@@ -440,12 +444,13 @@ function fileTypePage(options) {
 
   /**
     * Returns the string from the buffer array.
-    * @param buf
+    * @param {[]} buf the buffer
+    * @param {number} the buffer size
     */
-  function getStringFromBuffer (buf) {
+  function getStringFromBuffer (buf, bufferSize) {
     var s = "";
     var index = 0;
-    while(true){
+    while(true || index >= bufferSize){
       if(buf[index] !== 0){
         s += String.fromCharCode(buf[index]);
         index++;
