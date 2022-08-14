@@ -13,6 +13,7 @@
 function fileTypePage(options) {
 
   'use strict';
+  var UNKNOWN = 'n/a'; // value returned by the WASM function if the type was not determined.
 
   var fileDropZone = document.getElementById ('file-target');
   var fileElement = document.getElementById ('input-file');
@@ -336,7 +337,6 @@ function fileTypePage(options) {
     var RESULT_ARRAY_SIZE = 45;
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = 'Description';
-    var UNKNOWN = ''; // value returned by the WASM function if the type was not determined.
 
     var fileBufferSize = Math.min (fileData.byteLength, FILE_ARRAY_SIZE);
     var offset = 0;
