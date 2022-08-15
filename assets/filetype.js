@@ -4,6 +4,7 @@
  * 2022-08-12
  * 2022-08-13 isTextFile() added, fix for empty files.
  * 2022-08-14 code corrections, wasm function parameter added.
+ * 2022-08-15 code corrections.
  */
 
 /**
@@ -13,7 +14,7 @@
 function fileTypePage(options) {
 
   'use strict';
-  var UNKNOWN = 'n/a'; // value returned by the WASM function if the type was not determined.
+  var UNKNOWN = ''; // value returned by the WASM function if the type was not determined.
 
   var fileDropZone = document.getElementById ('file-target');
   var fileElement = document.getElementById ('input-file');
@@ -338,26 +339,26 @@ function fileTypePage(options) {
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = 'Description';
 
-    var fileBufferSize = Math.min (fileData.byteLength, FILE_ARRAY_SIZE);
     var offset = 0;
-
-    var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
-    memAllZeroes (fileBytes);
-    fileBytes.set(new Uint8Array (fileData, 0, fileBufferSize));
 
     if (fileData.byteLength === 0) {
       resultElement.innerHTML += getResultProperty (DESCR_TITLE, 'Empty file');
       return;
     }
 
+    var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
+    memAllZeroes (fileBytes);
+    fileBytes.set(new Uint8Array (fileData, 0, Math.min(fileData.byteLength, FILE_ARRAY_SIZE)));
+
     // result
     offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
     var resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
     memAllZeroes (resultBytes);
 
-    _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, fileBufferSize);
+    // call WASM function
+    _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, fileData.byteLength);
 
-    var resultText = getStringFromBuffer(resultBytes, fileBufferSize);
+    var resultText = getStringFromBuffer(resultBytes, RESULT_ARRAY_SIZE);
     var description = '';
     var isText = true;
 
