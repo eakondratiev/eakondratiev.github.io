@@ -102,6 +102,7 @@ function fileTypePage(options) {
     'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
               ' It can contain the equivalent of files and directories.' +
               ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
+    'MDB': {description: 'Microsoft Access MDB, Jet DB'},
     'AppleWorks5': {description: 'AppleWorks 5 document'},
     'AppleWorks6': {description: 'AppleWorks 6 document'},
 
