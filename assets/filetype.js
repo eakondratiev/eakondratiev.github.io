@@ -35,6 +35,7 @@ function fileTypePage(options) {
    * <div class="list-all"></div>
    * var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
    *
+   * console.log (Object.keys (SIGNATURES).length);
    */
   var SIGNATURES = {
 
@@ -85,7 +86,7 @@ function fileTypePage(options) {
     'avi':  {description: 'avi, Audio Video Interleave video format'},
     'MKV': {description: 'mkv, mka, mks, mk3d, webm - Matroska media container, including WebM'},
     'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
-    'mp4': {description: 'ISO Base Media file (MPEG-4)'},
+    'mp4': {description: 'mp4 - ISO Base Media file (MPEG-4)'},
     'ftyp3g': {description: '3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files'},
     'MLV': {description: 'Canon Magic Lantern Video file'},
     'MPEG-Stream': {description: 'MPEG Program Stream'},
@@ -174,6 +175,8 @@ function fileTypePage(options) {
     'XML': {description: 'XML file'}
 
   };
+
+  //console.log (Object.keys (SIGNATURES).length);
 
   // load WASM module, synchronous
   (async function(){
