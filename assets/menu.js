@@ -14,6 +14,7 @@
  * 2022-06-25 T.log() added.
  * 2022-07-30 conditionnal logging.
  * 2022-08-11 menu keyboard handling corrections.
+ * 2022-08-17 file.htm added to menu
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -27,6 +28,7 @@
     {
       header: 'Online Tools',
       items: [
+        {url: 'file.htm', name: 'File Type by Content'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'regex.htm', name: 'Test Regular Expressions'},
         {url: 'roman-numerals.htm', name: 'Roman Numerals Converter'},
