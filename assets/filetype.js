@@ -5,6 +5,7 @@
  * 2022-08-13 isTextFile() added, fix for empty files.
  * 2022-08-14 code corrections, wasm function parameter added.
  * 2022-08-15 code corrections.
+ * 2022-08-26 logging added, some corrections.
  */
 
 /**
@@ -24,6 +25,7 @@ function fileTypePage(options) {
   var wasmUrl = options.wasmUrl;
   var dropReadyCss = options.dropReadyCss;
   var dropZoneText = options.dropZoneText;
+  var flashCss = options.flashCss;
   var _wasmModule = {};
 
   // TODO: process file list
@@ -296,6 +298,7 @@ function fileTypePage(options) {
       file = files[0];
 
       loader.show();
+      resultElement.classList.remove(flashCss);
 
       var f = async (file) => {
 
@@ -309,10 +312,11 @@ function fileTypePage(options) {
         reader.onload = function (e) {
           getSignatue (e.target.result, file, resultElement);
           loader.hide();
+          T.log ('File processed');
         };
 
         reader.onerror = function (e) {
-          console.log ('Read error', e.toString());
+          T.log ('File error');
           loader.hide();
         }
 
@@ -380,6 +384,8 @@ function fileTypePage(options) {
     else {
       description = getDescription (resultText);
     }
+
+    resultElement.classList.add(flashCss);
 
     resultElement.innerHTML += getResultProperty (DESCR_TITLE, description);
 
@@ -455,7 +461,7 @@ function fileTypePage(options) {
   function getStringFromBuffer (buf, bufferSize) {
     var s = "";
     var index = 0;
-    while(true || index >= bufferSize){
+    while(index < bufferSize){
       if(buf[index] !== 0){
         s += String.fromCharCode(buf[index]);
         index++;
@@ -464,7 +470,7 @@ function fileTypePage(options) {
       }
     }
 
-    return ''; // todo: unreachable
+    return '';
   }
 
   /**
