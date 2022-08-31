@@ -5,9 +5,6 @@ User-agent: *
 Disallow: /404.htm
 
 User-agent: *
-Disallow: /sitemap.xml
-
-User-agent: *
 Allow: /
 
 Sitemap: https://eakondratiev.github.io/sitemap.xml
