@@ -6,6 +6,7 @@
  * 2022-08-14 code corrections, wasm function parameter added.
  * 2022-08-15 code corrections.
  * 2022-08-26 logging added, some corrections.
+ * 2022-08-31 link added to CRD type description
  */
 
 /**
@@ -108,6 +109,8 @@ function fileTypePage(options) {
     'MDB': {description: 'Microsoft Access MDB, Jet DB'},
     'AppleWorks5': {description: 'AppleWorks 5 document'},
     'AppleWorks6': {description: 'AppleWorks 6 document'},
+    'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, the file signature is RRG. The <a href="crd-reader.htm"><b>CRD Reader</b></a> command line application can read this kind of files.'},
+    'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, the file signature is MGC. The <a href="crd-reader.htm"><b>CRD Reader</b></a> command line application can read this kind of files.'},
 
     'SQLite3': {description: 'SQLite Database'},
     'dcr':  {description: 'Adobe Shockwave file'},
@@ -166,8 +169,6 @@ function fileTypePage(options) {
     'cab': {description: 'cab, InstallShield CAB Archive File'},
     'evt': {description: 'evt, Windows Event Viewer file'},
     'dat-reg': {description: 'dat, Windows Registry file'},
-    'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, RRG card file'},
-    'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, MGC card file'},
 
     // text
     'UTF8': {description: 'UTF-8 byte order mark, commonly seen in text files'},
