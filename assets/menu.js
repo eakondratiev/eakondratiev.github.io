@@ -15,6 +15,7 @@
  * 2022-07-30 conditionnal logging.
  * 2022-08-11 menu keyboard handling corrections.
  * 2022-08-17 file.htm added to menu
+ * 2022-09-17 errors handling corrections.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -447,9 +448,11 @@
         }
       )
       .then(function (text) { 
-        console.log ('GOT ' + text);
+        //console.log ('GOT ' + text);
       })
-      .catch(console.error);  
+      .catch(function(err) {
+        //console.error (err);
+      });
 
   }
 
