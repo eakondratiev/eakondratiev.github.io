@@ -262,7 +262,7 @@
               '<div class="code-label">Javascript code:</div>' +
               '<p class="code">' +
               'var re = <b>/' +
-              testRe.value.replace (/([/])/gi, '\\$1') +
+              reCodeToHtml (testRe.value) +
               '/' + flags + '</b>;</p>';
 
             // 1. isMatch
@@ -456,6 +456,22 @@
               urlBase + qs.replace (/&/g, '&amp;') + '</div>';
             messageBlock.style.display = 'block';
           }
+
+        }
+
+        /**
+         * Returns html code for the regular expression.
+         * @param {string} code
+         */
+        function reCodeToHtml(code) {
+
+          var relt = /[<]/gi;
+
+          var html = code
+            .replace (/([/])/gi, '\\$1')
+            .replace (relt, '&lt;');
+
+          return html;
 
         }
 
