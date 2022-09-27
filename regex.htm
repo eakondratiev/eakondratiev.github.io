@@ -465,11 +465,9 @@
          */
         function reCodeToHtml(code) {
 
-          var relt = /[<]/gi;
-
           var html = code
             .replace (/([/])/gi, '\\$1')
-            .replace (relt, '&lt;');
+            .replace (/[<]/gi, '&lt;');
 
           return html;
 
