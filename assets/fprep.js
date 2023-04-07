@@ -12,6 +12,7 @@
  * 2021-12-11 code corrections, 64-bit (double) added.
  * 2021-12-18 32- and 64-bit representation is shown.
  * 2021-12-19 long bits formatting.
+ * 2023-04-07 js representation using html template.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -33,6 +34,7 @@ function processFloatingPointValue(inputElement, resultElement) {
 
   var inputText = inputElement.value;
   var number = T.getNumber(inputText);
+  var jsRepTemplate = document.getElementById('tpl-js-representaion');
 
   resultElement.innerHTML = '';
 
@@ -40,7 +42,6 @@ function processFloatingPointValue(inputElement, resultElement) {
     resultElement.innerHTML = 'n/a';
     return;
   }
-
 
   fetch('/assets/fprep.wasm')
     .then(response =>
@@ -62,9 +63,8 @@ function processFloatingPointValue(inputElement, resultElement) {
       getDoubleBits(arr64.byteOffset, number);
       resultElement.innerHTML += getResults (arr64, number);
 
-      resultElement.innerHTML += '<p>The javascript representation is 64-bits</p>' +
-        '<div class="content-wide"><b>' +
-        number.toFixed(20) + '</b></div>';
+      let jsRepText = jsRepTemplate.innerHTML;
+      resultElement.innerHTML += jsRepText.replace('{N}', number.toFixed(20));
 
     })
     .catch(console.error);
