@@ -6,3 +6,6 @@
 *.sln
 *.suo
 [Ww]eb.config
+
+# temporary page
+beta.htm
