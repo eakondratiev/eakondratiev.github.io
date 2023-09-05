@@ -1,0 +1,176 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Mouse Events -- Free Online Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="Mouse Events" />
+    <meta name="application-name" content="Mouse Events" />
+
+    <meta property="og:site_name" content="Tool">
+    <meta property="og:title" content="Mouse Events">
+    <meta name="description" content="Registering mouse events, testing for misclicks">
+    <meta property="og:description" content="Registering mouse events, testing for misclicks">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/mouse-events.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/mouse-events.htm">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#444444" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20220622" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20220817"></script>
+    <script src="/assets/web-app.js"></script>
+    <style>
+
+      .events-log-title {font-size: 10pt; margin-top: 8pt; margin-bottom: 5pt;}
+      .events-log-title button {float: right;}
+
+      .settings {border: solid 1px #ccc; border-radius: 2pt; padding: 4pt; margin: 4pt 0;}
+      h3.settings-title {font-weight: normal; font-size: 1rem; margin: 0 0 8pt 0;}
+      .settings label {display: block; margin: 4pt 0; padding: 0;}
+      .settings input[type=checkbox] {margin-right: 4pt;}
+      .settings input[type=text] {width: 25pt; text-align: end;}
+      .event-warning {color: #e00;}
+      .dblclck-counter {background: #a00; color: #fff; padding: 0 4pt; border-radius: 1pt;}
+
+      #mouse-event-field {
+        background: #def; border:solid 1px #cde; border-radius: 2pt;
+        color:#000; padding: 24pt; margin: 12pt auto;
+        text-align: center; cursor: pointer; user-select: none;
+        transition: 0.5s;}
+      #mouse-event-field:hover {box-shadow: inset 0 0 10pt 0 #79b;}
+      #mouse-events-stat {margin: 8pt auto; padding-bottom: 4pt;}
+      #mouse-events-stat:not(:empty){ border-bottom: dotted 1pt #ccc;}
+      #mouse-events-registered {
+        font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        font-size: 0.9rem; margin: 4pt auto;}
+      #mouse-events-registered:empty:before {content: 'Ready...';}
+      #mouse-events-registered div {margin-bottom:4pt;}
+      #mouse-events-registered div span {white-space:nowrap;}
+
+      @media (prefers-color-scheme: dark) {
+        .settings {border-color: #555;}
+        #mouse-event-field {
+          background: #246; border:solid 1px #357; color:#8ac;}
+        #mouse-event-field:hover {box-shadow: inset 0 0 10pt 0 #68a;}
+      }
+
+      .footer-menu ul { columns: 170px auto;
+        line-height: 2; max-width: 700px; margin: 8pt auto;
+        padding-bottom: 8pt; text-align: start; list-style-type: none;}
+      .footer-menu a {color: #bbb;}
+      .footer-menu a:hover {color: #fff;}
+    </style>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></!--script -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PTBT00LYFH');
+    </script>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <h3 class="site-nav-header">Online Tools</h3>
+          <ul>
+          <li class="site-nav-top-item"><a href="file.htm">File Type by Content</a></li>
+          <li class="site-nav-top-item"><a href="mouse-events.htm">Mouse Events</a></li>
+          <li class="site-nav-top-item"><a href="regex.htm">Regex Tester</a></li>
+          <li class="site-nav-top-item"><a href="roman-numerals.htm">Convert a Roman Number</a></li>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">Representation of Floating-point Numbers 32 and 64 bits</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+          </ul>
+          <h3 class="site-nav-header">Console Tools</h3>
+          <ul>
+            <li class="site-nav-top-item"><a href="crd-reader.htm">CRD Reader</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <noscript><div>This site uses javascript. Please, turn it on in your browser settings.</div></noscript>
+          <div id="incompatible-browser">Please, update your browser.</div>
+          <h1>Mouse Events</h1>
+          <p class="description">
+            Sometimes the mouse can produce several clicks instead of one.
+            It is known as misclicks. The cause could be anything from the mechanical wear of mouse switches to a poor RF or Bluetooth connection.
+            This page tracks left-button clicks and detects whether they are too frequent.
+          </p>
+
+          <div class="settings">
+            <h3 class="settings-title">Advanced Settings</h3>
+            <div>
+              <label><input type="checkbox" max="4" id="settings-only-clicks" accesskey="R"/><u>R</u>egister only clicks</label>
+              <label>False double-click time <u>t</u>hreshold <input type="text" id="settings-dblclck-threshold" accesskey="T" /> ms</label>
+            </div>
+          </div>
+
+          <div id="mouse-event-field">
+            Click or tap here
+          </div>
+
+          <h3 class="events-log-title">Events <button id="btn-reset">Clear</button></h3>
+          <div id="mouse-events-stat"></div>
+          <div id="mouse-events-registered"></div>
+
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      <div class="footer-menu">
+        <ul>
+        <li><a href="crd-reader.htm">CRD File Reader Console App</a></li>
+        <li><a href="file.htm">Get File Type by Content</a></li>
+        <li><a href="mouse-events.htm">Mouse Events</a></li>
+        <li><a href="iprange.htm">IPv4 Ranges</a></li>
+        <li><a href="regex.htm">Test Regular Expressions</a></li>
+        <li><a href="roman-numerals.htm">Roman Numerals Converter</a></li>
+        <li><a href="floating-point-representation.htm">Floating-point Representation, 32/64 bit</a></li>
+        <li><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+        <li><a href="speed.htm">Speed &amp; Distance Scale</a></li>
+        <li><a href="ws.htm">Show White Spaces</a></li>
+        </ul>
+      </div>
+      imperfect <b>tools</b>
+    </div>
+    <script src="/assets/mouse-events.min.js"></script>
+    <script>
+      'use strict';
+
+      // check for compatibility
+      if (document.getElementsByClassName === undefined ||
+          !Element.prototype.addEventListener) {
+
+        document.getElementById('incompatible-browser').style.display = 'block';
+
+      }
+      else {
+
+        mouseEvents();
+
+      }
+    </script>
+  </body>
+</html>
