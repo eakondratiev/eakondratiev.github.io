@@ -16,6 +16,7 @@
  * 2022-08-11 menu keyboard handling corrections.
  * 2022-08-17 file.htm added to menu
  * 2022-09-17 errors handling corrections.
+ * 2023-09-12 the Mouse Events Tracker page added to the menu.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -30,6 +31,7 @@
       header: 'Online Tools',
       items: [
         {url: 'file.htm', name: 'File Type by Content'},
+        {url: 'mouse-events.htm', name: 'Mouse Events Tracker'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'regex.htm', name: 'Test Regular Expressions'},
         {url: 'roman-numerals.htm', name: 'Roman Numerals Converter'},

@@ -34,6 +34,12 @@ header {padding: 8pt 0; display: grid; }
 .footer { flex-shrink: 0; background: #333; color:#aaa; font-size: 0.7rem; text-align: center; padding: 4pt;}
 .footer b {background: #5252a0; color: #def; font-weight:normal; padding:0 2pt; border-top-right-radius: 4pt;}
 .footer:hover b {color: #fff;}
+.footer-menu ul {columns: 170px auto;
+  line-height: 2;
+  max-width: 700px; margin: 8pt auto; padding-bottom: 8pt;
+  text-align: start; list-style-type: none; }
+.footer-menu a {color: #bbb; text-decoration:none;}
+.footer-menu a:hover {color: #fff;}
 .site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; transition: color 1s;}
 .site-logo:hover { color: #fff; }
 
