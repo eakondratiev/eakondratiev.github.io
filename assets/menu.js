@@ -167,6 +167,8 @@
       T.log ("Page load");
     }
 
+    processBottomMenu ();
+
     /**
      * Sets the focus on the menu item.
      * @param {any} itemContainer
@@ -225,6 +227,34 @@
 
     // resets selected item
     selectedItem = 0;
+  }
+
+  /**
+   * Processes the page bottom menu, highlights current page menu item.
+   */
+  function processBottomMenu () {
+
+
+    var menu = document.getElementsByClassName('footer-menu');
+    var items;
+    var i;
+    var pageUrl;
+
+    if (menu.length === 0 ||
+        window.location === undefined ||
+        window.location.pathname === undefined) {
+      return;
+    }
+
+    pageUrl = window.location.pathname.split('/').pop();
+    items = menu[0].getElementsByTagName('a');
+
+    for (i = 0; i < items.length; i++) {
+      if (items[i].getAttribute('href') === pageUrl) {
+        items[i].classList.add('current');
+      }
+    }
+
   }
 
 })();

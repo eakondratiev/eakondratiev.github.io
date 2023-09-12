@@ -40,6 +40,8 @@ header {padding: 8pt 0; display: grid; }
   text-align: start; list-style-type: none; }
 .footer-menu a {color: #bbb; text-decoration:none;}
 .footer-menu a:hover {color: #fff;}
+.footer-menu a.current {color:#d80;}
+.footer-menu a.current:hover {color:#fff;}
 .site-logo { color: #aaa; font-size:1.2rem; font-weight: bold; text-decoration:none; transition: color 1s;}
 .site-logo:hover { color: #fff; }
 

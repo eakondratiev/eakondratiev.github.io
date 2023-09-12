@@ -2,6 +2,7 @@
  * Javascript code for the mouse-events.htm page.
  *
  * 2023-09-05
+ * 2023-09-12 a call to console.log removed
  */
 
 /**
@@ -277,8 +278,5 @@ function mouseEvents(options) {
 
     output.innerHTML = `<div${cls}>${text}</div>` + output.innerHTML;
   }
-
- console.log ('todo');
-
 
 }
