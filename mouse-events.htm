@@ -46,6 +46,7 @@
         text-align: center; cursor: pointer; user-select: none;
         transition: 0.5s;}
       #mouse-event-field:hover {box-shadow: inset 0 0 10pt 0 #79b;}
+      #mouse-event-field:active {background: #cde; box-shadow: inset 0 0 25pt 0 #79b;}
       #mouse-events-stat {margin: 8pt auto; padding-bottom: 4pt;}
       #mouse-events-stat:not(:empty){ border-bottom: dotted 1pt #ccc;}
       #mouse-events-registered {
@@ -109,7 +110,8 @@
           <p class="description">
             Sometimes the mouse can produce several clicks instead of one.
             It is known as misclicks. The cause could be anything from the mechanical wear of mouse switches to a poor RF or Bluetooth connection.
-            This page tracks left-button clicks and detects whether they are too frequent.
+            This page monitors left and right button clicks and detects whether they are too frequent.
+            Also, it tracks other events of a pointing device like a touchscreen or a trackpad.
           </p>
 
           <div class="settings">
@@ -148,7 +150,7 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/mouse-events.min.js?20230912"></script>
+    <script src="/assets/mouse-events.min.js?20230918"></script>
     <script>
       'use strict';
       // check for compatibility

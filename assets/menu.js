@@ -17,6 +17,7 @@
  * 2022-08-17 file.htm added to menu
  * 2022-09-17 errors handling corrections.
  * 2023-09-12 the Mouse Events Tracker page added to the menu.
+ * 
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS

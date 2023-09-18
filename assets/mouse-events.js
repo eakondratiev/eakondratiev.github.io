@@ -3,6 +3,7 @@
  *
  * 2023-09-05
  * 2023-09-12 a call to console.log removed
+ * 2023-09-18 handle right-button clicks
  */
 
 /**
@@ -62,6 +63,12 @@ function mouseEvents(options) {
   // Monitored events
   mouseField.addEventListener ('click', function(e){
     printMouseEvent (e, 'Click', {threshold: settings.clickThreshold});
+  });
+
+  mouseField.addEventListener ('contextmenu', function(e){
+    e.preventDefault();
+    printMouseEvent (e, 'Right-click', {threshold: settings.clickThreshold});
+    return false;
   });
 
   mouseField.addEventListener ('mouseenter', function(e){
@@ -125,7 +132,8 @@ function mouseEvents(options) {
 
     options = options || {};
 
-    if (settings.onlyClicks && e.type !== 'click') {
+    if (settings.onlyClicks && e.type !== 'click' &&
+        settings.onlyClicks && e.type !== 'contextmenu') {
       return; // skip other events if the checkbox set
     }
 
