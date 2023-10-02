@@ -7,6 +7,7 @@
  * 2022-08-15 code corrections.
  * 2022-08-26 logging added, some corrections.
  * 2022-08-31 link added to CRD type description
+ * 2023-10-02 JXR description added.
  */
 
 /**
@@ -45,6 +46,7 @@ function fileTypePage(options) {
     // graphics
     'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
     'JPEG2000': {description: 'JPEG 2000 file'},
+    'JXR': {description: 'JPEG XR (extended range) file'},
     'PNG': {description: 'png, Image encoded in the Portable Network Graphics format'},
     'webp': {description: 'Google WebP image file'},
     'ani':  {description: 'Animated cursor'},
