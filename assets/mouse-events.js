@@ -4,6 +4,7 @@
  * 2023-09-05
  * 2023-09-12 a call to console.log removed
  * 2023-09-18 handle right-button clicks
+ * 2023-01-18 printMouseEvent() output format
  */
 
 /**
@@ -181,7 +182,7 @@ function mouseEvents(options) {
     eventTimes[e.type] = e.timeStamp;
 
     statCount (e, eventName, {doubleClickDetected: doubleClickDetected});
-    prependLine (`${eventName}. <span>Time stamp: ${e.timeStamp.toFixed(3)} ms</span>` +
+    prependLine (`<b>${eventName}</b> <span>Time stamp: ${e.timeStamp.toFixed(3)} ms</span>` +
       `${coordinates}` +
       `${pointerType}${wheelData}${filesData}` +
       `${keys}.`, css);

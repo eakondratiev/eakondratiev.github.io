@@ -48,13 +48,12 @@
         transition: 0.5s;}
       #mouse-event-field:hover {box-shadow: inset 0 0 10pt 0 #79b;}
       #mouse-event-field:active {background: #cde; box-shadow: inset 0 0 25pt 0 #79b;}
-      #mouse-events-stat {margin: 8pt auto; padding-bottom: 4pt;}
+      #mouse-events-stat {margin: 8pt auto; padding-bottom: 4pt; font-size:0.85rem; line-height: 1.5;}
       #mouse-events-stat:not(:empty){ border-bottom: dotted 1pt #ccc;}
-      #mouse-events-registered {
-        font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
-        font-size: 0.9rem; margin: 4pt auto;}
+      #mouse-events-registered { font-size: 0.9rem; margin: 4pt auto;}
       #mouse-events-registered:empty:before {content: 'Ready...';}
-      #mouse-events-registered div {margin-bottom:4pt;}
+      #mouse-events-registered div {border-bottom: dotted 1pt #999; margin-bottom:4pt; padding-bottom: 4pt;}
+      #mouse-events-registered div b {background: #380; border-radius:1pt; color: #fff; padding: 0 2pt; margin-right: 2pt;}
       #mouse-events-registered div span {white-space:nowrap;}
 
       @media (prefers-color-scheme: dark) {
@@ -151,9 +150,10 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/mouse-events.min.js?20230918"></script>
+    <script src="/assets/mouse-events.min.js?20240118"></script>
     <script>
       'use strict';
+
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
           !Element.prototype.addEventListener) {
