@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
     <link href="/assets/main.css?20230912" rel="stylesheet" type="text/css" />
-    <script src="/assets/menu.min.js?20230912"></script>
+        <script src="/assets/menu.min.js?20240617"></script>
     <script src="/assets/web-app.js"></script>
     <style>
       #text-box, #text-processed {
@@ -37,6 +37,10 @@
       #text-processed b {background: #fd9; color: #c00; font-weight: normal; min-width:2pt;} /* non-ascii */
       #text-processed i {background: #eee; color: #777; font-style: normal;} /* whitespace */
       .new-line-symbol {font-family: 'Lucida Console'; font-size:0.8rem; padding: 0 2pt;}
+      .info-block {line-height:2;}
+      #text-character b {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;}
+      #text-character b:empty {border-bottom:1px dotted #777; height: 1em; width: 1em; display: inline-block;}
+      #text-character div:first-child b {font-size:1.2rem;}
       @media (prefers-color-scheme: dark) {
         #text-processed b {background: #966502; color: #fe9;}
         #text-processed i {background: #505050; color: #eee;}
@@ -70,7 +74,7 @@
           <li class="site-nav-top-item"><a href="roman-numerals.htm">Convert a Roman Number</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
-          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">Character Code Detector</a></li>
           <li class="site-nav-top-item"><a href="floating-point-representation.htm">Representation of Floating-point Numbers 32 and 64 bits</a></li>
           <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
           </ul>
@@ -84,14 +88,21 @@
         <div class="content page-content">
           <noscript><div>This site uses javascript. Please, turn it on in your browser settings.</div></noscript>
           <div id="incompatible-browser">Please, update your browser.</div>
-          <h1>Whitespaces and UTF</h1>
-          <p>Highlights whitespaces and non-Latin characters in the text. <a href="ws.htm?t=Sоme%20tеxt.">Example</a></p>
+          <h1>Character Code Detector</h1>
+          <p>Identifies spaces and characters that are not part of the Latin alphabet within the text.
+          <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
           <p id="textarea-label">Enter or paste a <u>t</u>ext here...</p>
           <textarea id="text-box" rows="5" accesskey="T" aria-labelledby="textarea-label"></textarea>
-          <div>Text length: <b id="text-len">0</b></div>
+          <div class="info-block">
+            <div>Text length: <b id="text-len">0</b></div>
+            <div id="text-character" style="display:none;">
+              <div>Character <b></b></div>
+              <div>Bytes hex <b></b></div>
+            </div>
+          </div>
           <div id="text-processed"></div>
           <div class="page-tags">
-            <b>#Unicode</b>
+            <b>#UTF</b> <b>#Unicode</b> <b>#Hexadecimal</b> <b>Almost AI-free</b>
           </div>
         </div>
       </div>
@@ -117,10 +128,14 @@
       (function () {
         'use strict';
 
-        var URL_PARAM = "t";
-        var sourceElement = document.getElementById("text-box"),
-          targetElement = document.getElementById("text-processed"),
-          lenElement = document.getElementById("text-len"),
+        var URL_PARAM = 't';
+        var showBytes = undefined;
+        var sourceElement = document.getElementById('text-box'),
+          targetElement = document.getElementById('text-processed'),
+          lenElement = document.getElementById('text-len'),
+          charElement = document.getElementById('text-character'),
+          charCharElement = charElement.getElementsByTagName('b')[0],
+          charBytesElement = charElement.getElementsByTagName('b')[1],
           urlParams = T.getUrlParameters();
 
         sourceElement.focus();
@@ -130,7 +145,88 @@
         if (urlParams.t !== undefined) {
           // process the url parameter
           sourceElement.value = decodeURIComponent(urlParams.t);
-          textChanged();;
+          textChanged();
+        }
+
+        // Shows the current character, first check browser support
+        if (window.getSelection !== undefined &&
+            String.fromCodePoint !== undefined) {
+
+          var cp2b = function(cp) {
+
+            var b = new Array(4); // strings in javascript are UTF-16, 4-bytes
+            var i;
+
+            for (i = 3; i >= 0; i--) {
+              b[i] = (cp >> (i * 8)) & 0xFF;
+            }
+
+            return b; // array of numbers
+
+          };
+
+          charElement.style.display = 'block'; // shows the block
+          sourceElement.onmouseup = function(){
+            showBytes();
+          };
+
+          /**
+           * Shows the character and its bytes
+           */
+          showBytes = function() {
+            // https://stackoverflow.com/questions/5290182/how-many-bytes-does-one-unicode-character-take#33349765
+            var cp = getCodePoint();
+            var i;
+            var bytesText = '';
+            var skip = true;
+            var byteToString = function(b) {
+              var s = b.toString(16);
+              if (b < 16) {
+                return '0' + s;
+              }
+              return s;
+            };
+
+            if (cp === 0) { 
+              charCharElement.innerHTML = '';
+              charBytesElement.innerHTML = '';
+              return; 
+            }
+
+            var b = cp2b(cp);
+            if (cp > 0) {
+              charCharElement.innerHTML = String.fromCodePoint (cp);
+            }
+            else {
+              charCharElement.innerHTML = '';
+            }
+
+            // show bytes in reverse order
+            for (i = b.length - 1; i >= 0; i--) {
+
+              if (b[i] === 0 && skip) {
+                continue;
+              }
+              skip = false;
+              bytesText += ' ' + byteToString(b[i]) + '';  // hex
+  
+            }
+
+            charBytesElement.innerHTML = bytesText;
+          };
+
+        }
+
+        /**
+         * Return the Unicode code point next to text cursor or zero;
+         */
+        function getCodePoint (){
+          var p = sourceElement.selectionStart;
+          var c = sourceElement.value.codePointAt(p);
+          if (sourceElement.selectionEnd - p <= 1) {
+            return c;
+          }
+          return 0;
         }
 
         /**
@@ -141,12 +237,17 @@
           targetElement.innerHTML = processText(sourceElement.value);
 
           if (sourceElement.value.length > 0) {
-            targetElement.style.display = "block";
+            targetElement.style.display = 'block';
           }
           else {
-            targetElement.style.display = "none";
+            targetElement.style.display = 'none';
           }
           lenElement.innerHTML = sourceElement.value.length.toString();
+
+          // Show character next to text cursor
+          if (typeof showBytes === 'function') {
+            showBytes();
+          }
 
           if (window.history.pushState) {
             window.history.pushState('ws.htm', 'Title', '/ws.htm?' +

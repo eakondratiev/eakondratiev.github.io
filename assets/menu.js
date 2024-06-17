@@ -17,7 +17,7 @@
  * 2022-08-17 file.htm added to menu
  * 2022-09-17 errors handling corrections.
  * 2023-09-12 the Mouse Events Tracker page added to the menu.
- * 
+ * 2024-06-17 rename the link from White Spaces to Character Code Detector.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -39,7 +39,7 @@
         {url: 'floating-point-representation.htm', name: 'FP32/64'},
         {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'},
         {url: 'speed.htm',   name: 'Speed &amp; Distance'},
-        {url: 'ws.htm',      name: 'White Spaces'}
+        {url: 'ws.htm',      name: 'Character Code Detector'}
       ]},
     {
       header: 'Console Tools',
