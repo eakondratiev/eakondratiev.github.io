@@ -6,6 +6,7 @@
  * 2020-12-27 * 
  * 2021-12-05 * browser compatibility check; the .dataset replaced with .getAttribute().
  * 2021-03-30 * messages are passed via options, set css classes to the message element.
+ * 2024-07-27 * "Cover the Distance" replaced with "Spanning the Distance".
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -260,7 +261,7 @@ function Speed(options) {
     }
 
     comparisonElement.innerHTML =
-      '<h2 class="comparison-header">Cover the Distance</h2>' +
+      '<h2 class="comparison-header">Spanning the Distance</h2>' +
       text;
   }
 
