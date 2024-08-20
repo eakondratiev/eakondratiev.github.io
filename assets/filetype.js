@@ -183,7 +183,7 @@ function fileTypePage(options) {
 
   };
 
-  //console.log (Object.keys (SIGNATURES).length);
+  //console.log ('Total signatures', Object.keys (SIGNATURES).length);
 
   // load WASM module, synchronous
   (async function(){
