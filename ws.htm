@@ -37,11 +37,10 @@
       #text-processed b {background: #fd9; color: #c00; font-weight: normal; min-width:2pt;} /* non-ascii */
       #text-processed i {background: #eee; color: #777; font-style: normal;} /* whitespace */
       .new-line-symbol {font-family: 'Lucida Console'; font-size:0.8rem; padding: 0 2pt;}
-      #text-character b {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;}
-      /*#text-character b:empty {border-bottom:1px dotted #777; height: 1em; width: 1em; display: inline-block;}*/
-      #text-character span:first-child b {font-size:1.2rem; display: inline-block; text-align: center;
-        background: #eee;
-        min-height: 0.8em; min-width: 1em;}
+      #text-character b {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; line-height: 1.5;}
+      #text-character b:empty:before {content:' ';}
+      #text-character span:first-child b {font-size:1.2rem; text-align: center;
+        background: #eee;}
       @media (prefers-color-scheme: dark) {
         #text-processed b {background: #966502; color: #fe9;}
         #text-processed i {background: #505050; color: #eee;}
@@ -94,7 +93,7 @@
           <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
           <div id="text-character" style="display:none;">
             <span>Character <b></b></span>
-            <span>Bytes hex <b></b></span>
+            <span style="margin-left:1em;">Bytes hex <b></b></span>
           </div>
           <textarea id="text-box" rows="5" accesskey="T" placeholder="Please enter or paste text"></textarea>
           <div>
@@ -264,7 +263,7 @@
           // NOTE: textarea internal value, the line breaks are normalized to LF (only).
           var reNonAscii = /([\u00FF-\uFFFF])/g,
             reNewline = /\n/g,
-            reWhiteSpace = /[ ]/g,
+            reWhiteSpace = /[\u0020\u00A0\u2000-\u200A\u2028\u205F\u3000]/g,
             reTab = /\t/g;
           return text.replace(reNonAscii, '<b>$1</b>')
             .replace(reTab, '<i>&rarr;</i>')
