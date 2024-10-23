@@ -9,6 +9,7 @@
  * 2022-08-31 link added to CRD type description
  * 2023-10-02 JXR description added.
  * 2024-08-20 JXL description added.
+ * 2024-10-23 HEIC description added.
  */
 
 /**
@@ -94,6 +95,9 @@ function fileTypePage(options) {
     'MKV': {description: 'mkv, mka, mks, mk3d, webm - Matroska media container, including WebM'},
     'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
     'mp4': {description: 'mp4 - ISO Base Media file (MPEG-4)'},
+    'av1': {description: 'AV1 - video file encoded using the AV1 codec with efficient compression'},
+    'avif': {description: 'AVIF - image file that uses AV1 video codec for image compression'},
+    'heic': {description: 'HEIC/HEIF - High Efficiency Image Container (or Format) for images, image sequences, other media streams.'},
     'ftyp3g': {description: '3rd Generation Partnership Project 3GPP and 3GPP2 multimedia files'},
     'MLV': {description: 'Canon Magic Lantern Video file'},
     'MPEG-Stream': {description: 'MPEG Program Stream'},
