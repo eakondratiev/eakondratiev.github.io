@@ -10,6 +10,7 @@
  * 2023-10-02 JXR description added.
  * 2024-08-20 JXL description added.
  * 2024-10-23 HEIC description added.
+ * 2024-10-24 HDF4 and HDF5 descriptions added.
  */
 
 /**
@@ -121,6 +122,8 @@ function fileTypePage(options) {
     'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, the file signature is MGC. The <a href="crd-reader.htm"><b>CRD Reader</b></a> command line application can read this kind of files.'},
 
     'SQLite3': {description: 'SQLite Database'},
+    'HDF4': {description: 'HDF4 -  Hierarchical Data Format version 4, scientific data in a hierarchical organization'},
+    'HDF5': {description: 'HDF5 -  Hierarchical Data Format version 5, for large and complex scientific data in a hierarchical organization, also commonly used in machine learning'},
     'dcr':  {description: 'Adobe Shockwave file'},
     'dir':  {description: 'Macromedia Director file'},
     'WinHtmlHelp': {description: 'chm, Microsoft Windows HtmlHelp file'},
@@ -314,7 +317,7 @@ function fileTypePage(options) {
         r +=
           getResultProperty ('File name', file.name) +
           getResultProperty ('File size', formatFileSize (file.size)) +
-          getResultProperty ('File MIME type', file.type);
+          getResultProperty ('File MIME type', file.type + '<div style="font-style:normal; opacity:0.7;">* reported by browser</div>');
 
         await reader.readAsArrayBuffer (file);
 
@@ -354,7 +357,7 @@ function fileTypePage(options) {
     var FILE_ARRAY_SIZE = 300; // some signatures uses an offset
     var RESULT_ARRAY_SIZE = 45;
     var MAX_SHOWN_BYTES = 32;
-    var DESCR_TITLE = 'Description';
+    var DESCR_TITLE = '<b>Description</b>';
 
     var offset = 0;
 
