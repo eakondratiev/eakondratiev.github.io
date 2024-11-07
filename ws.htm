@@ -144,7 +144,9 @@
         sourceElement.focus();
         sourceElement.addEventListener ('change', textChanged);
         sourceElement.addEventListener ('keyup', textChanged);
-        sourceElement.addEventListener ('paste', textChanged);
+        sourceElement.addEventListener ('paste', function(e) {
+          setTimeout (function() { textChanged(); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
+        });
 
         if (urlParams.t !== undefined) {
           // process the url parameter
