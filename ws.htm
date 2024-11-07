@@ -142,8 +142,9 @@
           urlParams = T.getUrlParameters();
 
         sourceElement.focus();
-        sourceElement.onchange = textChanged;
-        sourceElement.onkeyup = textChanged;
+        sourceElement.addEventListener ('change', textChanged);
+        sourceElement.addEventListener ('keyup', textChanged);
+        sourceElement.addEventListener ('paste', textChanged);
 
         if (urlParams.t !== undefined) {
           // process the url parameter
