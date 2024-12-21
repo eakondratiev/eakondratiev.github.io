@@ -146,11 +146,23 @@
               <span class="fp-nowrap">1/2<sup>1</sup> + 0/2<sup>2</sup> + 1/2<sup>3</sup> + 0/2<sup>4</sup> ... + 0/2<sup>23</sup></span>
               = 1/2 + 1/8 = 0.625.
             </p>
-            <p>
-              This representation is inaccurate by design for some numbers.
-              The error accumulates when summing several numbers.
-              To reduce this kind of numerical errors <a href="floating-point-summation.htm">algorithms</a> were developed.
-            </p>
+
+            <h3>How to Deal with Inaccuracies in Real Numbers Caused by Binary Representation?</h3>
+
+            <p>If the range of real number values is known, consider using specialized data types such as <i>Decimal</i> in Python, <i>BigDecimal</i> in Java,
+              and <a href="https://github.com/MikeMcl/bignumber.js"><i>BigNumber.js</i></a> in JavaScript.</p>
+
+            <p>Avoid comparing real numbers using the equality operator, such as <code>if (x == 0.3)</code>.
+              Instead, compare the difference between the numbers with a small threshold, like this: </p>
+            <pre class="code">
+const DELTA = 0.001;
+...
+if (Math.abs(x - 0.3) <= DELTA) ...</pre>
+            
+            <p>The error in binary representation accumulates when summing real numbers.
+            While algorithms like the Kahan <a href="floating-point-summation.htm">summation</a> algorithm can help mitigate these numerical errors,
+            they do not eliminate them completely and only reduce their impact.</p>
+
           </article>
           <template id="tpl-js-representaion" style="display:none">
             <p>Javascript representation is the 64-bit number</p>
