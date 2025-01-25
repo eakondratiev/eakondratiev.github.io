@@ -278,8 +278,8 @@
 
           // NOTE: textarea internal value, the line breaks are normalized to LF (only).
           var reNonAscii = /([\u00FF-\uFFFF])/g,
-            reNewline = /\n/g,
-            reWhiteSpace = /[\u0020\u00A0\u2000-\u200A\u2028\u205F\u3000]/g,
+            reNewline = /[\n\u2029]/g, // u2029 - paragraph separator
+            reWhiteSpace = /[\u0020\u00A0\u2000-\u200A\u2028\u205F\u3000]/g, // u2028 - line separator.
             reTab = /\t/g;
           return text.replace(reNonAscii, '<b>$1</b>')
             .replace(reTab, '<i>&rarr;</i>')
