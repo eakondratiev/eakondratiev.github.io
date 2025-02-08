@@ -45,6 +45,8 @@
       #text-character b:empty:before {content:' ';}
       #text-character span:first-child b {font-size:1.2rem; text-align: center;
         background: #eee;}
+      #nonascii-counter {margin-left: 8pt;}
+      #nonascii-counter b {background: #fd9; padding: 0 4pt;}
       @media (prefers-color-scheme: dark) {
         #text-processed b {background: #966502; color: #fe9;}
         #text-processed i {background: #505050; color: #eee;}
@@ -91,7 +93,7 @@
       <div class="page-wide">
         <div class="content page-content">
           <noscript><div>This site requires JavaScript to function properly. Please enable it in your browser settings.</div></noscript>
-          <div id="incompatible-browser">Please, update your browser.</div>
+          <div id="incompatible-browser">Plea         * se, update your browser.</div>
           <h1>Character Code Detector</h1>
           <p>Identifies spaces and characters that are not part of the Latin alphabet within the text.
           <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
@@ -100,8 +102,9 @@
             <span style="margin-left:1em;">Bytes hex <b></b></span>
           </div>
           <textarea id="text-box" rows="5" accesskey="T" placeholder="Please enter or paste text"></textarea>
-          <div>
-            <div>Text length: <b id="text-len">0</b></div>
+          <div style="margin-top: 4pt; line-height: 1.5;">
+            Text length: <b id="text-len">0</b>
+            <span id="nonascii-counter" style="display:none;">Whitespaces and Non-ASCII: <b></b></span>
           </div>
           <div id="text-processed"></div>
           <h2>About This Tool</h2>
@@ -114,7 +117,7 @@
             Just copy and paste the text into the box above.
           </p>
           <div class="page-tags">
-            <b>#UTF</b> <b>#Unicode</b> <b>#Hexadecimal</b> <b>Almost AI-free</b>
+            <b>#UTF</b> <b>#Unicode</b> <b>#Non-ASCII</b> <b>#Hexadecimal</b> <b>Almost AI-free</b>
           </div>
         </div>
       </div>
@@ -145,6 +148,8 @@
         var sourceElement = document.getElementById('text-box'),
           targetElement = document.getElementById('text-processed'),
           lenElement = document.getElementById('text-len'),
+          nonAsciiElement = document.getElementById('nonascii-counter'),
+          nonAsciiCounter = nonAsciiElement.getElementsByTagName('b')[0],
           charElement = document.getElementById('text-character'),
           charCharElement = charElement.getElementsByTagName('b')[0],
           charBytesElement = charElement.getElementsByTagName('b')[1],
@@ -249,7 +254,17 @@
          */
         function textChanged() {
 
-          targetElement.innerHTML = processText(sourceElement.value);
+          var result = processText(sourceElement.value);
+
+          targetElement.innerHTML = result.text;
+          nonAsciiCounter.innerHTML = result.nonAscii;
+
+          if (result.nonAscii > 0) {
+            nonAsciiElement.style.display = '';
+          }
+          else {
+            nonAsciiElement.style.display = 'none';
+          }
 
           if (sourceElement.value.length > 0) {
             targetElement.style.display = 'block';
@@ -271,8 +286,9 @@
         }
 
         /**
-         * Processes entered text.
+         * Processes the entered text.
          * @param {string} text the entered text.
+         * returns {{text:string, nonAscii:number}}
          */
         function processText(text) {
 
@@ -281,10 +297,17 @@
             reNewline = /[\n\u2029]/g, // u2029 - paragraph separator
             reWhiteSpace = /[\u0020\u00A0\u2000-\u200A\u2028\u205F\u3000]/g, // u2028 - line separator.
             reTab = /\t/g;
-          return text.replace(reNonAscii, '<b>$1</b>')
-            .replace(reTab, '<i>&rarr;</i>')
-            .replace(reWhiteSpace, '<i>.</i>')
-            .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />');
+
+          var nonAsciiMatches = text.match (reNonAscii);
+          var nonAsciiCounter = nonAsciiMatches? nonAsciiMatches.length : 0;
+          
+          return {
+            text: text.replace(reNonAscii, '<b>$1</b>')
+              .replace(reTab, '<i>&rarr;</i>')
+              .replace(reWhiteSpace, '<i>.</i>')
+              .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />'),
+            nonAscii: nonAsciiCounter
+          };
         }
 
       })();
