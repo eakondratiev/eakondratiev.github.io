@@ -302,7 +302,9 @@
           var nonAsciiCounter = nonAsciiMatches? nonAsciiMatches.length : 0;
           
           return {
-            text: text.replace(reNonAscii, '<b>$1</b>')
+            text: text.replace (/</g, '&lt;') // escape HTML <
+              .replace(/>/g, '&gt;')          // and >
+              .replace(reNonAscii, '<b>$1</b>')
               .replace(reTab, '<i>&rarr;</i>')
               .replace(reWhiteSpace, '<i>.</i>')
               .replace(reNewline, '<i class="new-line-symbol">&para;</i><br />'),
