@@ -1,0 +1,201 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>SHA-256 File Integrity Checker -- Free Online Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="apple-mobile-web-app-title" content="SHA-256 File Integrity Checker" />
+    <meta name="application-name" content="SHA-256 File Integrity Checker" />
+
+    <meta property="og:site_name" content="Tool">
+    <meta property="og:title" content="SHA-256 File Integrity Checker">
+    <meta name="description" content="Check your file's integrity using your browser to calculate the SHA-256 checksum.">
+    <meta property="og:description" content="Check your file's integrity using your browser to calculate the SHA-256 checksum.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/sha256.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/sha256.htm">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#444444" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20230912" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20240617"></script>
+    <script src="/assets/web-app.js"></script>
+    <style>
+      .file-selector-container {
+        border: dotted 2pt #28c; border-radius: 5pt; cursor: pointer;
+        font-size: 0.9rem; padding: 16pt 8pt; min-width: 230px;
+        text-align: center;
+      }
+      .file-selector-container:hover, .drop-ready {
+        box-shadow: 0 0 3px 2px rgba(0,128,255,0.5);
+      }
+      .flash {animation-name: fade-out; animation-duration: 4s;}
+
+      #expectedSHA256 { border: solid 1px #999; box-sizing: border-box; padding: 4pt; width: 100%; }
+      #message {display:none;}
+      #progressSHA256, #resultSHA256, #compareSHA256  {margin: 8pt 0;}
+      #resultSHA256 {line-height: 1.5; word-break: break-all; overflow-wrap: break-word;}
+      #compareSHA256 {font-weight: bold;}
+      #statSHA256 span { opacity: 0.7; }
+      .compare-match { color: #590; }
+      .compare-nomatch { color: #c00; }
+      @keyframes fade-out {
+        0% {background-color: inherit;}
+        35% {background-color: #fad963; background-color: rgb(255, 216, 0, 0.5);}
+        100% {background-color: inherit;}
+      }
+    </style>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></!--script -->
+    <script>
+      /* TODO: uncomment
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PTBT00LYFH');
+      */
+    </script>
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <h3 class="site-nav-header">Online Tools</h3>
+          <ul>
+          <li class="site-nav-top-item"><a href="file.htm">File Type by Content</a></li>
+          <li class="site-nav-top-item"><a href="regex.htm">Regex Tester</a></li>
+          <li class="site-nav-top-item"><a href="roman-numerals.htm">Convert a Roman Number</a></li>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">White Spaces</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">Representation of Floating-point Numbers 32 and 64 bits</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+          </ul>
+          <h3 class="site-nav-header">Console Tools</h3>
+          <ul>
+            <li class="site-nav-top-item"><a href="crd-reader.htm">CRD Reader</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <noscript><div>This site requires JavaScript to function properly. Please enable it in your browser settings.</div></noscript>
+          <div id="incompatible-browser">Please, update your browser.</div>
+          <h1>File SHA-256 Checksum Tool</h1>
+
+          <p class="description">
+            Check the integrity of a file by using your browser to calculate its SHA-256 checksum.
+            All files are processed locally in your browser and are not uploaded to any server.
+          </p>
+
+          <p><b>Note</b>
+          Processing large files may take some time. For example, a 3GB file can take a minute or more to process, depending on your device.
+          </p>
+
+          <div style="margin: 16pt 0;">
+            <input type="file" accept="" id="input-file" accesskey="F"
+                   placeholder="Select a file" value="" aria-label="Select a file"
+                   style="display:none" disabled>
+            <div class="file-selector-container" id="file-target" onclick="document.getElementById('input-file').click();">
+              ...
+            </div>
+          </div>
+          <div>
+            <input id="expectedSHA256" type="text" placeholder="Expected SHA-256 checksum, optional" />
+          </div>
+          <div id="message"></div>
+          <div id="progressSHA256"></div>
+          <div id="resultSHA256"></div>
+          <div id="compareSHA256"></div>
+          <div id="statSHA256"></div>
+
+          <div class="page-tags">
+            <b>#SHA256</b> <b>#Checksum</b> </b><b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      <div class="footer-menu">
+        <ul>
+        <li><a href="crd-reader.htm">CRD File Reader Console App</a></li>
+        <li><a href="file.htm">Get File Type by Content</a></li>
+        <li><a href="mouse-events.htm">Mouse Events</a></li>
+        <li><a href="iprange.htm">IPv4 Ranges</a></li>
+        <li><a href="regex.htm">Test Regular Expressions</a></li>
+        <li><a href="roman-numerals.htm">Roman Numerals Converter</a></li>
+        <li><a href="floating-point-representation.htm">Floating-point Representation, 32/64 bit</a></li>
+        <li><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+        <li><a href="speed.htm">Speed &amp; Distance Scale</a></li>
+        <li><a href="ws.htm">Character Code Detector</a></li>
+        </ul>
+      </div>
+      imperfect <b>tools</b>
+    </div>
+    <script>
+      var script = document.createElement('script');
+      script.src = '/assets/sha256.min.js';
+      script.async = true;
+
+      script.onerror = function() {
+        document.getElementById('incompatible-browser').style.display = 'block';
+      };
+
+      // Handle successful loading
+      script.onload = function() {
+
+        if (document.getElementsByClassName === undefined ||
+            window.fetch === undefined ||
+            typeof WebAssembly !== "object" ||
+            typeof WebAssembly.instantiateStreaming !== "function" ||
+            !Element.prototype.addEventListener ||
+            !Array.prototype.map ||
+            !Array.prototype.reduce) {
+
+          document.getElementById('incompatible-browser').style.display = 'block';
+
+        }
+        else {
+
+          sha256page ({
+            wasmUrl: '/assets/sha256.wasm',
+            fileDropElement: 'file-target',
+            fileElement: 'input-file',
+            expectedElement: 'expectedSHA256',
+            resultElement: 'resultSHA256',
+            compareElement: 'compareSHA256',
+            statElement: 'statSHA256',
+            progressElement: 'progressSHA256',
+            messageElement: 'message',
+            resultCss: 'code',
+            dropReadyCss: 'drop-ready',
+            dropZoneText: 'Click, tap or drag and drop a <u>f</u>ile here.',
+            flashCss: 'flash',
+            compareMatchCss: 'compare-match',
+            compareNoMatchCss: 'compare-nomatch'
+            });
+
+        }
+
+      };
+
+      document.head.appendChild(script);
+    </script>
+  </body>
+</html>
