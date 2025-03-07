@@ -352,6 +352,8 @@ async function sha256page (options) {
       }
 
       compareSha256Values ();
+
+      T.log ('Computed');
     }
   
     /**
