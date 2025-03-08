@@ -387,7 +387,7 @@ async function sha256page (options) {
 
     if (actual !== undefined && actual !== '' && expected !== '') {
 
-      if (expected === actual) {
+      if (expected.toLowerCase() === actual.toLowerCase()) {
         text = 'Values match';
         compareElement.classList.add (compareMatchCss);
       }
