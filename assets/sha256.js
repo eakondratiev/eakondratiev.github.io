@@ -17,6 +17,7 @@ async function sha256page (options) {
   const WASM_MEM_START = 2048; // starting address for the input (size of the file chunk) and output (64 + 1 bytes)
   const CHUNK_SIZE = 5 * 1024 * 1024;         // bytes
   const LARGE_FILE_BYTES = 100 * 1024 * 1024; // for estimating the time left
+  const STAT_THRESHOLD_MS = 300; // when processing time is longer than statistics is shown
   const numberFormat = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -345,7 +346,7 @@ async function sha256page (options) {
         `<span>File:</span> ${fileName}<br>` +
         `<span>Size:</span> ${formatFileSize (totalBytes)}<br>`;
 
-      if (duration > 1000) {
+      if (duration > STAT_THRESHOLD_MS) {
         statElement.innerHTML +=
         `<span>Elapsed time:</span> ${(duration / 1000).toFixed(2)} s<br>` +
         `<span>Performance:</span> ${numberFormat.format(totalBytes / duration)} bytes per ms`;
