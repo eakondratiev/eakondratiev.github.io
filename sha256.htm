@@ -37,7 +37,14 @@
       .file-selector-container:hover, .drop-ready {
         box-shadow: 0 0 3px 2px rgba(0,128,255,0.5);
       }
+      .file-selector-container input:disabled {
+        border-color:#777; opacity: 0.5;
+      }
       .flash {animation-name: fade-out; animation-duration: 4s;}
+
+      .expected-box-wrapper {position: relative;}
+      .expected-box-placeholder {position: absolute; top: 50%; left: 10px; transform: translateY(-50%);
+        font-size:0.9rem; padding: 0 4pt; pointer-events: none; opacity: 0.7; display: none;}
 
       #expectedSHA256 { border: solid 1px #999; box-sizing: border-box; padding: 4pt; width: 100%; }
       #message {display:none;}
@@ -98,16 +105,14 @@
           <h1>File SHA-256 Checksum Tool</h1>
 
           <p class="description">
-          To ensure the integrity of your file, you can use this page to calculate the SHA-256 checksum.
-          This process helps verify that the file has not been altered or corrupted.
-          Additionally, you can generate the SHA-256 checksum when sharing your own files,
-          providing recipients with a way to confirm the file's authenticity.
-          Please note that files are not uploaded but processed locally in your browser.
+          Calculate and verify the file's SHA-256 checksum to ensure it hasn't been altered or corrupted.
+          You can also generate checksums when sharing your files, so recipients can verify authenticity.
+          Files are processed locally in your browser, <b>not uploaded</b>.
           </p>
 
-          <p><b>Note</b>
-          Processing large files may take some time. For example, a 3GB file can take a minute or more to process, depending on your device.
-          Processing time grows linearly with file size.
+          <p>
+          Processing large files <b>may take some time</b>. For example, a 3GB file can take a minute or more to process, depending on your device.
+          Processing time grows linearly with file size. <a href="#fast_wasm">Further details...</a>
           </p>
 
           <div style="margin: 16pt 0;">
@@ -118,14 +123,22 @@
               ...
             </div>
           </div>
-          <div>
-            <input id="expectedSHA256" type="text" accesskey="E" placeholder="Expected SHA-256 checksum, optional" />
+          <div class="expected-box-wrapper">
+            <input id="expectedSHA256" type="text" accesskey="E" oninput="toggleExpectedBoxPlaceholder()" />
+            <div id="expectedPlaceholder" class="expected-box-placeholder"><u>E</u>xpected SHA-256 checksum, optional</div>
           </div>
           <div id="message"></div>
           <div id="progressSHA256"></div>
           <div id="resultSHA256"></div>
           <div id="compareSHA256"></div>
           <div id="statSHA256"></div>
+
+          <h2 id="fast_wasm">It's WASM, It's Fast</h2>
+
+          <p>This page uses the WASM technique, which is faster than the same JavaScript code for computing the SHA256 hash.
+            Modern browsers have the CryptoAPI set of functions that are faster than WASM, but they lack streaming processing capabilities.
+            This means the file must be fully loaded into the browser's memory before processing, which can be a problem for large files.
+            Therefore, the WASM option seems to be the best choice for computing the SHA256 hash of files of different sizes in web applications.</p>
 
           <div class="page-tags">
             <b>#SHA256</b> <b>#Checksum</b> </b><b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
@@ -180,6 +193,7 @@
             fileDropElement: 'file-target',
             fileElement: 'input-file',
             expectedElement: 'expectedSHA256',
+            expectedPlaceholder: 'expectedPlaceholder',
             resultElement: 'resultSHA256',
             compareElement: 'compareSHA256',
             statElement: 'statSHA256',

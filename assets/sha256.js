@@ -2,11 +2,12 @@
  * Javascript code for the sha256.htm page.
  * 
  * 2025-03-07
+ * 2025-03-14 toggle the Expected box placeholer.
  */
 
 /**
  * Initialization, event handlers etc.
- * @param {*} options some options {wasmUrl, fileDropElement, inputElement, expectedElement,
+ * @param {*} options some options {wasmUrl, fileDropElement, inputElement, expectedElement, expectedPlaceholder,
  *                                  resultElement, compareElement, statElement, progressElement, messageElement,
  *                                  dropReadyCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss}
  */
@@ -27,6 +28,7 @@ async function sha256page (options) {
   let fileDropElement = document.getElementById(options.fileDropElement);
   let fileInputElement = document.getElementById(options.fileElement);
   let expectedInputElement = document.getElementById(options.expectedElement);
+  let expectedPlaceholderElement = document.getElementById(options.expectedPlaceholder);
   let resultElement = document.getElementById (options.resultElement);
   let compareElement = document.getElementById (options.compareElement);
   let progressElement = document.getElementById (options.progressElement);
@@ -56,6 +58,8 @@ async function sha256page (options) {
         }
     }          
   };
+
+  setExpectedPlaceholderState (); // visible when the box is empty
 
   wm = await loadWasm (wasmUrl, wasmParams);
 
@@ -116,6 +120,10 @@ async function sha256page (options) {
    * Handles input into the expected value
    */
   expectedInputElement.addEventListener ('input', function(e){
+
+    // hide or show the placeholder
+    setExpectedPlaceholderState ();
+
     compareSha256Values();
   });
 
@@ -274,6 +282,19 @@ async function sha256page (options) {
     t += bytesFormat.format (size) + ' byte(s)';
 
     return t;
+  }
+
+  /**
+   * Sets the Expected box placeholder visibility depending on the box value.
+   */
+  function setExpectedPlaceholderState () {
+
+    if (expectedInputElement.value) {
+      expectedPlaceholder.style.display = 'none';
+    } else {
+      expectedPlaceholder.style.display = 'block';
+    }
+
   }
 
   /**
