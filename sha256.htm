@@ -37,7 +37,7 @@
       .file-selector-container:hover, .drop-ready {
         box-shadow: 0 0 3px 2px rgba(0,128,255,0.5);
       }
-      .file-selector-container input:disabled {
+      .file-selector-container.drop-disabled {
         border-color:#777; opacity: 0.5;
       }
       .flash {animation-name: fade-out; animation-duration: 4s;}
@@ -201,6 +201,7 @@
             messageElement: 'message',
             resultCss: 'code',
             dropReadyCss: 'drop-ready',
+            dropDisabledCss: 'drop-disabled',
             dropZoneText: 'Click, tap or drag and drop a <u>f</u>ile here.',
             flashCss: 'flash',
             compareMatchCss: 'compare-match',

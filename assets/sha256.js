@@ -9,7 +9,7 @@
  * Initialization, event handlers etc.
  * @param {*} options some options {wasmUrl, fileDropElement, inputElement, expectedElement, expectedPlaceholder,
  *                                  resultElement, compareElement, statElement, progressElement, messageElement,
- *                                  dropReadyCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss}
+ *                                  dropReadyCss, dropDisabledCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss}
  */
 async function sha256page (options) {
 
@@ -24,6 +24,11 @@ async function sha256page (options) {
     maximumFractionDigits: 2,
     useGrouping: true});
 
+  const INPUTS_STATE = {
+    Enabled: true,
+    Disabled: false
+  };
+
   let wasmUrl = options.wasmUrl;
   let fileDropElement = document.getElementById(options.fileDropElement);
   let fileInputElement = document.getElementById(options.fileElement);
@@ -37,6 +42,7 @@ async function sha256page (options) {
 
   let dropZoneText = options.dropZoneText;
   let dropReadyCss = options.dropReadyCss;
+  let dropDisabledCss = options.dropDisabledCss;
   let resultCss = options.resultCss; // adds border and background
   let flashCss = options.flashCss    // flashes results after process complete
   let compareMatchCss = options.compareMatchCss;
@@ -290,9 +296,27 @@ async function sha256page (options) {
   function setExpectedPlaceholderState () {
 
     if (expectedInputElement.value) {
-      expectedPlaceholder.style.display = 'none';
+      expectedPlaceholderElement.style.display = 'none';
     } else {
-      expectedPlaceholder.style.display = 'block';
+      expectedPlaceholderElement.style.display = 'block';
+    }
+
+  }
+
+  /**
+   * Enables or disables input elements.
+   * @param {boolean} isEnabled
+   */
+  function setInputsState (isEnabled) {
+
+    fileInputElement.disabled = !isEnabled;
+    expectedInputElement.disabled = !isEnabled;
+
+    if (isEnabled) {
+      fileDropElement.classList.remove (dropDisabledCss);
+    }
+    else {
+      fileDropElement.classList.add (dropDisabledCss);
     }
 
   }
@@ -333,6 +357,8 @@ async function sha256page (options) {
       messageElement.innerText = '';
       messageElement.style.display = 'none';
 
+      setInputsState (INPUTS_STATE.Disabled);
+
       timerStart = performance.now();
     }
   
@@ -356,6 +382,7 @@ async function sha256page (options) {
 
       const duration = performance.now() - timerStart;
 
+      setInputsState (INPUTS_STATE.Enabled);
       progressElement.innerText = '';
       resultElement.dataset.sha256 = computedSha256value;
       resultElement.innerHTML =
@@ -390,6 +417,7 @@ async function sha256page (options) {
       messageElement.textContent = '';
       messageElement.appendChild (element);
       messageElement.style.display = 'block';
+      setInputsState (INPUTS_STATE.Enabled);
     }
 
   }
