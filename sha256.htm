@@ -54,6 +54,14 @@
       #statSHA256 span { opacity: 0.7; }
       .compare-match { color: #590; }
       .compare-nomatch { color: #c00; }
+
+      .perf-tests {width: 100%; border-collapse: collapse;}
+      .perf-tests th, .perf-tests td {padding: 4pt; text-align: start;}
+      .perf-tests th:nth-child(2), .perf-tests th:nth-child(3),
+      .perf-tests td:nth-child(2), .perf-tests td:nth-child(3) {text-align: end;}
+      .perf-tests-subheader {border-top: 1pt dotted #777; border-bottom: 1pt dotted #777;}
+      .perf-tests tr:hover td {background: rgba(128, 128, 128, 0.1);}
+
       @keyframes fade-out {
         0% {background-color: inherit;}
         35% {background-color: #fad963; background-color: rgb(255, 216, 0, 0.5);}
@@ -108,6 +116,7 @@
           Calculate and verify the file's SHA-256 checksum to ensure it hasn't been altered or corrupted.
           You can also generate checksums when sharing your files, so recipients can verify authenticity.
           Files are processed locally in your browser, <b>not uploaded</b>.
+          This cryptographic hash function produces a unique 256-bit (32-byte) hash value for a given file, making it a reliable method for verifying data.
           </p>
 
           <p>
@@ -139,6 +148,97 @@
             Modern browsers have the CryptoAPI set of functions that are faster than WASM, but they lack streaming processing capabilities.
             This means the file must be fully loaded into the browser's memory before processing, which can be a problem for large files.
             Therefore, the WASM option seems to be the best choice for computing the SHA256 hash of files of different sizes in web applications.</p>
+
+          <p>Here are the results of performance tests for obtaining the SHA256 hash of a 100MB (104,857,600 bytes) file.</p>
+
+          <table class="perf-tests">
+            <tr>
+                <th>Method</th>
+                <th>ms</th>
+                <th>bytes per ms</th>
+            </tr>
+            <tr>
+              <th class="perf-tests-subheader" colspan="3">Windows 11, Intel Core i7-10700 CPU 2.90GHz (Desktop, 2020)</th>
+            </tr>
+            <tr>
+                <td>Edge CryptoAPI</td>
+                <td>465</td>
+                <td>225,500</td>
+            </tr>
+            <tr>
+                <td>Edge WASM</td>
+                <td>740</td>
+                <td>141,700</td>
+            </tr>
+            <tr>
+                <td>Edge Javascript</td>
+                <td>7,475</td>
+                <td>14,000</td>
+            </tr>
+            <tr>
+                <td>Firefox CryptoAPI</td>
+                <td>683</td>
+                <td>153,500</td>
+            </tr>
+            <tr>
+                <td>Firefox WASM</td>
+                <td>980</td>
+                <td>107,000</td>
+            </tr>
+            <tr>
+                <td>Firefox JavaScript</td>
+                <td>4,950</td>
+                <td>21,180</td>
+            </tr>
+            <tr>
+                <td>Powershell</td>
+                <td>302</td>
+                <td>347,200</td>
+            </tr>
+            <tr>
+                <td>VM Linux Mint</td>
+                <td>385</td>
+                <td>272,350</td>
+            </tr>
+            <tr>
+                <td>WSL Ubuntu</td>
+                <td>872</td>
+                <td>120,250</td>
+            </tr>
+
+            <tr>
+              <th class="perf-tests-subheader" colspan="3">Windows 11, AMD Ryzen 9 7940HS 4.00 GHz (Mobile, 2023)</th>
+            </tr>
+            <tr>
+              <td>Edge WASM</td>
+              <td>540</td>
+              <td>194,100</td>
+            </tr>
+            <tr>
+              <td>Edge Javascript</td>
+              <td>4,760</td>
+              <td>22,000</td>
+            </tr>
+            <tr>
+              <td>Powershell</td>
+              <td>104</td>
+              <td>1,008,245<td>
+            </tr>
+          </table>
+
+          <h2>You can use the command line to get the SHA256 checksum.</h2>
+
+          <p>Linux:</p>
+          <code>sha256sum &lt;your_file&gt;</code>
+
+          <p>Mac:</p>
+          <code>shasum -a 256 &lt;your_file&gt;</code>
+
+          <p>Windows Powershell:</p>
+          <code>Get-FileHash -Path &lt;your_file&gt; -Algorithm SHA256</code>
+
+          <p>Replace <span class="code">&lt;your_file&gt;</span> with the path and name of the file you want to hash.
+          <b>Use quotes</b> if the path or file name contains spaces.</p>
 
           <div class="page-tags">
             <b>#SHA256</b> <b>#Checksum</b> </b><b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
@@ -207,7 +307,6 @@
             compareMatchCss: 'compare-match',
             compareNoMatchCss: 'compare-nomatch'
             });
-
         }
 
       };
