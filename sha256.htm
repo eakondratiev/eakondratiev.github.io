@@ -240,6 +240,19 @@
           <p>Replace <span class="code">&lt;your_file&gt;</span> with the path and name of the file you want to hash.
           <b>Use quotes</b> if the path or file name contains spaces.</p>
 
+          <h2>Trivia</h2>
+
+          <p>&bull; The hash of an empty file is
+            <code><a href="?expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</a></code>.
+            Though it may seem useless, it serves as a reference point in hashing algorithms.
+          </p>
+          <p>&bull; You can add the <i>expected</i> URL parameter when linking to this page.</p>
+          <p>&bull; In theory, because SHA-256 produces a fixed-size output of 256 bits, there are 2<sup>256</sup> possible hash values.
+             However, the input space is effectively infinite, so collisions must exist.
+             While no two distinct files have been found to produce the same SHA-256 hash as of now,
+             and the algorithm is considered secure against known collision attacks, it is still theoretically
+             possible for two different inputs to hash to the same output.</p>
+
           <div class="page-tags">
             <b>#SHA256</b> <b>#Checksum</b> </b><b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
           </div>
@@ -265,7 +278,7 @@
     </div>
     <script>
       var script = document.createElement('script');
-      script.src = '/assets/sha256.min.js';
+      script.src = '/assets/sha256.min.js?20250320';
       script.async = true;
 
       script.onerror = function() {
@@ -305,7 +318,9 @@
             dropZoneText: 'Click, tap or drag and drop a <u>f</u>ile here.',
             flashCss: 'flash',
             compareMatchCss: 'compare-match',
-            compareNoMatchCss: 'compare-nomatch'
+            compareNoMatchCss: 'compare-nomatch',
+            textMatch:'Values match 🍾',
+            textNoMatch: 'Values do not match 😐'
             });
         }
 

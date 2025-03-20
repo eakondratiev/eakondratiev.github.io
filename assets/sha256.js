@@ -3,13 +3,15 @@
  * 
  * 2025-03-07
  * 2025-03-14 toggle the Expected box placeholer.
+ * 2025-03-20 process the Expected url parameter.
  */
 
 /**
  * Initialization, event handlers etc.
  * @param {*} options some options {wasmUrl, fileDropElement, inputElement, expectedElement, expectedPlaceholder,
  *                                  resultElement, compareElement, statElement, progressElement, messageElement,
- *                                  dropReadyCss, dropDisabledCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss}
+ *                                  dropReadyCss, dropDisabledCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss,
+ *                                  textMatch, textNoMatch}
  */
 async function sha256page (options) {
 
@@ -48,6 +50,11 @@ async function sha256page (options) {
   let compareMatchCss = options.compareMatchCss;
   let compareNoMatchCss = options.compareNoMatchCss;
 
+  let TEXT = {
+    match: options.textMatch,
+    noMatch: options.textNoMatch
+  };
+
   const statusHandler = StatusHandler ();
 
   let wm;
@@ -64,6 +71,26 @@ async function sha256page (options) {
         }
     }          
   };
+
+  // Process the url parameters
+  (function(){
+    let reExpected = /^[a-f0-9]+$/i;
+    let urlParameters = T.getUrlParameters();
+
+    if (typeof urlParameters.expected !== 'undefined' &&
+        urlParameters.expected !== '') {
+
+      // if there are several parameters with the name "expected" then array is returned, use it's first element
+      let expectedValue = (typeof urlParameters.expected === 'string')? urlParameters.expected : urlParameters.expected[0];
+
+      // validate
+      if (reExpected.test (expectedValue)) {
+        expectedInputElement.value = expectedValue;
+      }
+
+    }
+
+  })()
 
   setExpectedPlaceholderState (); // visible when the box is empty
 
@@ -438,11 +465,11 @@ async function sha256page (options) {
     if (actual !== undefined && actual !== '' && expected !== '') {
 
       if (expected.toLowerCase() === actual.toLowerCase()) {
-        text = 'Values match';
+        text = TEXT.match;
         compareElement.classList.add (compareMatchCss);
       }
       else {
-        text = 'Values do not match';
+        text = TEXT.noMatch;
         compareElement.classList.add (compareNoMatchCss);
       }
 
