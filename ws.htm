@@ -45,7 +45,8 @@
       #text-character b:empty:before {content:' ';}
       #text-character span:first-child b {font-size:1.2rem; text-align: center;
         background: #eee;}
-      #nonascii-counter, #bytes-counter {margin-left: 8pt;}
+      #text-len, #nonascii-counter {margin-right: 8pt;}
+      #nonascii-counter, #bytes-counter {white-space: nowrap;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
       @media (prefers-color-scheme: dark) {
         #text-processed b {background: #966502; color: #fe9;}
@@ -105,7 +106,7 @@
           <div style="margin-top: 4pt; line-height: 1.5;">
             Text length: <b id="text-len">0</b>
             <span id="nonascii-counter" style="display:none;">Non-ASCII count: <b></b></span>
-            <span id="bytes-counter" style="display:none;">Total bytes: <b></b></span>
+            <span id="bytes-counter" style="display:none;">Total bytes: <b>0</b></span>
           </div>
           <div id="text-processed"></div>
           <h2>About This Tool</h2>
