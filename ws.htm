@@ -9,8 +9,8 @@
     <meta name="application-name" content="Whitespace and UTF Characters" />
 
     <meta property="og:title" content="Whitespace and UTF Characters">
-    <meta name="description" content="Highlights whitespaces and UTF characters in a text, reveal deceptive texting techniques.">
-    <meta property="og:description" content="Highlights whitespaces and UTF characters in a text, reveal deceptive texting techniques.">
+    <meta name="description" content="Highlight whitespaces and UTF characters in your text, uncover deceptive texting techniques, and count text bytes for thorough text analysis. Detect resembled characters from different alphabets.">
+    <meta property="og:description" content="Highlight whitespaces and UTF characters in your text, uncover deceptive texting techniques, and count text bytes for thorough text analysis. Detect resembled characters from different alphabets.">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/ws.htm">
@@ -45,7 +45,7 @@
       #text-character b:empty:before {content:' ';}
       #text-character span:first-child b {font-size:1.2rem; text-align: center;
         background: #eee;}
-      #nonascii-counter {margin-left: 8pt;}
+      #nonascii-counter, #bytes-counter {margin-left: 8pt;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
       @media (prefers-color-scheme: dark) {
         #text-processed b {background: #966502; color: #fe9;}
@@ -105,6 +105,7 @@
           <div style="margin-top: 4pt; line-height: 1.5;">
             Text length: <b id="text-len">0</b>
             <span id="nonascii-counter" style="display:none;">Non-ASCII count: <b></b></span>
+            <span id="bytes-counter" style="display:none;">Total bytes: <b></b></span>
           </div>
           <div id="text-processed"></div>
           <h2>About This Tool</h2>
@@ -150,17 +151,34 @@
           lenElement = document.getElementById('text-len'),
           nonAsciiElement = document.getElementById('nonascii-counter'),
           nonAsciiCounter = nonAsciiElement.getElementsByTagName('b')[0],
+          bytesCounterElement = document.getElementById('bytes-counter'),
+          bytesCounter = bytesCounterElement.getElementsByTagName('b')[0],
+          showContentBytes = (typeof TextEncoder !== 'undefined'),
           charElement = document.getElementById('text-character'),
           charCharElement = charElement.getElementsByTagName('b')[0],
           charBytesElement = charElement.getElementsByTagName('b')[1],
           urlParams = T.getUrlParameters();
 
+        // check feature
+        if (showContentBytes) {
+          bytesCounterElement.style.display = ''; // show the container of bytes counter
+        }
+
         sourceElement.focus();
-        sourceElement.addEventListener ('change', textChanged);
-        sourceElement.addEventListener ('keyup', textChanged);
-        sourceElement.addEventListener ('paste', function(e) {
-          setTimeout (function() { textChanged(); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
-        });
+
+        // check if the newer 'input' event can be handled or not
+        if (false && typeof Event !== 'undefined' && typeof sourceElement.oninput === 'object') {
+          // inserting via system Emoji picker supported
+          sourceElement.addEventListener ('input', textChanged);
+        }
+        else {
+          // older browsers, inserting via system Emoji picker not supported
+          sourceElement.addEventListener ('change', textChanged);
+          sourceElement.addEventListener ('keyup', textChanged);
+          sourceElement.addEventListener ('paste', function(e) {
+            setTimeout (function() { textChanged(); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
+          });
+        }
 
         if (urlParams.t !== undefined) {
           // process the url parameter
@@ -255,6 +273,12 @@
         function textChanged() {
 
           var result = processText(sourceElement.value);
+          var contentBytes = [];
+
+          if (showContentBytes) {
+            contentBytes = getBytesArray(sourceElement.value);
+            bytesCounter.innerText = contentBytes.length;
+          }
 
           targetElement.innerHTML = result.text;
           nonAsciiCounter.innerHTML = result.nonAscii;
@@ -312,6 +336,10 @@
           };
         }
 
+        function getBytesArray(str) {
+            const encoder = new TextEncoder(); // Default is UTF-8
+            return encoder.encode(str);
+        }
       })();
     </script>
   </body>
