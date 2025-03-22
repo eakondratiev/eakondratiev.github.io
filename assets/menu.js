@@ -18,6 +18,7 @@
  * 2022-09-17 errors handling corrections.
  * 2023-09-12 the Mouse Events Tracker page added to the menu.
  * 2024-06-17 rename the link from White Spaces to Character Code Detector.
+ * 2025-03-22 sha256.htm added to menu
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -32,11 +33,12 @@
       header: 'Online Tools',
       items: [
         {url: 'file.htm', name: 'File Type by Content'},
+        {url: 'sha256.htm', name: 'File SHA-256 Checksum'},
         {url: 'mouse-events.htm', name: 'Mouse Events Tracker'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'regex.htm', name: 'Test Regular Expressions'},
         {url: 'roman-numerals.htm', name: 'Roman Numerals Converter'},
-        {url: 'floating-point-representation.htm', name: 'FP32/64'},
+        {url: 'floating-point-representation.htm', name: 'Floating-point Formats'},
         {url: 'floating-point-summation.htm',      name: 'Floating-point Summation'},
         {url: 'speed.htm',   name: 'Speed &amp; Distance'},
         {url: 'ws.htm',      name: 'Character Code Detector'}
