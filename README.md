@@ -6,8 +6,8 @@ Web Tools
 
 [Start here](https://eakondratiev.github.io/):
 
-* [Check file type by content](https://eakondratiev.github.io/file.htm),
-* [Calculate file SHA-256 checksum](https://eakondratiev.github.io/sha256.htm),
+* [Check a file type by content](https://eakondratiev.github.io/file.htm),
+* [Calculate a file SHA-256 checksum](https://eakondratiev.github.io/sha256.htm),
 * [IP v4 range calculator](https://eakondratiev.github.io/iprange.htm),
 * [Regex tester](https://eakondratiev.github.io/regex.htm),
 * [Roman numerals](https://eakondratiev.github.io/roman-numerals.htm),
