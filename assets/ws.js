@@ -37,11 +37,13 @@ function wsPage () {
   else {
     // older browsers, inserting via system Emoji picker not supported
     sourceElement.addEventListener ('change', textChanged);
-    sourceElement.addEventListener ('keyup', textChanged);
     sourceElement.addEventListener ('paste', function(e) {
       setTimeout (function() { textChanged(); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
     });
   }
+
+  // this handles the text cursor moves
+  sourceElement.addEventListener ('keyup', textChanged);
 
   if (urlParams.t !== undefined) {
     // process the url parameter
@@ -172,6 +174,12 @@ function wsPage () {
     }
   }
 
+  /**
+   * Returns the text length, one emoji counts as one.
+   * If the Segmenter does not support it returns inaccurate text.length.
+   * @param {string} text
+   * @returns {number}
+   */
   function getTextLength (text) {
 
     var segmenter;
