@@ -2,6 +2,7 @@
  * Javascript code for the ws.htm page.
  * 
  * 2025-03-25
+ * 2025-03-26 Graphemes type added.
  */
 
 function wsPage () {
@@ -21,6 +22,77 @@ function wsPage () {
     charCharElement = charElement.getElementsByTagName('b')[0],
     charBytesElement = charElement.getElementsByTagName('b')[1],
     urlParams = T.getUrlParameters();
+
+  var graphemes = (function(){
+
+    var _length = 0;
+    var _segmenter = null;
+
+    return {
+      init: function(){
+
+        var s, i, r;
+
+        try {
+          _segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+          // do quick test
+          s = _segmenter.segment('abc');
+          i = s[Symbol.iterator]();
+          r = i.next();
+        } catch (e) {
+          _segmenter = null;
+          //console.log ('Segmenter not supported', e);
+        }
+
+      },
+
+      update: function(text){
+      
+        var segments;
+        var iterator;
+        var r;
+
+        if (_segmenter) {
+        
+          try {
+
+            _length = 0;
+
+            // for better compatibility the iterator is used instead of
+            // "for (const s of _segmenter.segment(text)) _length++;"
+
+            segments = _segmenter.segment(text);
+            iterator = segments[Symbol.iterator]();
+
+            r = iterator.next();
+            while (!r.done) {
+                _length++;
+                r = iterator.next();
+            }
+
+            return;
+
+          } catch (e) {
+            //console.warn('Intl.Segmenter failed:', e);
+          }        
+
+        }
+
+        // Fallback but inaccurate
+        _length = text.length;
+
+      },
+
+      getLength: function() {
+        // for better compatibility the function is used instead of getter
+        return _length;
+      }
+
+    };
+
+  })();
+
+  graphemes.init();
 
   // check feature
   if (showContentBytes) {
@@ -161,7 +233,8 @@ function wsPage () {
     else {
       targetElement.style.display = 'none';
     }
-    lenElement.innerHTML = getTextLength (sourceElement.value).toString();
+    graphemes.update(sourceElement.value);
+    lenElement.innerHTML = graphemes.getLength().toString();
 
     // Show character next to text cursor
     if (typeof showBytes === 'function') {
@@ -173,35 +246,6 @@ function wsPage () {
         URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
     }
   }
-
-  /**
-   * Returns the text length, one emoji counts as one.
-   * If the Segmenter does not support it returns inaccurate text.length.
-   * @param {string} text
-   * @returns {number}
-   */
-  function getTextLength (text) {
-
-    var segmenter;
-    var graphemes;
-
-    // check the function support
-    if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
-
-      segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
-        
-      // Use the segmenter to split the string into graphemes
-      graphemes = Array.from(segmenter.segment(text));
-        
-      // Return the number of graphemes
-      return graphemes.length;
-    }
-    else {
-      // inaccurate
-      return text.length;
-    }
-  }
-
 
   /**
     * Processes the entered text.
@@ -231,7 +275,7 @@ function wsPage () {
   }
 
   function getBytesArray(str) {
-      const encoder = new TextEncoder(); // Default is UTF-8
+      var encoder = new TextEncoder(); // Default is UTF-8
       return encoder.encode(str);
   }
 }
