@@ -49,8 +49,8 @@
       #text-len, #nonascii-counter {margin-right: 8pt;}
       #nonascii-counter, #bytes-counter {white-space: nowrap;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
-      .text-bytes {display:none;}
-      .text-bytes i {display:inline-block; font-style: normal; text-align: right; padding: 0 2pt;}
+      .text-bytes {display:none; max-height: 10em; overflow-y: auto;}
+      .text-bytes i {display:inline-block; font-style: normal; text-align: right; padding: 0 1pt;}
       @media (prefers-color-scheme: dark) {
         #text-character span:first-child b {background: #555;}
         #text-processed b {background: #966502; color: #fe9;}
