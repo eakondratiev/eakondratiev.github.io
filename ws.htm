@@ -49,6 +49,8 @@
       #text-len, #nonascii-counter {margin-right: 8pt;}
       #nonascii-counter, #bytes-counter {white-space: nowrap;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
+      .text-bytes {display:none;}
+      .text-bytes i {display:inline-block; font-style: normal; text-align: right; padding: 0 2pt;}
       @media (prefers-color-scheme: dark) {
         #text-character span:first-child b {background: #555;}
         #text-processed b {background: #966502; color: #fe9;}
@@ -113,6 +115,7 @@
             <span id="bytes-counter" style="display:none;">Total bytes: <b>0</b></span>
           </div>
           <div id="text-processed"></div>
+          <div id="text-bytes" class="text-bytes code"></div>
           <h2>About This Tool</h2>
           <p>
             Some spammers exploit visually similar letters from different alphabets,
@@ -146,7 +149,7 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/ws.min.js?20250326"></script>
+    <script src="/assets/ws.min.js?20250328"></script>
     <script>
       wsPage();
     </script>

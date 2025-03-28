@@ -3,6 +3,7 @@
  * 
  * 2025-03-25
  * 2025-03-26 Graphemes type added.
+ * 2025-03-28 Show the whole text bytes.
  */
 
 function wsPage () {
@@ -17,6 +18,7 @@ function wsPage () {
     nonAsciiCounter = nonAsciiElement.getElementsByTagName('b')[0],
     bytesCounterElement = document.getElementById('bytes-counter'),
     bytesCounter = bytesCounterElement.getElementsByTagName('b')[0],
+    textBytesElement = document.getElementById('text-bytes'),
     showContentBytes = (typeof TextEncoder !== 'undefined'),
     charElement = document.getElementById('text-character'),
     charCharElement = charElement.getElementsByTagName('b')[0],
@@ -110,7 +112,7 @@ function wsPage () {
     // older browsers, inserting via system Emoji picker not supported
     sourceElement.addEventListener ('change', textChanged);
     sourceElement.addEventListener ('paste', function(e) {
-      setTimeout (function() { textChanged(); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
+      setTimeout (function() { textChanged(e); }, 0); // the paste event fired BEFORE the element content is updated, so the call is delayed
     });
   }
 
@@ -209,12 +211,24 @@ function wsPage () {
     */
   function textChanged() {
 
+    // this function can be called with or without arguments
     var result = processText(sourceElement.value);
     var contentBytes = [];
+    var isKeyUp = (arguments.length > 0 && arguments[0].type === 'keyup');
 
+    //console.log ('is key up', isKeyUp, arguments);
     if (showContentBytes) {
       contentBytes = getBytesArray(sourceElement.value);
       bytesCounter.innerText = contentBytes.length;
+
+      // show bytes
+      if (isKeyUp) {
+        // emphasize bytes at the text cursor
+      }
+      else {
+        // render bytes
+        showTextBytes (contentBytes);
+      }
     }
 
     targetElement.innerHTML = result.text;
@@ -274,8 +288,59 @@ function wsPage () {
     };
   }
 
+  /**
+   * Returns the string byte array
+   * @param {string} str
+   * @returns {[number]}
+   */
   function getBytesArray(str) {
       var encoder = new TextEncoder(); // Default is UTF-8
       return encoder.encode(str);
   }
+
+  /**
+   * Show the whole text bytes
+   * @param {[number]} bytes
+   */
+  function showTextBytes (bytes) {
+
+    var html = '';
+    var i;
+
+    // TODO: add graphemes
+    if (bytes.length > 0) {
+
+      for (i = 0; i < bytes.length; i++) {
+        html += '<i>' + formatHex (bytes[i]) + '</i>';
+        if (i !== 0 && (i + 1) % 16 === 0) {
+          html += '<br>';
+        }
+      }
+
+      textBytesElement.innerHTML = html;
+
+      // show the box
+      textBytesElement.style.display = 'block';
+    
+    }
+    else {
+      // clear
+      textBytesElement.textContent = '';
+      textBytesElement.style.display = 'none';
+    }
+  }
+
+  /**
+    * Formats the hexademical value
+    */
+  function formatHex(n) {
+
+    var hex = n.toString(16);
+
+    if (n < 16) {
+      return '0' + hex;
+    }
+    return hex;
+  }
+
 }
