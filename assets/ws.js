@@ -143,7 +143,7 @@ function wsPage () {
       var i;
       var bytesText = '';
       var leadingZeroByteCount = 0;
-
+      
       if (cp === 0 || cp === undefined) { 
         charCharElement.innerHTML = '';
         charBytesElement.innerHTML = '';
@@ -196,14 +196,14 @@ function wsPage () {
 
   /**
     * Return the Unicode code point next to text cursor or zero;
-    * The undefined value returned if the text is empty or at the end of the text.
     * @returns {numner} non-negative integer that is the Unicode code point value of the character.
     */
   function getCodePoint (){
     var p = sourceElement.selectionStart;
-    var c = sourceElement.value.codePointAt(p);
-    if (sourceElement.selectionEnd - p <= 1) {
-      return c;
+    var cp = sourceElement.value.codePointAt(p);
+
+    if (cp!== undefined && sourceElement.selectionEnd - p <= 1) {
+      return cp;
     }
     return 0;
   }

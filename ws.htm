@@ -106,7 +106,7 @@
           <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
           <div id="text-character" style="display:none;">
             <span>Character <b></b></span>
-            <span style="margin-left:1em;">Unicode code point <b></b></span>
+            <span style="margin-left:0.5em; white-space: nowrap;">Unicode code point <b></b></span>
           </div>
           <textarea id="text-box" rows="5" accesskey="T" placeholder="Please enter or paste text"></textarea>
           <div style="margin-top: 4pt; line-height: 1.5;">
@@ -149,8 +149,9 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/ws.min.js?20250328"></script>
+    <script src="/assets/ws.js?20250328"></script>
     <script>
+      var _ToolNoLogs = true;
       wsPage();
     </script>
   </body>
