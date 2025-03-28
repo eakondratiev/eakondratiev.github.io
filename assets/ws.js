@@ -22,7 +22,7 @@ function wsPage () {
     showContentBytes = (typeof TextEncoder !== 'undefined'),
     charElement = document.getElementById('text-character'),
     charCharElement = charElement.getElementsByTagName('b')[0],
-    charBytesElement = charElement.getElementsByTagName('b')[1],
+    charBytesElement = charElement.getElementsByTagName('b')[1], // the Unicode code point
     urlParams = T.getUrlParameters();
 
   var graphemes = (function(){
@@ -129,73 +129,75 @@ function wsPage () {
   if (window.getSelection !== undefined &&
       String.fromCodePoint !== undefined) {
 
-    var cp2b = function(cp) {
-
-      var b = new Array(4); // strings in javascript are UTF-16, 4-bytes
-      var i;
-
-      for (i = 3; i >= 0; i--) {
-        b[i] = (cp >> (i * 8)) & 0xFF;
-      }
-
-      return b; // array of numbers
-
-    };
-
     charElement.style.display = 'block'; // shows the block
     sourceElement.onmouseup = function(){
       showBytes();
     };
 
     /**
-      * Shows the character and its bytes
+      * Shows the character and its Unicode code point
       */
     showBytes = function() {
       // https://stackoverflow.com/questions/5290182/how-many-bytes-does-one-unicode-character-take#33349765
-      var cp = getCodePoint();
+      var cp = getCodePoint(); // non-negative integer that is the Unicode code point value
       var i;
       var bytesText = '';
-      var skip = true;
-      var byteToString = function(b) {
-        var s = b.toString(16);
-        if (b < 16) {
-          return '0' + s;
-        }
-        return s;
-      };
+      var leadingZeroByteCount = 0;
 
-      if (cp === 0) { 
+      if (cp === 0 || cp === undefined) { 
         charCharElement.innerHTML = '';
         charBytesElement.innerHTML = '';
         return; 
       }
 
-      var b = cp2b(cp);
       if (cp > 0) {
         charCharElement.innerHTML = String.fromCodePoint (cp);
       }
-      else {
-        charCharElement.innerHTML = '';
+
+      var b = codePointToBytes(cp); // 4-bytes array
+
+      // count leading zero bytes
+      for (i = b.length - 1; i >= 0; i--) {
+        if (b[i] === 0) {
+          ++leadingZeroByteCount;
+        }
+        else {
+          break;
+        }
       }
 
-      // show bytes in reverse order
+      // show bytes in reverse order. For example:
+      // 👍       bytes 4d f4 01 00, code point 1 f4 4d, 00 and 0 are omited
+      // tab (/t) bytes 09 00 00 00, code point 00 09
       for (i = b.length - 1; i >= 0; i--) {
 
-        if (b[i] === 0 && skip) {
+        if (b[i] === 0 && (
+             (leadingZeroByteCount >= 2 && i >= 2) ||
+             (leadingZeroByteCount === 1 && i === 3))) {
+          // skip first zero bytes if 2 or 3 leading bytes are zeros
           continue;
         }
-        skip = false;
-        bytesText += ' ' + byteToString(b[i]) + '';  // hex
+
+        if (leadingZeroByteCount <= 1 && i === 2) {
+          // no leading zero
+          bytesText += b[i].toString(16);
+        }
+        else {
+          // zero-padded
+          bytesText += byteToHexString(b[i]);
+        }
   
       }
+      charBytesElement.innerHTML = 'U+' + bytesText;
 
-      charBytesElement.innerHTML = bytesText;
     };
 
   }
 
   /**
     * Return the Unicode code point next to text cursor or zero;
+    * The undefined value returned if the text is empty or at the end of the text.
+    * @returns {numner} non-negative integer that is the Unicode code point value of the character.
     */
   function getCodePoint (){
     var p = sourceElement.selectionStart;
@@ -205,6 +207,25 @@ function wsPage () {
     }
     return 0;
   }
+
+  /**
+   * Returns 4-bytes array representing the Unicode code point
+   * @param {number} cp
+   * @returns {[]}
+   */
+  function codePointToBytes (cp) {
+
+    var b = new Array(4); // strings in javascript are UTF-16, 4-bytes
+    var i;
+
+    for (i = 3; i >= 0; i--) {
+      b[i] = (cp >> (i * 8)) & 0xFF;
+    }
+
+    return b; // array of numbers
+
+  };
+
 
   /**
     * Sets text from the textarea to the url parameter.
@@ -311,7 +332,7 @@ function wsPage () {
     if (bytes.length > 0) {
 
       for (i = 0; i < bytes.length; i++) {
-        html += '<i>' + formatHex (bytes[i]) + '</i>';
+        html += '<i>' + byteToHexString (bytes[i]) + '</i>';
         if (i !== 0 && (i + 1) % 16 === 0) {
           html += '<br>';
         }
@@ -331,11 +352,11 @@ function wsPage () {
   }
 
   /**
-    * Formats the hexademical value
+    * Returns the hexademical value representation of the byte.
     */
-  function formatHex(n) {
+  function byteToHexString(n) {
 
-    var hex = n.toString(16);
+    var hex = n.toString(16).toUpperCase();
 
     if (n < 16) {
       return '0' + hex;
