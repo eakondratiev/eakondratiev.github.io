@@ -4,13 +4,14 @@
  * 2025-03-25
  * 2025-03-26 Graphemes type added.
  * 2025-03-28 Show the whole text bytes.
+ * 2025-03-29 Show the whole text bytes.
  */
 
 function wsPage () {
   'use strict';
 
   var URL_PARAM = 't';
-  var showBytes = undefined;
+  var supportCodepoints = false;
   var sourceElement = document.getElementById('text-box'),
     targetElement = document.getElementById('text-processed'),
     lenElement = document.getElementById('text-len'),
@@ -22,13 +23,14 @@ function wsPage () {
     showContentBytes = (typeof TextEncoder !== 'undefined'),
     charElement = document.getElementById('text-character'),
     charCharElement = charElement.getElementsByTagName('b')[0],
-    charBytesElement = charElement.getElementsByTagName('b')[1], // the Unicode code point
+    charCodepointsElement = charElement.getElementsByTagName('b')[1], // the Unicode code point
     urlParams = T.getUrlParameters();
 
   var graphemes = (function(){
 
     var _length = 0;
     var _segmenter = null;
+    var _segments = [];
 
     return {
       init: function(){
@@ -43,39 +45,23 @@ function wsPage () {
           r = i.next();
         } catch (e) {
           _segmenter = null;
-          //console.log ('Segmenter not supported', e);
         }
 
       },
 
       update: function(text){
       
-        var segments;
-        var iterator;
-        var r;
-
         if (_segmenter) {
         
           try {
 
             _length = 0;
-
-            // for better compatibility the iterator is used instead of
-            // "for (const s of _segmenter.segment(text)) _length++;"
-
-            segments = _segmenter.segment(text);
-            iterator = segments[Symbol.iterator]();
-
-            r = iterator.next();
-            while (!r.done) {
-                _length++;
-                r = iterator.next();
-            }
-
+            _segments = Array.from (_segmenter.segment(text));
+            _length = _segments.length;
             return;
 
           } catch (e) {
-            //console.warn('Intl.Segmenter failed:', e);
+            _segments = [];
           }        
 
         }
@@ -88,8 +74,11 @@ function wsPage () {
       getLength: function() {
         // for better compatibility the function is used instead of getter
         return _length;
-      }
+      },
 
+      getSegments: function(){
+        return _segments;
+      }
     };
 
   })();
@@ -129,80 +118,73 @@ function wsPage () {
   if (window.getSelection !== undefined &&
       String.fromCodePoint !== undefined) {
 
+    supportCodepoints = true;
     charElement.style.display = 'block'; // shows the block
     sourceElement.onmouseup = function(){
-      showBytes();
-    };
-
-    /**
-      * Shows the character and its Unicode code point
-      */
-    showBytes = function() {
-      // https://stackoverflow.com/questions/5290182/how-many-bytes-does-one-unicode-character-take#33349765
-      var cp = getCodePoint(); // non-negative integer that is the Unicode code point value
-      var i;
-      var bytesText = '';
-      var leadingZeroByteCount = 0;
-      
-      if (cp === 0 || cp === undefined) { 
-        charCharElement.innerHTML = '';
-        charBytesElement.innerHTML = '';
-        return; 
-      }
-
-      if (cp > 0) {
-        charCharElement.innerHTML = String.fromCodePoint (cp);
-      }
-
-      var b = codePointToBytes(cp); // 4-bytes array
-
-      // count leading zero bytes
-      for (i = b.length - 1; i >= 0; i--) {
-        if (b[i] === 0) {
-          ++leadingZeroByteCount;
-        }
-        else {
-          break;
-        }
-      }
-
-      // show bytes in reverse order. For example:
-      // 👍       bytes 4d f4 01 00, code point 1 f4 4d, 00 and 0 are omited
-      // tab (/t) bytes 09 00 00 00, code point 00 09
-      for (i = b.length - 1; i >= 0; i--) {
-
-        if (b[i] === 0 && (
-             (leadingZeroByteCount >= 2 && i >= 2) ||
-             (leadingZeroByteCount === 1 && i === 3))) {
-          // skip first zero bytes if 2 or 3 leading bytes are zeros
-          continue;
-        }
-
-        if (leadingZeroByteCount <= 1 && i === 2) {
-          // no leading zero
-          bytesText += b[i].toString(16);
-        }
-        else {
-          // zero-padded
-          bytesText += byteToHexString(b[i]);
-        }
-  
-      }
-      charBytesElement.innerHTML = 'U+' + bytesText;
-
+      showCharAndCodepoints();
     };
 
   }
 
   /**
+    * Shows the character and its Unicode code points
+    */
+  function showCharAndCodepoints() {
+      
+    var segments = graphemes.getSegments();
+    var p = sourceElement.selectionStart;
+    var cp;
+    var symbol = '';
+    var codepoints;
+    var i;
+    var j;
+      
+    if (segments.length === 0) {
+      // empty text or the browser don't support Intl.Segmenter
+      cp = getCodePoint(p); // non-negative integer that is the Unicode code point value
+      
+      if (cp === 0) { 
+        charCharElement.innerHTML = '';
+        charCodepointsElement.innerHTML = '';
+      }
+      else {
+        charCharElement.innerHTML = String.fromCodePoint (cp);
+        charCodepointsElement.innerHTML = codepointToString (cp);
+      }
+
+    }
+    else {
+      // use Intl.Segmenter
+      charCodepointsElement.innerHTML = '';
+
+      for (i = 0; i < segments.length; i++) {
+        if (segments[i].index === p) {
+          symbol = segments[i].segment;
+
+          for (j = 0; j < symbol.length; j++) {
+            cp = symbol.codePointAt (j);
+            // the space is after the code point, so the first codepoint will not break from the field title
+            charCodepointsElement.innerHTML += codepointToString (cp) + ' ';
+          }
+
+          charCharElement.textContent = symbol;
+          return; // done
+        }
+      }
+
+    }
+
+  };
+
+  /**
     * Return the Unicode code point next to text cursor or zero;
     * @returns {numner} non-negative integer that is the Unicode code point value of the character.
     */
-  function getCodePoint (){
-    var p = sourceElement.selectionStart;
-    var cp = sourceElement.value.codePointAt(p);
+  function getCodePoint (position){
 
-    if (cp!== undefined && sourceElement.selectionEnd - p <= 1) {
+    var cp = sourceElement.value.codePointAt(position);
+
+    if (cp!== undefined && sourceElement.selectionEnd - position <= 1) {
       return cp;
     }
     return 0;
@@ -237,7 +219,6 @@ function wsPage () {
     var contentBytes = [];
     var isKeyUp = (arguments.length > 0 && arguments[0].type === 'keyup');
 
-    //console.log ('is key up', isKeyUp, arguments);
     if (showContentBytes) {
       contentBytes = getBytesArray(sourceElement.value);
       bytesCounter.innerText = contentBytes.length;
@@ -272,8 +253,8 @@ function wsPage () {
     lenElement.innerHTML = graphemes.getLength().toString();
 
     // Show character next to text cursor
-    if (typeof showBytes === 'function') {
-      showBytes();
+    if (supportCodepoints) {
+      showCharAndCodepoints();
     }
 
     if (window.history.pushState) {
@@ -349,6 +330,52 @@ function wsPage () {
       textBytesElement.textContent = '';
       textBytesElement.style.display = 'none';
     }
+  }
+
+  /**
+   * Returns the string representation of the Unicode code point
+   * @param {any} cp
+   */
+  function codepointToString (cp) {
+
+    var b = codePointToBytes(cp); // 4-bytes array
+    var i;
+    var leadingZeroByteCount = 0;
+    var bytesText = '';
+
+    // count leading zero bytes
+    for (i = b.length - 1; i >= 0; i--) {
+      if (b[i] === 0) {
+        ++leadingZeroByteCount;
+      }
+      else {
+        break;
+      }
+    }
+
+    // show bytes in reverse order. For example:
+    // 👍       bytes 4d f4 01 00, code point 1 f4 4d, 00 and 0 are omited
+    // tab (/t) bytes 09 00 00 00, code point 00 09
+    for (i = b.length - 1; i >= 0; i--) {
+
+      if (b[i] === 0 && (
+            (leadingZeroByteCount >= 2 && i >= 2) ||
+            (leadingZeroByteCount === 1 && i === 3))) {
+        // skip first zero bytes if 2 or 3 leading bytes are zeros
+        continue;
+      }
+
+      if (leadingZeroByteCount <= 1 && i === 2) {
+        // no leading zero
+        bytesText += b[i].toString(16);
+      }
+      else {
+        // zero-padded
+        bytesText += byteToHexString(b[i]);
+      }
+  
+    }
+    return 'U+' + bytesText;
   }
 
   /**
