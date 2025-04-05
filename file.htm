@@ -147,7 +147,7 @@
 <li>gif, Image file encoded in the Graphics Interchange Format (GIF87a)</li>
 <li>gif, Image file encoded in the Graphics Interchange Format (GIF89a)</li>
 <li>TrueType font</li>
-<li>Computer icon encoded in ICO file format</li>
+<li>Computer icon encoded in the ICO file format</li>
 <li>Adobe Photoshop's native file</li>
 <li>Apple Icon Image format</li>
 <li>TIFF, Tagged Image File Format, little-endian</li>
@@ -262,6 +262,7 @@
 <li>cab, InstallShield CAB Archive File</li>
 <li>evt, Windows Event Viewer file</li>
 <li>dat, Windows Registry file</li>
+<li>lnk, Windows Shortcut file</li>
 <li>UTF-8 byte order mark, commonly seen in text files</li>
 <li>Text file with UTF-16LE byte order mark</li>
 <li>Text file with UTF-16BE byte order mark</li>
@@ -297,9 +298,10 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/filetype.min.js?20241024"></script>
+    <script src="/assets/filetype.min.js?20250405"></script>
     <script>
       'use strict';
+
       // check for compatibility
       if (document.getElementsByClassName === undefined ||
           window.fetch === undefined ||

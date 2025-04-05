@@ -11,6 +11,7 @@
  * 2024-08-20 JXL description added.
  * 2024-10-23 HEIC description added.
  * 2024-10-24 HDF4 and HDF5 descriptions added.
+ * 2025-04-05 LNK added.
  */
 
 /**
@@ -59,7 +60,7 @@ function fileTypePage(options) {
     'GIF87a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF87a)'},
     'GIF89a': {description: 'gif, Image file encoded in the Graphics Interchange Format (GIF89a)'},
     'ttf': {description: 'TrueType font'},
-    'ico': {description: 'Computer icon encoded in ICO file format'},
+    'ICO': {description: 'A computer icon encoded in the ICO file format'},
     'PSD': {description: 'Adobe Photoshop\'s native file'},
     'AppleIcon': {description: 'Apple Icon Image format'},
     'TIFF(le)': {description: 'TIFF, Tagged Image File Format, little-endian'},
@@ -179,7 +180,8 @@ function fileTypePage(options) {
     'PGP': {description: 'PGP file'},
     'cab': {description: 'cab, InstallShield CAB Archive File'},
     'evt': {description: 'evt, Windows Event Viewer file'},
-    'dat-reg': {description: 'dat, Windows Registry file'},
+    'dat-reg': {description: 'dat, a Windows Registry file'},
+    'LNK': {description: 'lnk, a Windows shortcut file'},
 
     // text
     'UTF8': {description: 'UTF-8 byte order mark, commonly seen in text files'},
