@@ -32,6 +32,11 @@ function fileTypePage(options) {
   var dropReadyCss = options.dropReadyCss;
   var dropZoneText = options.dropZoneText;
   var flashCss = options.flashCss;
+
+  var LNK_SIZE_MIN = 500; // bytes
+  var LNK_SIZE_MAX = 100 * 1024; // bytes
+  var LNK_SIZE_MESSAGE = options.textLnkSize;
+
   var _wasmModule = {};
 
   // TODO: process file list
@@ -360,7 +365,7 @@ function fileTypePage(options) {
     var RESULT_ARRAY_SIZE = 45;
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = '<b>Description</b>';
-
+    var message = '';
     var offset = 0;
 
     if (fileData.byteLength === 0) {
@@ -397,11 +402,19 @@ function fileTypePage(options) {
     }
     else {
       description = getDescription (resultText);
+
+      // the resultText is a string returned by the wasm function, contains the file signature
+      if (resultText === 'LNK' &&
+          (fileData.byteLength < LNK_SIZE_MIN || fileData.byteLength > LNK_SIZE_MAX)) {
+        // too small or too big for the LNK file, should be checked.
+        message = '<div class="page-message page-message--error">' + LNK_SIZE_MESSAGE + fileData.byteLength.toString() + '</div>';
+      }
+
     }
 
     resultElement.classList.add(flashCss);
 
-    resultElement.innerHTML += getResultProperty (DESCR_TITLE, description);
+    resultElement.innerHTML += getResultProperty (DESCR_TITLE, description) + message;
 
     if (resultText === UNKNOWN && isText === false) {
       // for unknown binary files show its first bytes
