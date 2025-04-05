@@ -4,14 +4,15 @@
  * 2025-03-25
  * 2025-03-26 Graphemes type added.
  * 2025-03-28 Show the whole text bytes.
- * 2025-03-29 Show the whole text bytes.
+ * 2025-03-29 Show the whole text bytes updates.
+ * 2025-04-05 Show the text bytes and hightligh selected character bytes.
  */
 
 function wsPage () {
   'use strict';
 
   var URL_PARAM = 't';
-  var supportCodepoints = false;
+  var CHARBYTES_HL = 'byte-hl'; // css of the highlighted character(s) bytes
   var sourceElement = document.getElementById('text-box'),
     targetElement = document.getElementById('text-processed'),
     lenElement = document.getElementById('text-len'),
@@ -20,7 +21,7 @@ function wsPage () {
     bytesCounterElement = document.getElementById('bytes-counter'),
     bytesCounter = bytesCounterElement.getElementsByTagName('b')[0],
     textBytesElement = document.getElementById('text-bytes'),
-    showContentBytes = (typeof TextEncoder !== 'undefined'),
+    encoder = (typeof TextEncoder !== 'undefined')? new TextEncoder() : null,
     charElement = document.getElementById('text-character'),
     charCharElement = charElement.getElementsByTagName('b')[0],
     charCodepointsElement = charElement.getElementsByTagName('b')[1], // the Unicode code point
@@ -86,11 +87,18 @@ function wsPage () {
   graphemes.init();
 
   // check feature
-  if (showContentBytes) {
+  if (encoder) {
     bytesCounterElement.style.display = ''; // show the container of bytes counter
   }
 
   sourceElement.focus();
+
+  // initial render
+  if (urlParams.t !== undefined) {
+    // process the url parameter
+    sourceElement.value = decodeURIComponent(urlParams.t);
+    textChanged();
+  }
 
   // check if the newer 'input' event can be handled or not
   if (typeof Event !== 'undefined' && typeof sourceElement.oninput === 'object') {
@@ -105,40 +113,35 @@ function wsPage () {
     });
   }
 
-  // this handles the text cursor moves
-  sourceElement.addEventListener ('keyup', textChanged);
-
-  if (urlParams.t !== undefined) {
-    // process the url parameter
-    sourceElement.value = decodeURIComponent(urlParams.t);
-    textChanged();
-  }
-
   // Shows the current character, first check browser support
   if (window.getSelection !== undefined &&
       String.fromCodePoint !== undefined) {
 
-    supportCodepoints = true;
     charElement.style.display = 'block'; // shows the block
-    sourceElement.onmouseup = function(){
-      showCharAndCodepoints();
-    };
+    sourceElement.addEventListener ('keyup', onTextSelection);
+    sourceElement.addEventListener ('mouseup', onTextSelection);
 
   }
 
   /**
-    * Shows the character and its Unicode code points
+    * Handles the text cursor move/text selection.
+    * Shows the character and its Unicode code points under cursor,
+    * highlights bytes of the selected text.
     */
-  function showCharAndCodepoints() {
+  function onTextSelection() {
       
     var segments = graphemes.getSegments();
     var p = sourceElement.selectionStart;
+    var to = sourceElement.selectionEnd;
     var cp;
     var symbol = '';
-    var codepoints;
     var i;
     var j;
+    var highlighted;
+    var charBytesElement;
+    var hlto;
       
+    // show the character (first in selection) and it's code point.
     if (segments.length === 0) {
       // empty text or the browser don't support Intl.Segmenter
       cp = getCodePoint(p); // non-negative integer that is the Unicode code point value
@@ -149,7 +152,7 @@ function wsPage () {
       }
       else {
         charCharElement.innerHTML = String.fromCodePoint (cp);
-        charCodepointsElement.innerHTML = codepointToString (cp);
+        charCodepointsElement.innerHTML = codePointToString (cp);
       }
 
     }
@@ -164,14 +167,28 @@ function wsPage () {
           for (j = 0; j < symbol.length; j++) {
             cp = symbol.codePointAt (j);
             // the space is after the code point, so the first codepoint will not break from the field title
-            charCodepointsElement.innerHTML += codepointToString (cp) + ' ';
+            charCodepointsElement.innerHTML += codePointToString (cp) + ' ';
           }
 
           charCharElement.textContent = symbol;
-          return; // done
         }
       }
 
+    }
+
+    // highlight the selected text bytes
+    highlighted = textBytesElement.querySelectorAll('.' + CHARBYTES_HL);
+    for (i = 0; i < highlighted.length; i++) {
+      highlighted[i].classList.remove(CHARBYTES_HL);
+    }
+
+    // p == to: no selection, show the p char
+    // p < to : selection, show from p to to-1
+    hlto = (p === to) ? p + 1 : to; // End index (one past the last character)
+
+    for (i = p; i < hlto; i++) {
+      charBytesElement = document.getElementById('charpos-' + i);
+      if (charBytesElement) charBytesElement.classList.add(CHARBYTES_HL);
     }
 
   };
@@ -210,31 +227,25 @@ function wsPage () {
 
 
   /**
-    * Sets text from the textarea to the url parameter.
+    * Handels the text change (typed or pasted):
+    * - process and highlight whitespaces and non-ASCII,
+    * - displays the text length and the number of non-ASCII characters,
+    * - displays bytes of the text,
+    * - sets text from the textarea to the url parameter.
     */
   function textChanged() {
 
-    // this function can be called with or without arguments
     var result = processText(sourceElement.value);
-    var contentBytes = [];
-    var isKeyUp = (arguments.length > 0 && arguments[0].type === 'keyup');
 
-    if (showContentBytes) {
-      contentBytes = getBytesArray(sourceElement.value);
-      bytesCounter.innerText = contentBytes.length;
+    graphemes.update(sourceElement.value); // update the array of graphems
 
-      // show bytes
-      if (isKeyUp) {
-        // emphasize bytes at the text cursor
-      }
-      else {
-        // render bytes
-        showTextBytes (contentBytes);
-      }
-    }
+    bytesCounter.innerText = '';
 
-    targetElement.innerHTML = result.text;
-    nonAsciiCounter.innerHTML = result.nonAscii;
+    // show bytes
+    showTextBytes (sourceElement.value);
+
+    targetElement.innerHTML = result.text;       // show the text with highlights
+    nonAsciiCounter.innerHTML = result.nonAscii; // show the number of non-ASCII characters
 
     if (result.nonAscii > 0) {
       nonAsciiElement.style.display = '';
@@ -249,22 +260,21 @@ function wsPage () {
     else {
       targetElement.style.display = 'none';
     }
-    graphemes.update(sourceElement.value);
+
+    // show the text lenght (accurate or not depending on Intl.Segmenter support)
     lenElement.innerHTML = graphemes.getLength().toString();
 
-    // Show character next to text cursor
-    if (supportCodepoints) {
-      showCharAndCodepoints();
-    }
-
+    // update the page URL
     if (window.history.pushState) {
       window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
         URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
     }
+
   }
 
   /**
-    * Processes the entered text.
+    * Processes the entered text, returns the text wiith whitespaces and non-ASCII highlighted
+    * and also the number of non-ASCII characters.
     * @param {string} text the entered text.
     * returns {{text:string, nonAscii:number}}
     */
@@ -291,32 +301,42 @@ function wsPage () {
   }
 
   /**
-   * Returns the string byte array
-   * @param {string} str
-   * @returns {[number]}
+   * Displays the HTML code of the whole text bytes, grouped by graphemes.
+   * Also shows the total bytes.
+   * @param {string} text
    */
-  function getBytesArray(str) {
-      var encoder = new TextEncoder(); // Default is UTF-8
-      return encoder.encode(str);
-  }
-
-  /**
-   * Show the whole text bytes
-   * @param {[number]} bytes
-   */
-  function showTextBytes (bytes) {
+  function showTextBytes (text) {
 
     var html = '';
     var i;
+    var iterator = text[Symbol.iterator]();
+    var char;
+    var charRes;
+    var charBytes;
+    var charIndex = 0;
+    var hexBytes;
+    var totalBytes = 0;
 
-    // TODO: add graphemes
-    if (bytes.length > 0) {
+    if (encoder && text.length > 0) {
 
-      for (i = 0; i < bytes.length; i++) {
-        html += '<i>' + byteToHexString (bytes[i]) + '</i>';
-        if (i !== 0 && (i + 1) % 16 === 0) {
-          html += '<br>';
+      // Iterate through the characters using the iterator
+      charRes = iterator.next();
+
+      while (!charRes.done) {
+
+        char = charRes.value;
+        charBytes = encoder.encode (char); // get bytes character
+        hexBytes = '';
+
+        for (i = 0; i < charBytes.length; i++) { // iterate through the character bytes
+          hexBytes += byteToHexString (charBytes[i]) + ' ';
+          totalBytes += 1;
         }
+
+        html += `<i id="charpos-${charIndex}">${hexBytes.trim()}</i> `;
+
+        charIndex += char.length;
+        charRes = iterator.next();   // Move to the next character
       }
 
       textBytesElement.innerHTML = html;
@@ -330,13 +350,16 @@ function wsPage () {
       textBytesElement.textContent = '';
       textBytesElement.style.display = 'none';
     }
+
+    bytesCounter.innerText = totalBytes;
+
   }
 
   /**
    * Returns the string representation of the Unicode code point
    * @param {any} cp
    */
-  function codepointToString (cp) {
+  function codePointToString (cp) {
 
     var b = codePointToBytes(cp); // 4-bytes array
     var i;

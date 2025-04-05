@@ -50,7 +50,8 @@
       #nonascii-counter, #bytes-counter {white-space: nowrap;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
       .text-bytes {display:none; max-height: 10em; overflow-y: auto;}
-      .text-bytes i {display:inline-block; font-style: normal; text-align: right; padding: 0 1pt;}
+      .text-bytes i {display:inline-block; font-style: normal; padding: 0; white-space: nowrap;}
+      .byte-hl {background-color: #fdb430; color: #000; border-radius: 2pt;}
       @media (prefers-color-scheme: dark) {
         #text-character span:first-child b {background: #555;}
         #text-processed b {background: #966502; color: #fe9;}
@@ -150,7 +151,7 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/ws.min.js?20250329"></script>
+    <script src="/assets/ws.min.js?20250405"></script>
     <script>
       wsPage();
     </script>
