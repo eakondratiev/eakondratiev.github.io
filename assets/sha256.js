@@ -77,7 +77,7 @@ async function sha256page (options) {
 
   // Process the url parameters
   (function(){
-    const reExpected = /^[a-f0-9]+$/i;
+
     let urlParameters = T.getUrlParameters();
 
     if (typeof urlParameters.expected !== 'undefined' &&
