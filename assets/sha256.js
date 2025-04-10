@@ -4,6 +4,7 @@
  * 2025-03-07
  * 2025-03-14 toggle the Expected box placeholer.
  * 2025-03-20 process the Expected url parameter.
+ * 2025-04-10 some fixes and improvements.
  */
 
 /**
@@ -30,6 +31,8 @@ async function sha256page (options) {
     Enabled: true,
     Disabled: false
   };
+
+  const reExpected = /^[a-f0-9]+$/i;
 
   let wasmUrl = options.wasmUrl;
   let fileDropElement = document.getElementById(options.fileDropElement);
@@ -74,7 +77,7 @@ async function sha256page (options) {
 
   // Process the url parameters
   (function(){
-    let reExpected = /^[a-f0-9]+$/i;
+    const reExpected = /^[a-f0-9]+$/i;
     let urlParameters = T.getUrlParameters();
 
     if (typeof urlParameters.expected !== 'undefined' &&
@@ -224,6 +227,8 @@ async function sha256page (options) {
   async function wasmProcessChunks (file, chunkSize, handlers) {
 
     let offset = 0;
+    let codeLine = 0;
+
 
     while (offset < file.size) {
 
@@ -232,23 +237,27 @@ async function sha256page (options) {
 
       try {
         // Await the reading of the chunk as an ArrayBuffer
+        codeLine = 1;
         const arrayBuffer = await readBlob(chunk);
         const chunkLength = arrayBuffer.byteLength;
 
         // Create a Uint8Array view for the wasm memory buffer at the allocated position.
         // 0 - the input data always in the buffer beginning
+        codeLine = 2;
         const wasmMemoryArray = new Uint8Array(wm.memory.buffer, WASM_MEM_START, chunkLength);
 
         // Copy chunk data from the ArrayBuffer into wasmMemoryArray
+        codeLine = 3;
         wasmMemoryArray.set(new Uint8Array(arrayBuffer));
 
         // Call the update function
+        codeLine = 4;
         wm.sha256update(WASM_MEM_START, chunkLength);
         handlers.progress (offset);
 
       } catch (error) {
         handlers.error ('Something went wrong. Error processing the file chunk.');
-        T.log ('WASM Chunk');
+        T.log (`WASM Chunk (${codeLine})`);
         break;
       }
 
@@ -369,8 +378,6 @@ async function sha256page (options) {
     /** Called on the process start */
     function onStart(file) {
 
-      options = options || {};
-
       fileName = file.name;
       totalBytes = file.size;
       sha256value = '';
@@ -429,7 +436,7 @@ async function sha256page (options) {
 
       compareSha256Values ();
 
-      T.log ('Computed');
+      T.log (`Computed in ${(duration / 1000).toFixed(2)}`);
     }
   
     /**
@@ -457,7 +464,7 @@ async function sha256page (options) {
 
     const expected = expectedInputElement.value.replace(/[\s\-]+/g, '');
     let text = '';
-    let actual = resultElement.dataset.sha256;
+    let actual = (resultElement.dataset.sha256 || '').trim();
 
     compareElement.classList.remove (compareMatchCss);
     compareElement.classList.remove (compareNoMatchCss);
@@ -486,10 +493,19 @@ async function sha256page (options) {
    */
   async function loadWasm (url, params) {
 
+    let wasmInstance;
+
     try {
-      // Fetch and instantiate the Wasm module in one step
-      const response = await fetch(url);
-      const wasmInstance = await WebAssembly.instantiateStreaming(response, params);
+      if ('instantiateStreaming' in WebAssembly) {
+        // Fetch and instantiate the Wasm module in one step
+        const response = await fetch(url);
+        wasmInstance = await WebAssembly.instantiateStreaming(response, params);
+      } else {
+        // Fallback for environments that don't support instantiateStreaming
+        const response = await fetch(url);
+        const bytes = await response.arrayBuffer();
+        wasmInstance = await WebAssembly.instantiate(bytes, params);
+      }
 
       // Return the instance for further use
       return {
