@@ -6,6 +6,7 @@
  * 2025-03-28 Show the whole text bytes.
  * 2025-03-29 Show the whole text bytes updates.
  * 2025-04-05 Show the text bytes and hightligh selected character bytes.
+ * 2025-04-11 Show/hide the title of the bytes element.
  */
 
 function wsPage () {
@@ -21,6 +22,7 @@ function wsPage () {
     bytesCounterElement = document.getElementById('bytes-counter'),
     bytesCounter = bytesCounterElement.getElementsByTagName('b')[0],
     textBytesElement = document.getElementById('text-bytes'),
+    textBytesTitleElement = textBytesElement.previousElementSibling,
     encoder = (typeof TextEncoder !== 'undefined')? new TextEncoder() : null,
     charElement = document.getElementById('text-character'),
     charCharElement = charElement.getElementsByTagName('b')[0],
@@ -166,7 +168,7 @@ function wsPage () {
 
           for (j = 0; j < symbol.length; j++) {
             cp = symbol.codePointAt (j);
-            // the space is after the code point, so the first codepoint will not break from the field title
+            // add the space after the code point, so the first codepoint will not break from the field title
             charCodepointsElement.innerHTML += codePointToString (cp) + ' ';
           }
 
@@ -341,14 +343,16 @@ function wsPage () {
 
       textBytesElement.innerHTML = html;
 
-      // show the box
+      // show the box and it's title
       textBytesElement.style.display = 'block';
+      if (textBytesTitleElement) {textBytesTitleElement.style.display = 'block';}
     
     }
     else {
       // clear
       textBytesElement.textContent = '';
       textBytesElement.style.display = 'none';
+      if (textBytesTitleElement) {textBytesTitleElement.style.display = 'none';}
     }
 
     bytesCounter.innerText = totalBytes;

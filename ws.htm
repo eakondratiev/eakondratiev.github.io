@@ -29,6 +29,7 @@
     <script src="/assets/menu.min.js?20250322"></script>
     <script src="/assets/web-app.js"></script>
     <style>
+      code {white-space: nowrap;}
       #text-box, #text-processed {
         border: solid 1px #999;
         box-sizing: border-box; padding:4pt; width:100%;}
@@ -49,8 +50,9 @@
       #text-len, #nonascii-counter {margin-right: 8pt;}
       #nonascii-counter, #bytes-counter {white-space: nowrap;}
       #nonascii-counter b {background: #fd9; padding: 0 4pt;}
-      .text-bytes {display:none; max-height: 10em; overflow-y: auto;}
-      .text-bytes i {display:inline-block; font-style: normal; padding: 0; white-space: nowrap;}
+      .text-bytes-mark {font-size: 0.75rem; opacity: 0.7; display: none;}
+      .text-bytes {display:none; max-height: 10em; overflow-y: auto; }
+      .text-bytes i {display:inline-block; font-style: normal; margin: 1pt 0; padding: 0; white-space: nowrap;}
       .byte-hl {background-color: #fdb430; color: #000; border-radius: 2pt;}
       @media (prefers-color-scheme: dark) {
         #text-character span:first-child b {background: #555;}
@@ -108,7 +110,7 @@
              <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
           <div id="text-character" style="display:none;">
             <span style="margin-right:0.5em;">Character <b></b></span>
-            <span>Unicode code points <b></b></span>
+            <span>Unicode code units <b></b></span>
           </div>
           <textarea id="text-box" rows="5" accesskey="T" placeholder="Please enter or paste text"></textarea>
           <div style="margin-top: 4pt; line-height: 1.5;">
@@ -117,8 +119,9 @@
             <span id="bytes-counter" style="display:none;">Total bytes: <b>0</b></span>
           </div>
           <div id="text-processed"></div>
+          <div class="text-bytes-mark">UTF-8 bytes</div>
           <div id="text-bytes" class="text-bytes code"></div>
-          <h2>About This Tool</h2>
+          <h2>Letters That Aren't What They Seem</h2>
           <p>
             Some spammers exploit visually similar letters from different alphabets,
             as seen in the word <a href="ws.htm?t=S%D0%B0l%D0%B5"><i>Sаlе</i></a>,
@@ -127,6 +130,24 @@
             You can also check your own text for occasionally mixing characters.
             Just copy and paste the text into the box above.
           </p>
+
+          <!--
+          <h2>Weird Unicode</h2>
+          <p>
+            In Unicode, each character is represented by a code point.
+            A code point is a unique number assigned to each character in the Unicode standard,
+            which encompasses a wide range of characters from various writing systems, symbols, and emojis.
+            Code points can be encoded in different ways (e.g., UTF-8, UTF-16, UTF-32), which determine how the code points are represented in bytes.
+          </p>
+          <p>Some characters are simple. <a href="?t=A">For example</a>, the character <code>A</code> has a code point of <code>U+0041</code>,
+          which is represented as bytes <code>0x00 0x41</code> in UTF-16BE (big-endian), <code>0x41 0x00</code> in UTF-16LE (little-endian), 
+          and <code>0x41</code> in UTF-8.</p>
+          <p><a href="?t=%EB%B0%94">The Korean letter</a> <code>바</code> has a code point of <code>U+BC14</code> and is represented as the bytes <code>EB B0 94</code> in UTF-8.</p>
+          <p><a href="?t=%F0%9F%91%8D">The emoji thumbs up</a> <code>👍</code> has one code point <code>U+1F44D</code> consisting of two code units in UTF-16 
+          <code>U+1F44D U+DC4D</code>
+          and represented by <code>F0 9F 91 8D</code> bytes in UTF-8.</p>
+          -->
+
           <div class="page-tags">
             <b>#UTF</b> <b>#Unicode</b> <b>#Non-ASCII</b> <b>#Hexadecimal</b> <b>Almost AI-free</b>
           </div>
@@ -151,8 +172,9 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/ws.min.js?20250405"></script>
+    <script src="/assets/ws.min.js?20250411"></script>
     <script>
+      var _ToolNoLogs = true; // TODO: remove
       wsPage();
     </script>
   </body>
