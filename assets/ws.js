@@ -165,13 +165,7 @@ function wsPage () {
       for (i = 0; i < segments.length; i++) {
         if (segments[i].index === p) {
           symbol = segments[i].segment;
-
-          for (j = 0; j < symbol.length; j++) {
-            cp = symbol.codePointAt (j);
-            // add the space after the code point, so the first codepoint will not break from the field title
-            charCodepointsElement.innerHTML += codePointToString (cp) + ' ';
-          }
-
+          charCodepointsElement.innerHTML += getCodePoints(symbol); 
           charCharElement.textContent = symbol;
         }
       }
@@ -416,6 +410,26 @@ function wsPage () {
       return '0' + hex;
     }
     return hex;
+  }
+
+  /**
+   * Returns code point(s) in U+nnnn format
+   * @param {string} str the input string
+   * @returns {string}
+   */
+  function getCodePoints(symbol) {
+    var result = '';
+    var iter = symbol[Symbol.iterator]();
+    var next = iter.next();
+  
+    while (!next.done) {
+      if (result) result += ' ';
+      const codePoint = next.value.codePointAt(0);
+      result += 'U+' + codePoint.toString(16).padStart(4, '0').toUpperCase();
+      next = iter.next();
+    }
+  
+    return result;
   }
 
 }

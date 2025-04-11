@@ -110,13 +110,13 @@
              <a href="ws.htm?t=Sоme%20tеxt.%F0%9F%91%8D%F0%9F%98%83%F0%9F%98%80">Example</a></p>
           <div id="text-character" style="display:none;">
             <span style="margin-right:0.5em;">Character <b></b></span>
-            <span>Unicode code units <b></b></span>
+            <span>Unicode points <b></b></span>
           </div>
           <textarea id="text-box" rows="5" accesskey="T" placeholder="Please enter or paste text"></textarea>
           <div style="margin-top: 4pt; line-height: 1.5;">
             Text length: <b id="text-len">0</b>
             <span id="nonascii-counter" style="display:none;">Non-ASCII count: <b></b></span>
-            <span id="bytes-counter" style="display:none;">Total bytes: <b>0</b></span>
+            <span id="bytes-counter" style="display:none;">Total UTF-8 bytes: <b>0</b></span>
           </div>
           <div id="text-processed"></div>
           <div class="text-bytes-mark">UTF-8 bytes</div>
@@ -130,8 +130,6 @@
             You can also check your own text for occasionally mixing characters.
             Just copy and paste the text into the box above.
           </p>
-
-          <!--
           <h2>Weird Unicode</h2>
           <p>
             In Unicode, each character is represented by a code point.
@@ -143,11 +141,25 @@
           which is represented as bytes <code>0x00 0x41</code> in UTF-16BE (big-endian), <code>0x41 0x00</code> in UTF-16LE (little-endian), 
           and <code>0x41</code> in UTF-8.</p>
           <p><a href="?t=%EB%B0%94">The Korean letter</a> <code>바</code> has a code point of <code>U+BC14</code> and is represented as the bytes <code>EB B0 94</code> in UTF-8.</p>
-          <p><a href="?t=%F0%9F%91%8D">The emoji thumbs up</a> <code>👍</code> has one code point <code>U+1F44D</code> consisting of two code units in UTF-16 
-          <code>U+1F44D U+DC4D</code>
-          and represented by <code>F0 9F 91 8D</code> bytes in UTF-8.</p>
-          -->
-
+          <p><a href="?t=%F0%9F%91%8D">The thumbs up emoji</a> <code>👍</code> has one Unicode code point <code>U+1F44D</code>, and is encoded as
+          the bytes sequence <code>F0 9F 91 8D</code> in UTF-8.</p>
+          <p><a href="?t=%F0%9F%91%A8%F0%9F%8F%BC%E2%80%8D%F0%9F%91%A9%F0%9F%8F%BD%E2%80%8D%F0%9F%91%A7%F0%9F%8F%BE%E2%80%8D%F0%9F%91%A6">This one emoji</a> <code>👨🏼‍👩🏽‍👧🏾‍👦</code>
+          consists of four characters, each with a different skin tone modifier. It consists of the following code points
+          <code>U+1F468 U+1F3FC U+200D U+1F469 U+1F3FD U+200D U+1F467 U+1F3FE U+200D U+1F466</code>, which means:</p>
+          <p><code>U+1F468</code>: <a href="?t=%F0%9F%91%A8">Man</a></p>
+          <p><code>U+1F3FC</code>: Medium-light skin tone modifier</p>
+          <p><code>U+200D</code>: Zero Width Joiner (used to connect characters)</p>
+          <p><code>U+1F469</code>: <a href="?t=%F0%9F%91%A9">Woman</a></p>
+          <p><code>U+1F3FD</code>: Medium skin tone modifier</p>
+          <p><code>U+200D</code>: Zero Width Joiner</p>
+          <p><code>U+1F467</code>: <a href="?t=%F0%9F%91%A7">Girl</a></p>
+          <p><code>U+1F3FE</code>: Medium-dark skin tone modifier</p>
+          <p><code>U+200D</code>: Zero Width Joiner</p>
+          <p><code>U+1F466</code>: <a href="?t=%F0%9F%91%A6">Boy</a></p>
+          <p>What is really weird is that Unicode zero-width characters, such as the Zero Width Space <code>U+200B</code> and Zero Width Joiner <code>U+200D</code>,
+          are often overlooked due to their invisibility in text. However, they can be exploited to hide text or obfuscate code, including in SQL injection attacks.
+          Malicious actors may embed these invisible characters within legitimate strings to bypass security filters, making detection difficult.
+          This highlights the need for developers and security professionals to implement strong validation and sanitization measures to protect against such vulnerabilities.</p>
           <div class="page-tags">
             <b>#UTF</b> <b>#Unicode</b> <b>#Non-ASCII</b> <b>#Hexadecimal</b> <b>Almost AI-free</b>
           </div>
