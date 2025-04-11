@@ -402,7 +402,7 @@ function wsPage () {
       }
   
     }
-    return 'U+' + bytesText;
+    return 'U+' + bytesText.toUpperCase();
   }
 
   /**
