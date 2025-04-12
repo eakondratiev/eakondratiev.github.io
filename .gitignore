@@ -8,6 +8,7 @@
 [Ww]eb.config
 
 # temporary page
+countdown.htm
 beta.htm
 assets/beta.js
 assets/beta.wasm
