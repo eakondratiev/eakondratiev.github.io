@@ -9,6 +9,7 @@
 
 # temporary page
 countdown.htm
+assets/countdown.js
 beta.htm
 assets/beta.js
 assets/beta.wasm
