@@ -138,7 +138,6 @@ function wsPage () {
     var cp;
     var symbol = '';
     var i;
-    var j;
     var highlighted;
     var charBytesElement;
     var hlto;

@@ -19,6 +19,7 @@
  * 2023-09-12 the Mouse Events Tracker page added to the menu.
  * 2024-06-17 rename the link from White Spaces to Character Code Detector.
  * 2025-03-22 sha256.htm added to menu
+ * 2025-04-27 T.log() truncates long query strings.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -28,6 +29,7 @@
 
   'use strict';
 
+  var MAX_QS_LOG_LENGTH = 150; // max length of the query string for logging
   var TOP_MENU = [
     {
       header: 'Online Tools',
@@ -466,10 +468,16 @@
     }
 
     // 1. collect
+    var qs = window.location.search;
+
+    if (qs.length > MAX_QS_LOG_LENGTH) {
+      qs = qs.slice (0, MAX_QS_LOG_LENGTH) + '...'; // truncate the large query string
+    }
+
     var data = [
       'e=' + eventName,
       'p=' + encodeURIComponent (window.location.pathname),
-      'q=' + encodeURIComponent (window.location.search)];
+      'q=' + encodeURIComponent (qs)];
 
     if (document.referrer !== '') {
       data.push('r=' + encodeURIComponent (document.referrer));
