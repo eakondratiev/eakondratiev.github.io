@@ -29,7 +29,6 @@
 
   'use strict';
 
-  var MAX_QS_LOG_LENGTH = 150; // max length of the query string for logging
   var TOP_MENU = [
     {
       header: 'Online Tools',
@@ -270,6 +269,8 @@
 (function(T, undefined){
 
   'use strict';
+
+  var MAX_QS_LOG_LENGTH = 150; // max length of the query string for logging
 
   /**
    * Sets the text in the input element and url parameter;
