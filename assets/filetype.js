@@ -324,7 +324,7 @@ function fileTypePage(options) {
         r +=
           getResultProperty ('File name', file.name) +
           getResultProperty ('File size', formatFileSize (file.size)) +
-          getResultProperty ('File MIME type', file.type + '<div style="font-style:normal; opacity:0.7;">* reported by browser</div>');
+          getResultProperty ('File MIME type', file.type + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
 
         await reader.readAsArrayBuffer (file);
 
