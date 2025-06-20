@@ -12,6 +12,7 @@
  * 2024-10-23 HEIC description added.
  * 2024-10-24 HDF4 and HDF5 descriptions added.
  * 2025-04-05 LNK added.
+ * 2025-06-20 DSF, DFF (DSD) added.
  */
 
 /**
@@ -91,11 +92,13 @@ function fileTypePage(options) {
     // audio
     'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
     'mp3': {description: 'MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag'},
-    'FLAC': {description: 'Free Lossless Audio Codec'},
+    'FLAC': {description: 'FLAC, Free Lossless Audio Codec'},
     'AIFF': {description: 'AIFF, Audio Interchange File Format'},
     'wav':  {description: 'wav, Waveform Audio File Format'},
     'OGGS': {description: 'Ogg, an open source media container format'},
-    'MIDI': {description: 'MIDI sound file'},
+    'MIDI': {description: 'MID, MIDI, a Musical Instrument Digital Interface file, sound file'},
+    'DSF': {description: '<b>DSF</b> (DSD Storage Facility) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
+    'DFF': {description: '<b>DFF</b> (DSD Interchange File Format) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
 
     // video
     'avi':  {description: 'avi, Audio Video Interleave video format'},
