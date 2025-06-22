@@ -13,6 +13,7 @@
  * 2024-10-24 HDF4 and HDF5 descriptions added.
  * 2025-04-05 LNK added.
  * 2025-06-20 DSF, DFF (DSD) added.
+ * 2025-06-22 separate detection of the JPEG JFIF.
  */
 
 /**
@@ -55,6 +56,7 @@ function fileTypePage(options) {
 
     // graphics
     'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
+    'JFIF': {description: 'JFIF,  JPEG File Interchange Format - the standard format for storing JPEG images, including metadata for image dimensions and color space'},
     'JPEG2000': {description: 'JPEG 2000 file'},
     'JXR': {description: 'JPEG XR (extended range) file'},
     'JXL': {description: 'JPEG XL file, jxl - supports both lossy and lossless compressions, as well as alpha channels and HDR'},
@@ -94,7 +96,7 @@ function fileTypePage(options) {
     'mp3': {description: 'MP3, MPEG-1 Layer 3 file without an ID3 tag or with an ID3v1 tag'},
     'FLAC': {description: 'FLAC, Free Lossless Audio Codec'},
     'AIFF': {description: 'AIFF, Audio Interchange File Format'},
-    'wav':  {description: 'wav, Waveform Audio File Format'},
+    'wav':  {description: 'WAV, Waveform Audio File Format'},
     'OGGS': {description: 'Ogg, an open source media container format'},
     'MIDI': {description: 'MID, MIDI, a Musical Instrument Digital Interface file, sound file'},
     'DSF': {description: '<b>DSF</b> (DSD Storage Facility) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
