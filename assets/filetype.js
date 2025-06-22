@@ -55,8 +55,8 @@ function fileTypePage(options) {
   var SIGNATURES = {
 
     // graphics
-    'JPEG': {description: 'JPEG raw or in the JFIF or Exif'},
-    'JFIF': {description: 'JFIF,  JPEG File Interchange Format - the standard format for storing JPEG images, including metadata for image dimensions and color space'},
+    'JPEG': {description: 'JPEG, lossy compressed image file'},
+    'JFIF': {description: 'JFIF, JPEG File Interchange Format - the standard format for storing JPEG images, including metadata for image dimensions and color space'},
     'JPEG2000': {description: 'JPEG 2000 file'},
     'JXR': {description: 'JPEG XR (extended range) file'},
     'JXL': {description: 'JPEG XL file, jxl - supports both lossy and lossless compressions, as well as alpha channels and HDR'},
