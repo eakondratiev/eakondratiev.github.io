@@ -8,10 +8,6 @@
 [Ww]eb.config
 
 # temporary page
-countdown.htm
-assets/countdown.js
-assets/files/Windows-Alarm05.mp3
-
 beta.htm
 assets/beta.js
 assets/beta.wasm

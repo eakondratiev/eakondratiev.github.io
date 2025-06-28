@@ -1,0 +1,153 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Countdown Timer -- Free Online Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index, follow">
+
+    <meta name="apple-mobile-web-app-title" content="Countdown Timer" />
+    <meta name="application-name" content="Countdown Timer" />
+
+    <meta property="og:title" content="Countdown Timer">
+    <meta name="description" content="Countdown to the Time and Date">
+    <meta property="og:description" content="Countdown to the Time and Date">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eakondratiev.github.io/countdown.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/countdown.htm">
+
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
+    <meta name="theme-color" content="#444444" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon-180.png" />
+    <link rel="manifest" href="/assets/icons/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
+  
+    <link href="/assets/main.css?20250322" rel="stylesheet" type="text/css" />
+    <script src="/assets/menu.min.js?20250427"></script>
+    <script src="/assets/web-app.js"></script>
+    <style>
+      #countdown-settings-form div {margin: 2pt 0;}
+      #countdown-settings-form input {border: solid 1pt #333; padding: 2pt;}
+      #countdown-settings-form input:invalid {background: #f77;}
+      #current-time {color: #555; text-align:right; text-align: end; height: 1.5em; margin-bottom: 16pt;}
+      #current-time b {color: initial; font-weight: normal; display: inline-block; min-width: 15em;}
+      #countdown-left {font-size: 3rem; margin: 8pt 0;}
+      #countdown-progress-bar {border: solid 1pt #777; border-radius: 2pt; background: #ddd; height: 7pt;
+                               margin: 8pt 0; width: 100%; overflow: hidden; display: none;}
+      #countdown-progress-bar b {display: block; background: #09f; height: 100%; border: none; width: 0;
+                                 float: right;}
+      #countdown-in-process {display: none;}
+      @media (prefers-color-scheme: dark) {
+        #current-time {color: #777;}
+      }
+    </style>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></script>
+    <!--
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gta         * g('js', new Date());
+      gtag('config', 'G-PTBT00LYFH');
+    </script>
+    -->
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-wide header">
+        <header class="content">
+          <button class="site-menu-btn" aria-label="Open the site menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </button>
+          <div class="site-title"><a class="site-logo" href="/">TOOL</a></div>
+        </header>
+        <nav class="content site-nav" aria-label="Site menu">
+          <h3 class="site-nav-header">Online Tools</h3>
+          <ul>
+          <li class="site-nav-top-item"><a href="file.htm">File Type by Content</a></li>
+          <li class="site-nav-top-item"><a href="sha256.htm">File SHA-256 Checksum</a></li>
+          <li class="site-nav-top-item"><a href="regex.htm">Regex Tester</a></li>
+          <li class="site-nav-top-item"><a href="roman-numerals.htm">Convert a Roman Number</a></li>
+          <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
+          <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">Character Code Detector</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-representation.htm">Representation of Floating-point Numbers 32 and 64 bits</a></li>
+          <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+          </ul>
+          <h3 class="site-nav-header">Console Tools</h3>
+          <ul>
+            <li class="site-nav-top-item"><a href="crd-reader.htm">CRD Reader</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="page-wide">
+        <div class="content page-content">
+          <noscript><div>This site requires JavaScript to function properly. Please enable it in your browser settings.</div></noscript>
+          <div id="incompatible-browser">Please, update your browser.</div>
+          <h1>Countdown Timer</h1>
+          <p>Set the time and date and run the countdown.
+          <br /><b>Under constru</b>
+          </p>
+
+          <div id="current-time">Current time <b></b></div>
+
+          <div id="countdown-settings-form">
+            <div>Countdown to</div>
+            <div><u>t</u>ime <input id="countdown-to-time" type="text" placeholder="hh:mm" pattern="([01]?[0-9]|2[0-3]):([0-5]?[0-9])" required accesskey="T"/></div>
+            <div><u>d</u>ate <input id="countdown-to-date" type="date" accesskey="D"/></div>
+            <div><button id="countdown-start-btn" class="form-button" accesskey="S"><u>S</u>tart</button></div>
+          </div>
+
+          <div id="countdown-in-process">
+            <div id="countdown-to"></div>
+            <div id="countdown-left"></div>
+            <div id="countdown-progress-bar"><b></b></div>
+            <div id="countdown-reset-button-container">
+              <button class="form-button" accesskey="R"><u>R</u>eset</button>
+            </div>
+          </div>
+
+          <p id="notification-sound-box">
+            <label>
+              <input type="checkbox" />
+              Play notification <a href="#_" id="notification-sound-text">sound</a>
+            </label>
+          </p>
+
+          <div class="page-tags">
+            <b>#Time</b> <b>#Date</b> <b>#Timer</b>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-wide footer">
+      <div class="footer-menu">
+        <ul>
+        <li><a href="crd-reader.htm">CRD File Reader Console App</a></li>
+        <li><a href="file.htm">Get File Type by Content</a></li>
+        <li><a href="sha256.htm">Verify File SHA-256 Checksum</a></li>
+        <li><a href="mouse-events.htm">Mouse Events</a></li>
+        <li><a href="iprange.htm">IPv4 Ranges</a></li>
+        <li><a href="regex.htm">Test Regular Expressions</a></li>
+        <li><a href="roman-numerals.htm">Roman Numerals Converter</a></li>
+        <li><a href="floating-point-representation.htm">Floating-point Representation, 32/64 bit</a></li>
+        <li><a href="floating-point-summation.htm">Floating-point Summation</a></li>
+        <li><a href="speed.htm">Speed &amp; Distance Scale</a></li>
+        <li><a href="ws.htm">Character Code Detector</a></li>
+        </ul>
+      </div>
+      imperfect <b>tools</b>
+    </div>
+    <script src="/assets/countdown.min.js"></script>
+    <script>
+      countdownPage({
+        messageNoSound: 'The Web Audio API is not supported in this browser, so notification sounds will not be played.'
+      });
+    </script>
+  </body>
+</html>
