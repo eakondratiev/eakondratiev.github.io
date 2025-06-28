@@ -44,6 +44,39 @@ function countdownPage (options){
   let soundBox = document.getElementById('notification-sound-box');
   let soundTestLink = document.getElementById('notification-sound-text');
 
+  // IMPORTANT: AudioContext should be a persistent instance
+  let audioContext = null;
+  let isPlayingSequence = false;
+  const notes = {
+    // Fifth Octave
+    C5: 523.25,
+    CSharp5: 554.37, // C#5
+    D5: 587.33,
+    DSharp5: 622.25, // D#5
+    E5: 659.25,
+    F5: 698.46,
+    FSharp5: 739.99, // F#5
+    G5: 783.99,
+    GSharp5: 830.61, // G#5
+    A5: 880.00,
+    ASharp5: 932.33, // A#5
+    B5: 987.77,
+
+    // Sixth Octave
+    C6: 1046.50,
+    CSharp6: 1108.73, // C#6
+    D6: 1174.66,
+    DSharp6: 1244.51, // D#6
+    E6: 1318.51,
+    F6: 1396.91,
+    FSharp6: 1479.98, // F#6
+    G6: 1567.98,
+    GSharp6: 1661.22, // G#6
+    A6: 1760.00,
+    ASharp6: 1864.66, // A#6
+    B6: 1975.53
+  };
+
   // API check
   if (!window.AudioContext && !window.webkitAudioContext) {
     soundBox.innerHTML = options.messageNoSound;
@@ -262,77 +295,89 @@ function countdownPage (options){
 
   function playOnTimeSound() {
 
+    if (isPlayingSequence) {
+      return; // Prevent multiple simultaneous sequences
+    }
+
     if (!window.AudioContext && !window.webkitAudioContext) {
       return;
     }
 
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = {
-      // Fifth Octave
-      C5: 523.25,
-      CSharp5: 554.37, // C#5
-      D5: 587.33,
-      DSharp5: 622.25, // D#5
-      E5: 659.25,
-      F5: 698.46,
-      FSharp5: 739.99, // F#5
-      G5: 783.99,
-      GSharp5: 830.61, // G#5
-      A5: 880.00,
-      ASharp5: 932.33, // A#5
-      B5: 987.77,
+    isPlayingSequence = true; // Set the flag to indicate a sequence is playing
 
-      // Sixth Octave
-      C6: 1046.50,
-      CSharp6: 1108.73, // C#6
-      D6: 1174.66,
-      DSharp6: 1244.51, // D#6
-      E6: 1318.51,
-      F6: 1396.91,
-      FSharp6: 1479.98, // F#6
-      G6: 1567.98,
-      GSharp6: 1661.22, // G#6
-      A6: 1760.00,
-      ASharp6: 1864.66, // A#6
-      B6: 1975.53
-    };
-    
-    // Function to create a beep sound
-    function beep(frequency, duration) {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+
+    /** Function to create the note sound.
+     * @param {*} startTime the absolute start time in seconds
+     */
+    function beep(frequency, duration, startTime) {
       const oscillator = audioContext.createOscillator();
       oscillator.type = 'sine'; // You can change this to 'square', 'sawtooth', etc.
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(frequency, startTime);
 
       const gainNode = audioContext.createGain();
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Start with volume at 0
+      gainNode.gain.setValueAtTime(0, startTime); // Start with volume at 0
 
       // Connect the oscillator to the gain node
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
 
-      oscillator.start();
+      oscillator.start(startTime);
 
-      const riseDuration = 0.05 * duration; // Quick rise duration in seconds
-      gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + riseDuration);
+      //ADSR-like (Attack-Decay-Sustain-Release) shaping 
+      const attackDuration = 0.05 * duration; // Quick rise duration in seconds
+      const releaseDuration = 0.9 * duration; // Longer fade duration in seconds
+      // Rise to full volume
+      gainNode.gain.linearRampToValueAtTime(1, startTime + attackDuration);
 
-      // Slow drop in volume
-      const dropDuration = 0.9 * duration; // Slow drop duration in seconds
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration - dropDuration + 1); // +1 is the lasting fading sound
+      // Release, slow fade from full volume
+      // Ensure this ends a little after the intended duration of the note itself
+      const fadeOutEnd = startTime + attackDuration + releaseDuration;
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, fadeOutEnd);
 
-      oscillator.stop(audioContext.currentTime + duration);
+      // Schedule the oscillator to stop slightly after its gain has faded out
+      oscillator.stop(fadeOutEnd + 0.05); // Add a small buffer for cleanup
+
+      // Clean up resources when the sound finishes
+      oscillator.onended = () => {
+          oscillator.disconnect();
+          gainNode.disconnect();
+      };
+
     }
 
     // Sequence of beeps to mimic a car door warning
     const score = [notes.C6, notes.A5, notes.F5];
-    const duration = 0.5; // Duration of each beep in seconds
-    const interval = 0.05; // Interval between beeps in seconds
+    const noteDuration = 1.2; // Duration of each beep in seconds
+    const intervalBetweenStarts = 0.3; // Interval between beeps in seconds
+
+    const now = audioContext.currentTime; // Get the current time in seconds
+    let lastNoteTrueEndTime = now; // To track when the *last* note in the sequence will truly end
 
     score.forEach((freq, index) => {
-        setTimeout(() => {
-            beep(freq, duration);
-        }, index * (duration + interval) * 1000);
+
+      const currentNoteStartTime = now + (index * intervalBetweenStarts);
+      beep(freq, noteDuration, currentNoteStartTime);
+
+      // Calculate the actual end time of this specific note (including its fade-out tail)
+      // This value is based on how 'beep' calculates its fadeOutEnd and oscillator.stop() time
+      const thisNoteCalculatedEndTime = currentNoteStartTime + noteDuration +intervalBetweenStarts; // 0.1 from fadeOutEnd + 0.05 from oscillator.stop()
+      if (thisNoteCalculatedEndTime > lastNoteTrueEndTime) {
+          lastNoteTrueEndTime = thisNoteCalculatedEndTime;
+      }
     });
 
+    // Set a setTimeout to reset the `isPlayingSequence` flag
+    // after the entire sequence (including the fade-out of the last note) has completed.
+    // This setTimeout is safe because it's managing UI state, not audio scheduling.
+    const totalSequencePlayDuration = lastNoteTrueEndTime - now;
+    setTimeout(() => {
+        isPlayingSequence = false;
+    }, totalSequencePlayDuration * 1000); // Convert seconds to milliseconds
+        
   }
 
 }
