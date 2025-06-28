@@ -2,8 +2,10 @@
   * 2025-04-12
   * 2025-05-21
   * 2025-06-21
+  * 2025-06-28 fix sound pops
   * TODO:
   * - check for Intl...
+  * - check the timezone UTC for FF Incognito mode
   * - Accept Terms and Conditions
   * - Notifications
   */
@@ -42,6 +44,7 @@ function countdownPage (options){
   let countdownResetButton = countdownResetContainer.getElementsByTagName('button')[0];
 
   let soundBox = document.getElementById('notification-sound-box');
+  let soundCheckBox = soundBox.getElementsByTagName('input')[0];
   let soundTestLink = document.getElementById('notification-sound-text');
 
   // IMPORTANT: AudioContext should be a persistent instance
@@ -89,7 +92,7 @@ function countdownPage (options){
   (function(){
     let now = new Date();
     const timezoneOffset = now.getTimezoneOffset(); // in minutes
-    console.log(timezoneOffset);
+    
     // set today date
     countdownToTimeElement.value = now.toLocaleTimeString(EN_US_LOCALE, {hour: '2-digit', minute: '2-digit', hour12: false});
     countdownToDateElement.value = now.toISOString().replace(/T.*/, '');
@@ -167,6 +170,7 @@ function countdownPage (options){
       checkTime(targetDate, timerId);
     }, 500);
 
+    T.log ('Started');
   }
 
   function checkTime(dt, timerId) {
@@ -213,9 +217,13 @@ function countdownPage (options){
   function onCountdownDone () {
     countdownProgressBarElement.style.display = 'none';
     countdownLeftElement.innerHTML = 'It\'s the time!';
+    T.log ('Stopped');
 
-    // play sound
-    playOnTimeSound();
+    if (soundCheckBox.checked) {
+      // play sound
+      playOnTimeSound();
+    }
+
   }
 
   /**
