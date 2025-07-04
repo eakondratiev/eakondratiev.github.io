@@ -14,7 +14,7 @@
  * 2025-04-05 LNK added.
  * 2025-06-20 DSF, DFF (DSD) added.
  * 2025-06-22 separate detection of the JPEG JFIF.
- * 2025-07-04 Apple M4V, M4A added.
+ * 2025-07-04 Apple M4V, M4A added; reading first bytes of a file.
  */
 
 /**
@@ -24,6 +24,13 @@
 function fileTypePage(options) {
 
   'use strict';
+
+  // Number of bytes to read from the start of the file.
+  // NOTES:
+  // * longest signature is 39 bytes
+  // * the TAR signatue is 7 bytes at offset 257
+  var HEAD_BYTES = 1024;
+
   var UNKNOWN = ''; // value returned by the WASM function if the type was not determined.
 
   var fileDropZone = document.getElementById ('file-target');
@@ -334,10 +341,12 @@ function fileTypePage(options) {
           getResultProperty ('File size', formatFileSize (file.size)) +
           getResultProperty ('File MIME type', file.type + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
 
-        await reader.readAsArrayBuffer (file);
+        var slice = file.slice(0, HEAD_BYTES);
+        await reader.readAsArrayBuffer (slice);
 
         reader.onload = function (e) {
-          getSignatue (e.target.result, file, resultElement);
+
+          getSignatue (e.target.result, slice, resultElement);
           loader.hide();
           T.log ('File processed');
         };
