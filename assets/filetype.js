@@ -14,6 +14,7 @@
  * 2025-04-05 LNK added.
  * 2025-06-20 DSF, DFF (DSD) added.
  * 2025-06-22 separate detection of the JPEG JFIF.
+ * 2025-07-04 Apple M4V, M4A added.
  */
 
 /**
@@ -98,6 +99,7 @@ function fileTypePage(options) {
     'AIFF': {description: 'AIFF, Audio Interchange File Format'},
     'wav':  {description: 'WAV, Waveform Audio File Format'},
     'OGGS': {description: 'Ogg, an open source media container format'},
+    'm4a': { description: 'M4A, Apple Lossless Audio Codec (ALAC) or AAC audio file, ISO media' },
     'MIDI': {description: 'MID, MIDI, a Musical Instrument Digital Interface file, sound file'},
     'DSF': {description: '<b>DSF</b> (DSD Storage Facility) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
     'DFF': {description: '<b>DFF</b> (DSD Interchange File Format) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
@@ -115,7 +117,8 @@ function fileTypePage(options) {
     'MPEG-Stream': {description: 'MPEG Program Stream'},
     'MPEG-Video': {description: 'MPEG-1 video and MPEG-2 video'},
     'MPEG-Transport': {description: 'ts, tsv, tsa, mpg, mpeg - MPEG Transport Stream (MPEG-2 Part 1)'},
-    'MOV': {description: 'QuickTime MOV, a video container'},
+    'MOV': {description: 'Apple QuickTime MOV, a video container'},
+    'm4v': {description: 'M4V, Apple iTunes Video, ISO media'},
     'FLV': {description: 'flv, Flash Video file'},
     'PIC-PIF-SEA-OCR': {description: 'PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File)' +
                         ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
