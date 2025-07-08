@@ -15,6 +15,7 @@
  * 2025-06-20 DSF, DFF (DSD) added.
  * 2025-06-22 separate detection of the JPEG JFIF.
  * 2025-07-04 Apple M4V, M4A added; reading first bytes of a file.
+ * 2025-07-08 Apple AAC in ADTS and MP2 added.
  */
 
 /**
@@ -107,6 +108,8 @@ function fileTypePage(options) {
     'wav':  {description: 'WAV, Waveform Audio File Format'},
     'OGGS': {description: 'Ogg, an open source media container format'},
     'm4a': { description: 'M4A, Apple Lossless Audio Codec (ALAC) or AAC audio file, ISO media' },
+    'AAC-ADTS': { description: 'An audio file containing AAC (Advanced Audio Coding) in ADTS (Audio Data Transport Stream) format, optimized for streaming and broadcasting'},
+    'MP2': { description: 'An audio file using MPEG-1 Layer 2 (MP2) format, designed for broadcasting and digital radio transmission'},
     'MIDI': {description: 'MID, MIDI, a Musical Instrument Digital Interface file, sound file'},
     'DSF': {description: '<b>DSF</b> (DSD Storage Facility) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
     'DFF': {description: '<b>DFF</b> (DSD Interchange File Format) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
