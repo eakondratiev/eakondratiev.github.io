@@ -116,7 +116,7 @@ function fileTypePage(options) {
 
     // video
     'avi':  {description: 'avi, Audio Video Interleave video format'},
-    'MKV': {description: 'mkv, mka, mks, mk3d, webm - Matroska media container, including WebM'},
+    'MKV': {description: 'mkv, mka, mks, mk3d, webm - The Extensible Binary Meta Language (EBML) is a binary container format used for audio and video storage and streaming, specifically for Matroska and WebM media'},
     'ASF-WMA-WMV': {description: 'asf, wma, wmv - Advanced Systems Format'},
     'mp4': {description: 'mp4 - ISO Base Media file (MPEG-4)'},
     'av1': {description: 'AV1 - video file encoded using the AV1 codec with efficient compression'},
