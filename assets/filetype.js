@@ -16,6 +16,7 @@
  * 2025-06-22 separate detection of the JPEG JFIF.
  * 2025-07-04 Apple M4V, M4A added; reading first bytes of a file.
  * 2025-07-08 Apple AAC in ADTS and MP2 added.
+ * 2025-08-17 ICS, VCF (vCard), VCF (Variant Call) text formats added.
  */
 
 /**
@@ -213,7 +214,10 @@ function fileTypePage(options) {
     'UTF16LE': {description: 'Text file with UTF-16LE byte order mark'},
     'UTF16BE': {description: 'Text file with UTF-16BE byte order mark'},
     'HTML': {description: 'HTML file'},
-    'XML': {description: 'XML file'}
+    'XML': {description: 'XML file'},
+    'ICS': {description: 'ICS (iCalendar) is a file format for sharing calendar events, allowing users to exchange scheduling information across different applications.'},
+    'VCARD': {description: 'VCF (vCard) is a file format for electronic business cards, storing contact information like names, phone numbers, and addresses'},
+    'VCF-GEN': {description: 'VCF (Variant Call Format) is a text file format for storing genetic variation data, including SNPs and INDELs, in bioinformatics.'}
 
   };
 
