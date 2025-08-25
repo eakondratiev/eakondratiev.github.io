@@ -17,6 +17,7 @@
  * 2025-07-04 Apple M4V, M4A added; reading first bytes of a file.
  * 2025-07-08 Apple AAC in ADTS and MP2 added.
  * 2025-08-17 ICS, VCF (vCard), VCF (Variant Call) text formats added.
+ * 2025-08-25 TIFF(be/le) descriptions modified
  */
 
 /**
@@ -81,8 +82,8 @@ function fileTypePage(options) {
     'ICO': {description: 'A computer icon encoded in the ICO file format'},
     'PSD': {description: 'Adobe Photoshop\'s native file'},
     'AppleIcon': {description: 'Apple Icon Image format'},
-    'TIFF(le)': {description: 'TIFF, Tagged Image File Format, little-endian'},
-    'TIFF(be)': {description: 'TIFF, Tagged Image File Format, big-endian'},
+    'TIFF(le)': {description: 'TIFF, Tagged Image File Format, Intel/little-endian'},
+    'TIFF(be)': {description: 'TIFF, Tagged Image File Format, Motorola/big-endian'},
     'bmp': {description: 'BMP file, a bitmap format used mostly in the Windows world'},
     'wmf': {description: 'wmf, Windows Metafile, image file'},
     'OpenEXR': {description: 'OpenEXR image'},
