@@ -18,6 +18,7 @@
  * 2025-07-08 Apple AAC in ADTS and MP2 added.
  * 2025-08-17 ICS, VCF (vCard), VCF (Variant Call) text formats added.
  * 2025-08-25 TIFF(be/le) descriptions modified
+ * 2025-09-01 SQLite v3 description updated
  */
 
 /**
@@ -149,7 +150,7 @@ function fileTypePage(options) {
     'CRD-RRG': {description: 'crd, Microsoft Windows Cardfile Database Format, the file signature is RRG. The <a href="crd-reader.htm"><b>CRD Reader</b></a> command line application can read this kind of files.'},
     'CRD-MGC': {description: 'crd, Microsoft Windows Cardfile Database Format, the file signature is MGC. The <a href="crd-reader.htm"><b>CRD Reader</b></a> command line application can read this kind of files.'},
 
-    'SQLite3': {description: 'SQLite Database'},
+    'SQLite3': {description: 'SQLite version 3 database'},
     'HDF4': {description: 'HDF4 -  Hierarchical Data Format version 4, scientific data in a hierarchical organization'},
     'HDF5': {description: 'HDF5 -  Hierarchical Data Format version 5, for large and complex scientific data in a hierarchical organization, also commonly used in machine learning'},
     'dcr':  {description: 'Adobe Shockwave file'},
