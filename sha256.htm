@@ -115,15 +115,16 @@
           <h1>File SHA-256 Checksum Tool</h1>
 
           <p class="description">
-          Calculate and verify the file's SHA-256 checksum to ensure it hasn't been altered or corrupted.
-          You can also generate checksums when sharing your files, so recipients can verify authenticity.
-          Files are processed locally in your browser, <b>not uploaded</b>.
-          This cryptographic hash function produces a unique 256-bit (32-byte) hash value for a given file, making it a reliable method for verifying data.
+            This tool generates SHA256 checksum of a file to check if it was corrupted or altered.
+            The checksum can also be used when sharing files.
+            Processing is done in the browser, <b>files are not uploaded</b>.
           </p>
 
           <p>
-          Processing large files <b>may take some time</b>. For example, a 3GB file can take a minute or more to process, depending on your device.
-          Processing time grows linearly with file size. <a href="#fast_wasm">Further details...</a>
+            This tool is fast, but
+            processing of large files <b>may take some time</b>.
+            For example, a 3GB file can take a minute or more to process, depending on your device.
+            Processing time grows linearly with file size. <a href="#fast_wasm">Further details...</a>
           </p>
 
           <div style="margin: 16pt 0;">
@@ -146,12 +147,12 @@
 
           <h2 id="fast_wasm">It's WASM, It's Fast</h2>
 
-          <p>This page uses the WASM technique, which is faster than the same JavaScript code for computing the SHA256 hash.
-            Modern browsers have the CryptoAPI set of functions that are faster than WASM, but they lack streaming processing capabilities.
+          <p>This page uses the WebAssembly (WASM) technology, which is faster than the same JavaScript code for computing the SHA256 hash.
+            Modern browsers provide CryptoAPI functions that are faster than WASM, but they lack streaming processing.
             This means the file must be fully loaded into the browser's memory before processing, which can be a problem for large files.
-            Therefore, the WASM option seems to be the best choice for computing the SHA256 hash of files of different sizes in web applications.</p>
+            Therefore, the WASM option seems to be the best for computing the SHA-256 hash of files of different sizes in web applications.</p>
 
-          <p>Here are the results of performance tests for obtaining the SHA256 hash of a 100MB (104,857,600 bytes) file.</p>
+          <p>Here are the results of performance tests for obtaining the SHA256 hash of a 100 MB (104,857,600 bytes) file.</p>
 
           <table class="perf-tests">
             <tr>
@@ -243,7 +244,7 @@
 
           </table>
 
-          <h2>You can use the command line to get the SHA256 checksum.</h2>
+          <h2>You can use the command line to get the SHA-256 checksum.</h2>
 
           <p>Linux:</p>
           <code>sha256sum &lt;your_file&gt;</code>
@@ -264,14 +265,13 @@
             Though it may seem useless, it serves as a reference point in hashing algorithms.
           </p>
           <p>&bull; You can add the <i>expected</i> URL parameter when linking to this page.</p>
-          <p>&bull; In theory, because SHA-256 produces a fixed-size output of 256 bits, there are 2<sup>256</sup> possible hash values.
-             However, the input space is effectively infinite, so collisions must exist.
-             While no two distinct files have been found to produce the same SHA-256 hash as of now,
-             and the algorithm is considered secure against known collision attacks, it is still theoretically
-             possible for two different inputs to hash to the same output.</p>
+          <p>&bull; SHA-256 produces an output of 256 bits, so there are 2<sup>256</sup> possible hash values.
+             Obviously there are many more files; therefore collisions must exist.
+             Still, no two distinct files have been found so far with the same SHA-256 hash,
+             and the algorithm is considered secure against known collision attacks.</p>
 
           <div class="page-tags">
-            <b>#SHA256</b> <b>#Checksum</b> <b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
+            <b>#SHA256</b> <b>#Checksum</b> <b>#Hash</b> <b>#Online</b> <b>#Integrity</b> <b>#Calculator</b>
           </div>
         </div>
       </div>
