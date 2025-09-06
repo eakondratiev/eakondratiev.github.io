@@ -19,6 +19,7 @@
  * 2025-08-17 ICS, VCF (vCard), VCF (Variant Call) text formats added.
  * 2025-08-25 TIFF(be/le) descriptions modified
  * 2025-09-01 SQLite v3 description updated
+ * 2025-09-06 DNG added
  */
 
 /**
@@ -85,6 +86,7 @@ function fileTypePage(options) {
     'AppleIcon': {description: 'Apple Icon Image format'},
     'TIFF(le)': {description: 'TIFF, Tagged Image File Format, Intel/little-endian'},
     'TIFF(be)': {description: 'TIFF, Tagged Image File Format, Motorola/big-endian'},
+    'DNG': {description: 'DNG, Digital Negative: a raw image format from cameras and phones for enhanced editing'},
     'bmp': {description: 'BMP file, a bitmap format used mostly in the Windows world'},
     'wmf': {description: 'wmf, Windows Metafile, image file'},
     'OpenEXR': {description: 'OpenEXR image'},
