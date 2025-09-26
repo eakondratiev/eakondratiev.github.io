@@ -20,6 +20,7 @@
  * 2024-06-17 rename the link from White Spaces to Character Code Detector.
  * 2025-03-22 sha256.htm added to menu
  * 2025-04-27 T.log() truncates long query strings.
+ * 2025-09-26 nslookup.htm added to menu
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -37,6 +38,7 @@
         {url: 'sha256.htm', name: 'File SHA-256 Checksum'},
         {url: 'mouse-events.htm', name: 'Mouse Events Tracker'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
+        {url: 'nslookup.htm', name: 'DNS over HTTPS'},
         {url: 'regex.htm', name: 'Test Regular Expressions'},
         {url: 'roman-numerals.htm', name: 'Roman Numerals Converter'},
         {url: 'floating-point-representation.htm', name: 'Floating-point Formats'},
