@@ -2,22 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Roman Numerals Converter -- Free Online Tool</title>
+    <title>DNS Lookup -- Free Online Tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
 
-    <meta name="apple-mobile-web-app-title" content="Tool" />
-    <meta name="application-name" content="Tool" />
+    <meta name="apple-mobile-web-app-title" content="DNS Lookup" />
+    <meta name="application-name" content="DNS Lookup" />
 
-    <meta property="og:title" content="Tool">
-    <meta name="description" content="Easily convert Roman numerals to numbers and vice versa with our efficient tool. Perfect for students, educators, and history enthusiasts.">
-    <meta property="og:description" content="Easily convert Roman numerals to numbers and vice versa with our efficient tool. Perfect for students, educators, and history enthusiasts.">
+    <meta property="og:title" content="DNS Lookup">
+    <meta name="description" content="Resolve a domain to its IP address using an HTTPS request, DOH">
+    <meta property="og:description" content="Resolve a domain to its IP address using an HTTPS request, DOH">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://eakondratiev.github.io/">
-    <meta name="google-site-verification" content="DG8CDSi7XJOTIAp-BDhrgPccz9Js2GR8G1EKSbn_Dek" />
-    <meta name="msvalidate.01" content="8DEC6FAF984E8A6C5DC915A0BABC8B19" />
-    <link rel="canonical" href="https://eakondratiev.github.io/roman-numerals.htm">
+    <meta property="og:url" content="https://eakondratiev.github.io/nslookup.htm">
+    <link rel="canonical" href="https://eakondratiev.github.io/nslookup.htm">
 
     <meta name="msapplication-config" content="/assets/icons/browserconfig.xml" />
     <meta name="theme-color" content="#444444" />
@@ -28,23 +26,13 @@
     <link rel="icon" type="image/png" href="/assets/icons/favicon-16.png" sizes="16x16" />
   
     <link href="/assets/main.css?20250322" rel="stylesheet" type="text/css" />
-    <style>
-      .result-block {border: 1px solid #ccc; margin: 8pt 0; padding: 4pt; height: 90px;}
-      .result-block span {color: #606060;}
-      .result-block div {font-size: 2.5rem; font-family: Georgia, Garamond, "Times New Roman", Times, serif;}
-      .input-field {font-size:1rem; padding: 2pt;}
-      p.note {font-size: 0.9rem; margin: 2pt 0 8pt 0;}
-      .btns {margin: 8pt 0;}
-      .err {color:#b00; font-weight: bold;}
-      .symbols div {font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace; margin: 4pt 0; white-space:pre;}
-      @media (prefers-color-scheme: dark) {
-        .result-block {border: 1px solid #444;}
-        .result-block span {color: #aaa;}
-        .err {color:#fb9;}
-      }
-    </style>
     <script src="/assets/menu.min.js?20250427"></script>
     <script src="/assets/web-app.js"></script>
+    <style>
+      .doh-test-block {margin:8pt 0; border: solid 1px #ccc; border-radius: 2pt; padding: 4pt; background: #f7f7f7;}
+      .doh-test-block span div {font-size: 0.8rem;}
+      .doh-data-row {margin: 4pt 0;}
+    </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></script>
     <script>
@@ -74,7 +62,7 @@
           <li class="site-nav-top-item"><a href="roman-numerals.htm">Convert a Roman Number</a></li>
           <li class="site-nav-top-item"><a href="iprange.htm">IPv4 Ranges</a></li>
           <li class="site-nav-top-item"><a href="speed.htm">Speed &amp; Distance</a></li>
-          <li class="site-nav-top-item"><a href="ws.htm">Text Characters Analyzer</a></li>
+          <li class="site-nav-top-item"><a href="ws.htm">Character Code Detector</a></li>
           <li class="site-nav-top-item"><a href="floating-point-representation.htm">Representation of Floating-point Numbers 32 and 64 bits</a></li>
           <li class="site-nav-top-item"><a href="floating-point-summation.htm">Floating-point Summation</a></li>
           </ul>
@@ -88,51 +76,40 @@
         <div class="content page-content">
           <noscript><div>This site requires JavaScript to function properly. Please enable it in your browser settings.</div></noscript>
           <div id="incompatible-browser">Please, update your browser.</div>
+          <h1>DNS Lookup</h1>
+          <p>Resolve a domain to its IP address using an secure HTTPS connection.
+             This tool sends requests from this device and your IP address.</p>
 
-          <h1>Roman Numerals Converter</h1>
-
-          <div class="result-block" id="result"></div>
-
-          <div style="margin: 16pt 0;">
-            <div class="page-field-name"><u>R</u>oman Numeral or Integer number</div>
-            <input class="input-field" type="text" name="value-to-convert" id="value-to-convert" accesskey="R" title="Enter a Roman numeral or an integer number" value="" maxlength="15" />
-            <p class="note">
-              Range from 1 to 3999 (<a href="roman-numerals.htm?value=MMMCMXCIX">MMMCMXCIX</a>).
-            </p>
-            <div class="btns">
-            <button type="button" class="form-button" accesskey="N" id="button-to-number">Convert to <u>N</u>umber</button>
-            </div>
-            <div id="message-block" class="page-message page-message--warning" style="display: none;"></div>
+          <div class="doh-test-block" >
+            <input type="text" id="doh-domain" placeholder="Domain" value="" />
+            <select id="doh-types-options">
+              <option value="A">Record type A, IPv4</option>
+              <option value="AAAA">Record type AAAA, IPv6</option>
+              <option value="MX">Record type MX, Mail exchange</option>
+              <option value="CNAME">Record type CNAME, Canonical name</option>
+              <option value="NS">Record type NS, Name server</option>
+              <option value="TXT">Record type TXT, Arbitrary text data</option>
+              <option value="SRV">Record type SRV, Service record</option>
+            </select>
+            <select id="doh-server-options">
+              <option data-url="https://cloudflare-dns.com/dns-query?name={domain}&type={type}">Cloudflare DNS</option>
+              <option data-url="https://dns.google/resolve?name={domain}&type={type}">Google DNS</option>
+            </select>
+            <button id="doh-button" class="form-button" accesskey="D">Request <u>D</u>NS</button>
           </div>
+          <div id="doh-test-result"></div>
 
-          <p class="page-description">
-            Converts Roman numerals to natural numbers and numbers to Roman numerals.
-          </p>
-
-          <h3>Some Examples</h3>
-          <p>
-            What are
-            <a href="roman-numerals.htm?value=VII">VII</a>,
-            <a href="roman-numerals.htm?value=DCCLXXXIX">DCCLXXXIX</a>,
-            <a href="roman-numerals.htm?value=MMXXII">MMXXII</a> numbers?
-          </p>
-          <p>
-            How to write <a href="roman-numerals.htm?value=2022">2022</a> in Roman numerals?
-          </p>
-
-          <h3>Symbols</h3>
-          <div class="symbols">
-            <div><a href="roman-numerals.htm?value=I">I</a> =    1</div>
-            <div><a href="roman-numerals.htm?value=V">V</a> =    5</div>
-            <div><a href="roman-numerals.htm?value=X">X</a> =   10</div>
-            <div><a href="roman-numerals.htm?value=L">L</a> =   50</div>
-            <div><a href="roman-numerals.htm?value=C">C</a> =  100</div>
-            <div><a href="roman-numerals.htm?value=D">D</a> =  500</div>
-            <div><a href="roman-numerals.htm?value=M">M</a> = 1000</div>
-          </div>
+    <h3>Notes</h3>
+          <ul>
+          <li><b>TTL</b> is a Time to Live, the duration for caching a DNS record in seconds.</li>
+          <li>Some domains, usually belonging to large companies, can have multiple IP addresses for different regions.
+            For example, a user in Japan may receive other results than a user in Africa.</li>
+          <li>There are domains without type A records; they do not serve IPv4 requests, only IPv6.
+            However, more domains do not have type AAAA records (IPv6).</li>
+          </ul>
 
           <div class="page-tags">
-            <b>#Numbers</b> <b>#Integer</b> <b>#Calculator</b> <b>#js</b>
+            <b>#Network</b> <b>#nslookup</b> <b>#DOH</b>
           </div>
         </div>
       </div>
@@ -156,9 +133,39 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/roman-numerals.min.js?20220520"></script>
+    <script src="/assets/nslookup.min.js"></script>
     <script>
-      RomanNumerals();
+      'use strict';
+
+      // check for compatibility
+      if (document.getElementsByClassName === undefined ||
+          window.fetch === undefined ||
+          !Element.prototype.addEventListener ||
+          !Array.prototype.map) {
+
+        document.getElementById('incompatible-browser').style.display = 'block';
+
+      }
+      else {
+
+        nslookupPage ({
+          button: 'doh-button',
+          domainField: 'doh-domain',
+          serverSelector: 'doh-server-options',
+          recTypeSelector: 'doh-types-options',
+          resultElement: 'doh-test-result'
+        }, {
+          msgEmptyString: 'Enter a valid domain name.',
+          msgPunicode: 'The name <b>{domain}</b> contains Unicode characters.' +
+              ' Please convert it to ASCII format (e.g., \'xn--caf-dma.com\') using a Punycode converter and try again.',
+          msgNotValid: 'The name <b>{domain}</b> is not a valid domain name.',
+          msgUnexpected: 'Unexpected reply from the service.',
+          msgNotExists: 'Domain <b>{domain}</b> does not exist or a typo in the name.',
+          msgNoRecord: 'No DNS record of this type.',
+          msgAnError: 'An error occurred.'
+        });
+
+      }
     </script>
   </body>
 </html>
