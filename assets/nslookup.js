@@ -1,6 +1,7 @@
 ﻿/*
  * Code for the nslookup page.
  * 2025-09-26
+ * 2025-09-28 keyboard events handler updated.
  */
 
 /**
@@ -19,7 +20,8 @@ function nslookupPage(options, texts) {
     const resultElement = document.getElementById (options.resultElement);
 
     let kbdHandler = function(event){
-      if(event.key === 'Enter') {
+      if(event.key === 'Enter' || event.keyCode === 13) {
+        event.preventDefault();
         dohButton.click();
       }
     };
