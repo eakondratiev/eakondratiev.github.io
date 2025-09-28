@@ -29,8 +29,13 @@
     <script src="/assets/menu.min.js?20250926"></script>
     <script src="/assets/web-app.js"></script>
     <style>
-      .doh-test-block {margin:8pt 0; border: solid 1px #ccc; border-radius: 2pt; padding: 4pt; background: #f7f7f7;}
-      .doh-test-block span div {font-size: 0.8rem;}
+      .doh-form-block {margin:8pt 0; border: solid 1px #ccc; border-radius: 2pt; padding: 4pt; background: #f7f7f7;}
+      .doh-form-block span div {font-size: 0.8rem;}
+      .doh-input-container {display: inline-block; padding: 0 4pt 4pt 0;}
+      .doh-input-container label {display: block; color: #555; font-size: 0.75rem;}
+      .doh-input-container input[type=text] {width:210px;}
+      .doh-button-container {padding: 0;}
+      .doh-button-container button {margin: 0;}
       .doh-data-row {margin: 4pt 0;}
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -80,24 +85,35 @@
           <p>Resolve a domain to its IP address using an secure HTTPS connection.
              This tool sends requests from this device and your IP address.</p>
 
-          <div class="doh-test-block" >
-            <input type="text" id="doh-domain" placeholder="Domain" value="" />
-            <select id="doh-types-options">
-              <option value="A">Record type A, IPv4</option>
-              <option value="AAAA">Record type AAAA, IPv6</option>
-              <option value="MX">Record type MX, Mail exchange</option>
-              <option value="CNAME">Record type CNAME, Canonical name</option>
-              <option value="NS">Record type NS, Name server</option>
-              <option value="TXT">Record type TXT, Arbitrary text data</option>
-              <option value="SRV">Record type SRV, Service record</option>
-            </select>
-            <select id="doh-server-options">
-              <option data-url="https://cloudflare-dns.com/dns-query?name={domain}&type={type}">Cloudflare DNS</option>
-              <option data-url="https://dns.google/resolve?name={domain}&type={type}">Google DNS</option>
-            </select>
-            <button id="doh-button" class="form-button" accesskey="D">Request <u>D</u>NS</button>
+          <div class="doh-form-block" >
+            <div class="doh-input-container">
+              <label for="doh-domain"><u>D</u>omain</label>
+              <input type="text" id="doh-domain" placeholder="Domain" value="" accesskey="D" />
+            </div>
+            <div class="doh-input-container">
+              <label for="doh-types-options">DNS Record Type</label>
+              <select id="doh-types-options">
+                <option value="A">A, IPv4</option>
+                <option value="AAAA">AAAA, IPv6</option>
+                <option value="MX">MX, Mail exchange</option>
+                <option value="CNAME">CNAME, Canonical name</option>
+                <option value="NS">NS, Name server</option>
+                <option value="TXT">TXT, Arbitrary text data</option>
+                <option value="SRV">SRV, Service record</option>
+              </select>
+            </div>
+            <div class="doh-input-container">
+              <label for="doh-server-options">DNS Resolver</label>
+              <select id="doh-server-options">
+                <option data-url="https://cloudflare-dns.com/dns-query?name={domain}&type={type}">Cloudflare DNS</option>
+                <option data-url="https://dns.google/resolve?name={domain}&type={type}">Google DNS</option>
+              </select>
+            </div>
+            <div class="doh-input-container doh-button-container">
+              <button id="doh-button" class="form-button">Request DNS</button>
+            </div>
           </div>
-          <div id="doh-test-result"></div>
+          <div id="doh-result"></div>
 
     <h3>Notes</h3>
           <ul>
@@ -154,7 +170,7 @@
           domainField: 'doh-domain',
           serverSelector: 'doh-server-options',
           recTypeSelector: 'doh-types-options',
-          resultElement: 'doh-test-result'
+          resultElement: 'doh-result'
         }, {
           msgEmptyString: 'Enter a valid domain name.',
           msgPunicode: 'The name <b>{domain}</b> contains Unicode characters.' +
