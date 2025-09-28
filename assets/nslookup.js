@@ -27,7 +27,6 @@ function nslookupPage(options, texts) {
     };
 
     domainField.addEventListener('keydown', kbdHandler);
-    domainField.addEventListener('change', function(){dohButton.click();});
     serverSelector.addEventListener('change', function(){dohButton.click();});
     recTypeSelector.addEventListener('change', function(){dohButton.click();});
 
