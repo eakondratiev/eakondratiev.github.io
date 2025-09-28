@@ -21,7 +21,6 @@ function nslookupPage(options, texts) {
 
     let kbdHandler = function(event){
       if(event.key === 'Enter' || event.keyCode === 13) {
-        event.preventDefault();
         dohButton.click();
       }
     };
