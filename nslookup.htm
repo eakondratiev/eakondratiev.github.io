@@ -107,6 +107,7 @@
                 <option value="CNAME">CNAME, Canonical name</option>
                 <option value="NS">NS, Name server</option>
                 <option value="TXT">TXT, Arbitrary text data</option>
+                <option value="SOA">SOA, Start of authority</option>
                 <option value="SRV">SRV, Service record</option>
               </select>
             </div>
@@ -126,6 +127,8 @@
           <h3>Notes</h3>
           <ul class="doh-notes">
           <li><b>TTL</b> is a Time to Live, the duration for caching a DNS record in seconds.</li>
+          <li>The <b>SOA</b> (Start of Authority) record contains: the primary name server, the hostmaster's email (first dot <code>.</code> instead of <code>@</code>),
+              the serial number, and the refresh, retry, expire, and minimum TTL values, all measured in seconds.</li>
           <li>Some domains, usually belonging to large companies, can have multiple IP addresses for different regions.
             For example, a user in Japan may receive other results than a user in Africa.</li>
           <li>There are domains without type A records; they do not serve IPv4 requests, only IPv6.
