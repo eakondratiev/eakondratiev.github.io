@@ -2,6 +2,7 @@
  * Code for the nslookup page.
  * 2025-09-26
  * 2025-09-28 keyboard events handler updated.
+ * 2025-09-29 MX record format.
  */
 
 /**
@@ -114,6 +115,7 @@ function nslookupPage(options, texts) {
       .then(data => {
 
           let text = '';
+          let reMX = /^(\d+)\s+(.+)/;
 
           btn.disabled = false;
 
@@ -126,8 +128,16 @@ function nslookupPage(options, texts) {
           else if (data.Status === 0 && typeof data.Answer !== 'undefined' && data.Answer.length > 0) {
             for (let i = 0; i < data.Answer.length; i++) {
 
+              let value = sanitizeText(data.Answer[i].data);
+              
+              switch (data.Answer[i].type) {
+                case 15: // MX, format like 10 mail.com
+                  value = value.replace (reMX, 'Priority $1, $2');
+                  break;
+              }
+
               // type=1 (A, IPv4) and type=28 (AAAA, IPv6)
-              text += `<div class="doh-data-row">TTL ${data.Answer[i].TTL} s, ${sanitizeText(data.Answer[i].data)}</div>`;
+              text += `<div class="doh-data-row">TTL ${data.Answer[i].TTL} s, ${value}</div>`;
             }
           }
           else {
@@ -156,7 +166,8 @@ function nslookupPage(options, texts) {
      */
     function isDomainNameValid (name) {
       // Prevents consecutive dots and leading/trailing hyphens
-      const reDomain = /^(?!.*\.\.)(?!-)([A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$/;
+      // Leading underscore added for service subdomains like _sip.example.com
+      const reDomain = /^(?!.*\.\.)(?!-)([_A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$/;
       return reDomain.test (name);
     }      
 
