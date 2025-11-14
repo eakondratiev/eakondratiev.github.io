@@ -99,11 +99,11 @@
         </nav>
       </div>
       <div class="page-wide">
-        <div class="content page-content">
+        <div class="content page-content" role="main">
           <noscript><div>This site requires JavaScript to function properly. Please enable it in your browser settings.</div></noscript>
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>DNS Lookup</h1>
-          <p>Resolve a domain to its IP address using an secure HTTPS connection.
+          <p>Resolve a domain to its IP address using a secure HTTPS connection.
              This tool sends requests from this device and your IP address.</p>
 
           <div class="doh-form-block" >
@@ -135,7 +135,7 @@
               <button id="doh-button" class="form-button">Request DNS</button>
             </div>
           </div>
-          <div id="doh-result"></div>
+          <div id="doh-result" role="status" aria-live="polite"></div>
 
           <h3>Notes</h3>
           <ul class="doh-notes">
@@ -198,7 +198,7 @@
         }, {
           msgEmptyString: 'Enter a valid domain name.',
           msgPunicode: 'The name <b>{domain}</b> contains non-ASCII characters.' +
-              ' Please punicode it (e.g., \'xn--caf-dma.com\') using amy online converter and try again.',
+              ' Please punicode it (e.g., \'xn--caf-dma.com\') using any online converter and try again.',
           msgNotValid: 'The name <b>{domain}</b> is not a valid domain name.',
           msgUnexpected: 'Unexpected reply from the service.',
           msgNotExists: 'Domain <b>{domain}</b> does not exist or a typo in the name.',
