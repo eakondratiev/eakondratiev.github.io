@@ -7,6 +7,7 @@
  * 2025-03-29 Show the whole text bytes updates.
  * 2025-04-05 Show the text bytes and hightligh selected character bytes.
  * 2025-04-11 Show/hide the title of the bytes element.
+ * 2025-11-17 url update on text edit is commented out
  */
 
 function wsPage () {
@@ -259,11 +260,12 @@ function wsPage () {
     // show the text lenght (accurate or not depending on Intl.Segmenter support)
     lenElement.innerHTML = graphemes.getLength().toString();
 
+    // commented out on 2025-11-17
     // update the page URL
-    if (window.history.pushState) {
-      window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
-        URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
-    }
+    //if (window.history.pushState) {
+    //  window.history.pushState('ws.htm', 'Title', '/ws.htm?' +
+    //    URL_PARAM + '=' + encodeURIComponent(sourceElement.value));
+    //}
 
   }
 
