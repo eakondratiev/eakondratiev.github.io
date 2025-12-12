@@ -20,6 +20,7 @@
  * 2025-08-25 TIFF(be/le) descriptions modified
  * 2025-09-01 SQLite v3 description updated
  * 2025-09-06 DNG added
+ * 2025-12-12 global keyboard handling, press F to select a file.
  */
 
 /**
@@ -45,7 +46,6 @@ function fileTypePage(options) {
 
   var wasmUrl = options.wasmUrl;
   var dropReadyCss = options.dropReadyCss;
-  var dropZoneText = options.dropZoneText;
   var flashCss = options.flashCss;
 
   var LNK_SIZE_MIN = 500; // bytes
@@ -233,7 +233,6 @@ function fileTypePage(options) {
 
     if (_wasmModule.memory !== undefined) {
       // the module was loaded
-      fileDropZone.innerHTML = dropZoneText;
       fileElement.disabled = false;
       showFileProperties(fileElement.files, resultElement); // from prev session if any
     }
@@ -283,6 +282,26 @@ function fileTypePage(options) {
     fileDropZone.classList.remove(dropReadyCss);
 
     showFileProperties(dt.files, resultElement);
+
+  });
+
+  // click on the file drop zone
+  fileDropZone.addEventListener ('click', function(e) { document.getElementById('input-file').click(); });
+
+  // handle keyboard, pressing a shortcut keys
+  document.addEventListener ('keydown', function(e) {
+
+    if (e.altKey || e.ctrlKey) {
+      return; // leave to the browser
+    }
+
+    switch (e.key) {
+      case 'f':
+      case 'F':
+        document.getElementById('input-file').click();
+        e.preventDefault();
+        break;
+    }
 
   });
 
