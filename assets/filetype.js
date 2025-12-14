@@ -21,6 +21,7 @@
  * 2025-09-01 SQLite v3 description updated
  * 2025-09-06 DNG added
  * 2025-12-12 global keyboard handling, press F to select a file.
+ * 2025-12-14 prints "unknown" the the file MIME type is not defined.
  */
 
 /**
@@ -370,7 +371,7 @@ function fileTypePage(options) {
         r +=
           getResultProperty ('File name', file.name) +
           getResultProperty ('File size', formatFileSize (file.size)) +
-          getResultProperty ('File MIME type', file.type + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
+          getResultProperty ('File MIME type', (file.type || 'unknown') + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
 
         var slice = file.slice(0, HEAD_BYTES);
         await reader.readAsArrayBuffer (slice);
