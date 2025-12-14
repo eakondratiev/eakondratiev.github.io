@@ -373,8 +373,8 @@ function fileTypePage(options) {
           getResultProperty ('File size', formatFileSize (file.size)) +
           getResultProperty ('File MIME type', (file.type || 'unknown') + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
 
-        var slice = file.slice(0, HEAD_BYTES);
-        await reader.readAsArrayBuffer (slice);
+        var slice = file.slice(0, HEAD_BYTES);  // blob with the first bytes of the file
+        await reader.readAsArrayBuffer (slice); // read this blob
 
         reader.onload = function (e) {
 
@@ -399,14 +399,11 @@ function fileTypePage(options) {
 
   /**
     * Processes the file bytes and appends the file description to the result element.
-    * @param {*} fileData
+    * @param {ArrayBuffer} fileData the binary data of read portion on the file
     * @param {FILE} file
     * @param {*} resultElement
     */
   function getSignatue(fileData, file, resultElement) {
-
-    // https://wasdk.github.io/WasmFiddle/
-    // move -Force C:\Users\ekond\Downloads\program.wasm D:\MyStuff\EA\eakondratiev.github.io\assets\filesignature.wasm
 
     // create input and output arrays
     // input
