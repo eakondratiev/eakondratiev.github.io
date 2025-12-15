@@ -6,6 +6,7 @@ Web Tools
 
 [Start here](https://eakondratiev.github.io/):
 
+* [DNS Lookup](https://eakondratiev.github.io/nslookup.htm),
 * [Check a file type by content](https://eakondratiev.github.io/file.htm),
 * [Calculate a file SHA-256 checksum](https://eakondratiev.github.io/sha256.htm),
 * [IP v4 range calculator](https://eakondratiev.github.io/iprange.htm),
