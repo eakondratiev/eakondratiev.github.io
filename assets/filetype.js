@@ -22,6 +22,7 @@
  * 2025-09-06 DNG added
  * 2025-12-12 global keyboard handling, press F to select a file.
  * 2025-12-14 prints "unknown" the the file MIME type is not defined.
+ * 2026-01-04 image thumbnail added.
  */
 
 /**
@@ -43,6 +44,7 @@ function fileTypePage(options) {
   var fileDropZone = document.getElementById ('file-target');
   var fileElement = document.getElementById ('input-file');
   var resultElement = document.getElementsByClassName('file-signature')[0];
+  var fileInfoElement = document.getElementsByClassName('file-info')[0];
   var loader = new Loader(options.loaderCss);
 
   var wasmUrl = options.wasmUrl;
@@ -227,6 +229,10 @@ function fileTypePage(options) {
 
   //console.log ('Total signatures', Object.keys (SIGNATURES).length);
 
+
+  // Image types which will show additional info and the img thumbnail
+  var IMG_TYPES = new Set(['JPEG', 'PNG', 'GIF87a', 'GIF89a', 'webp', 'bmp', 'ICO']);
+
   // load WASM module, synchronous
   (async function(){
     _wasmModule = await loadWasmModule (wasmUrl);
@@ -354,6 +360,8 @@ function fileTypePage(options) {
     var file;
     var reader = new FileReader();
 
+    fileInfoElement.innerHTML = '';
+
     if (files === undefined ||
         files.length === 0) {
 
@@ -378,7 +386,7 @@ function fileTypePage(options) {
 
         reader.onload = function (e) {
 
-          getSignatue (e.target.result, slice, resultElement);
+          getSignatue (e.target.result, file, resultElement);
           loader.hide();
           T.log ('File processed');
         };
@@ -454,6 +462,10 @@ function fileTypePage(options) {
           (fileData.byteLength < LNK_SIZE_MIN || fileData.byteLength > LNK_SIZE_MAX)) {
         // too small or too big for the LNK file, should be checked.
         message = '<div class="page-message page-message--error">' + LNK_SIZE_MESSAGE + fileData.byteLength.toString() + '</div>';
+      }
+      else if (IMG_TYPES.has (resultText)) {
+        // show thumbnail and additional info for images
+        showAdditionalImageInfo (fileInfoElement, file);
       }
 
     }
@@ -683,6 +695,52 @@ function fileTypePage(options) {
     }
 
     return true; // text
+
+  }
+
+  /**
+   * Shows additional file info
+   * @param {any} fileInfoElement
+   * @param {any} file
+   */
+  function showAdditionalImageInfo (fileInfoElement, file) {
+
+    // Read image dimensions without uploading: create object URL
+    var url = URL.createObjectURL(file);
+    var image = new Image();
+    image.onload = function () {
+
+      if (image.naturalWidth && image.naturalHeight) {
+
+        var imgContainer = document.createElement('div');
+        var imgElement = document.createElement('img');
+        var aspectRatio = image.naturalWidth / image.naturalHeight;
+
+        // styles: aspect-ratio, object-fit: cover
+        imgElement.src = url;
+
+        if (aspectRatio < 1) {
+          // portrait
+          imgElement.style.height = '150px';
+          imgElement.style.width = (150 * aspectRatio) + 'px';
+        }
+        else {
+          // landscape or square
+          imgElement.style.maxWidth = '100%';
+          imgElement.style.height = 'auto';
+        }
+
+        imgContainer.classList.add('img-thumbnail-container');
+        imgContainer.appendChild (imgElement)
+        fileInfoElement.appendChild (imgContainer);
+      }
+      URL.revokeObjectURL(url); // cleanup
+    };
+    image.onerror = function () {
+      fileInfoElement.innerHTML = '<p>Failed to load the image</p>';
+      URL.revokeObjectURL(url);
+    };
+    image.src = url;
 
   }
 
