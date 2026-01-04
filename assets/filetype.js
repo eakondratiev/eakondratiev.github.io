@@ -712,6 +712,7 @@ function fileTypePage(options) {
 
       if (image.naturalWidth && image.naturalHeight) {
 
+        var imgInfoElement = document.createElement('div');
         var imgContainer = document.createElement('div');
         var imgElement = document.createElement('img');
         var aspectRatio = image.naturalWidth / image.naturalHeight;
@@ -732,7 +733,14 @@ function fileTypePage(options) {
 
         imgContainer.classList.add('img-thumbnail-container');
         imgContainer.appendChild (imgElement)
+
+        // image info
+        imgInfoElement.classList.add('img-info-data');
+        imgInfoElement.innerHTML = '<div><b>The image size</b></div>' +
+          `<div>Width: ${image.naturalWidth} px</div>` +
+          `<div>Height: ${image.naturalHeight} px</div>`;
         fileInfoElement.appendChild (imgContainer);
+        fileInfoElement.appendChild (imgInfoElement);
       }
       URL.revokeObjectURL(url); // cleanup
     };
