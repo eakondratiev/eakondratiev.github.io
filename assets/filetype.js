@@ -736,11 +736,9 @@ function fileTypePage(options) {
 
         // image info
         imgInfoElement.classList.add('img-info-data');
-        imgInfoElement.innerHTML = '<div><b>The image size</b></div>' +
-          `<div>Width: ${image.naturalWidth} px</div>` +
-          `<div>Height: ${image.naturalHeight} px</div>`;
-        fileInfoElement.appendChild (imgContainer);
+        imgInfoElement.innerHTML = `<div>Size: ${image.naturalWidth} x ${image.naturalHeight} px</div>`;
         fileInfoElement.appendChild (imgInfoElement);
+        fileInfoElement.appendChild (imgContainer);
       }
       URL.revokeObjectURL(url); // cleanup
     };
