@@ -715,21 +715,9 @@ function fileTypePage(options) {
         var imgInfoElement = document.createElement('div');
         var imgContainer = document.createElement('div');
         var imgElement = document.createElement('img');
-        var aspectRatio = image.naturalWidth / image.naturalHeight;
 
         // styles: aspect-ratio, object-fit: cover
         imgElement.src = url;
-
-        if (aspectRatio < 1) {
-          // portrait
-          imgElement.style.height = '150px';
-          imgElement.style.width = (150 * aspectRatio) + 'px';
-        }
-        else {
-          // landscape or square
-          imgElement.style.maxWidth = '100%';
-          imgElement.style.height = 'auto';
-        }
 
         imgContainer.classList.add('img-thumbnail-container');
         imgContainer.appendChild (imgElement)
