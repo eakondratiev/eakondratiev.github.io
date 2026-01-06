@@ -736,7 +736,7 @@ function fileTypePage(options) {
 
         // image info
         imgInfoElement.classList.add('img-info-data');
-        imgInfoElement.innerHTML = `<div>Size: ${image.naturalWidth} x ${image.naturalHeight} px</div>`;
+        imgInfoElement.innerHTML = `<div>Image size ${image.naturalWidth} x ${image.naturalHeight} px</div>`;
         fileInfoElement.appendChild (imgInfoElement);
         fileInfoElement.appendChild (imgContainer);
       }
