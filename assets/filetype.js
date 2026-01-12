@@ -23,6 +23,7 @@
  * 2025-12-12 global keyboard handling, press F to select a file.
  * 2025-12-14 prints "unknown" the the file MIME type is not defined.
  * 2026-01-04 image thumbnail added.
+ * 2026-01-12 AC3 added.
  */
 
 /**
@@ -65,9 +66,8 @@ function fileTypePage(options) {
    * 
    * <div class="list-all"></div>
    * var listAll = document.getElementsByClassName('list-all')[0].innerHTML = listAllDescriptions(SIGNATURES);
-   *
-   * console.log (Object.keys (SIGNATURES).length);
    */
+  
   var SIGNATURES = {
 
     // graphics
@@ -120,6 +120,7 @@ function fileTypePage(options) {
     'MIDI': {description: 'MID, MIDI, a Musical Instrument Digital Interface file, sound file'},
     'DSF': {description: '<b>DSF</b> (DSD Storage Facility) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
     'DFF': {description: '<b>DFF</b> (DSD Interchange File Format) is a high-resolution audio file format that stores Direct Stream Digital (DSD) audio data, commonly used for high-fidelity music playback.'},
+    'AC3': {description: 'AC3, compressed surround sound, AC-3 aka ATSC A/52 aka Dolby Digital stream, typically for DVDs.'},
 
     // video
     'avi':  {description: 'avi, Audio Video Interleave video format'},
