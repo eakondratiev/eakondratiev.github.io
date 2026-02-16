@@ -24,6 +24,8 @@
  * 2025-12-14 prints "unknown" the the file MIME type is not defined.
  * 2026-01-04 image thumbnail added.
  * 2026-01-12 AC3 added.
+ * 2026-01-14 parsing the AC3 header.
+ * 2026-02-11, 2026-02-16 parsing the AC3 header, fixes.
  */
 
 /**
@@ -442,6 +444,8 @@ function fileTypePage(options) {
 
     var resultText = getStringFromBuffer(resultBytes, RESULT_ARRAY_SIZE);
     var description = '';
+    var parsedInfo = '';
+    var info;
     var isText = true;
 
     if (resultText === UNKNOWN) {
@@ -464,6 +468,18 @@ function fileTypePage(options) {
         // too small or too big for the LNK file, should be checked.
         message = '<div class="page-message page-message--error">' + LNK_SIZE_MESSAGE + fileData.byteLength.toString() + '</div>';
       }
+      else if (resultText === 'AC3') {
+        info = getInfo_AC3(fileBytes);
+
+        if (info) {
+          parsedInfo = getResultProperty ('Type', info.isEAC3? 'E-AC3 (Enhanced AC-3 or Dolby Digital Plus)' : 'Regular AC-3') +
+            getResultProperty ('Rate', `${info.samplingRate/1000} kHz`) +
+            getResultProperty ('Channels', info.numChannels) +
+            getResultProperty ('LFE', info.hasLFE? 'present' : 'no') +
+            getResultProperty ('Bit rate', `${info.bitRate/1000} kbps`);
+        }
+
+      }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
@@ -473,13 +489,13 @@ function fileTypePage(options) {
 
     resultElement.classList.add(flashCss);
 
-    resultElement.innerHTML += getResultProperty (DESCR_TITLE, description) + message;
+    resultElement.innerHTML += getResultProperty (DESCR_TITLE, description) + parsedInfo + message;
 
     if (resultText === UNKNOWN && isText === false) {
       // for unknown binary files show its first bytes
       resultElement.innerHTML += '<div style="margin: 8pt 0;">' +
         '<div>First bytes</div>' +
-        getFirstBytes(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)) +
+        getFirstBytesHex(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)) +
         '</div>';
     }
 
@@ -545,7 +561,7 @@ function fileTypePage(options) {
     * @param {number} the buffer size
     */
   function getStringFromBuffer (buf, bufferSize) {
-    var s = "";
+    var s = '';
     var index = 0;
     while(index < bufferSize){
       if(buf[index] !== 0){
@@ -601,7 +617,7 @@ function fileTypePage(options) {
     * @param fileBytes
     * @param size
     */
-  function getFirstBytes(fileBytes, size) {
+  function getFirstBytesHex(fileBytes, size) {
 
     var i;
     var eightBytes = '';
@@ -667,6 +683,28 @@ function fileTypePage(options) {
       return '0' + hex;
     }
     return hex;
+  }
+
+  /**
+   * Extracts bits from a byte using most significant bit first numbering (MSB).
+   * 
+   * @param {number} byte - The byte to extract bits from (0-255)
+   * @param {number} startBit - Starting bit position (0 = MSB (leftmost), 7 = LSB (rightmost))
+   * @param {number} numBits - Number of bits to extract (1-8)
+   * @returns {number} The extracted bits as an integer
+   * 
+   * @example
+   * // byte 0x16 (0001 0110):
+   * // 2 bits 5-6: 11b = 3
+   * // 4 bits 3-6: 1011b = 11
+   */
+  function readBitsMSBFirst(byte, startBit, numBits) {
+      // Shift right to move desired bits to LSB position
+      const shiftRight = 8 - (startBit + numBits);
+      // Mask to keep only the desired bits
+      const mask = (1 << numBits) - 1;
+    
+      return (byte >> shiftRight) & mask;
   }
 
   /**
@@ -737,6 +775,153 @@ function fileTypePage(options) {
     };
     image.src = url;
 
+  }
+
+  /**
+   * Returns additional info parsed from the file data.
+   * @param {Uint8Array} fb file bytes, the valid Uint8Array with AC3 data.
+   * @returns {{isEAC3: boolean, samplingRate: number, numChannels: number, bitRate: number, hasLFE: boolean} | null} AC-3/E-AC3 frame information or null
+   */
+  function getInfo_AC3(fb) {
+    
+    // ref:
+    // https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/ac3_parser.c
+    // https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/ac3tab.c
+
+    var bsid,
+      srCode,
+      srCode2,
+      srShift,
+      frameSizeCode,
+      bitrateCode,
+      bitrate,
+      code,
+      samplingRate,
+      numChannels,
+      LFEchannels,
+      frameSize,
+      numBlocks;
+
+    var ac3FrameSizeTab = [
+            [64,   69,   96   ],   // 0
+            [64,   70,   96   ],   // 1
+            [80,   87,   120  ],   // 2
+            [80,   88,   120  ],   // 3
+            [96,   104,  144  ],   // 4
+            [96,   105,  144  ],   // 5
+            [112,  121,  168  ],   // 6
+            [112,  122,  168  ],   // 7
+            [128,  139,  192  ],   // 8
+            [128,  140,  192  ],   // 9
+            [160,  174,  240  ],   // 10
+            [160,  175,  240  ],   // 11
+            [192,  208,  288  ],   // 12
+            [192,  209,  288  ],   // 13
+            [224,  243,  336  ],   // 14
+            [224,  244,  336  ],   // 15
+            [256,  278,  384  ],   // 16
+            [256,  279,  384  ],   // 17
+            [320,  348,  480  ],   // 18
+            [320,  349,  480  ],   // 19
+            [384,  417,  576  ],   // 20
+            [384,  418,  576  ],   // 21
+            [448,  487,  672  ],   // 22
+            [448,  488,  672  ],   // 23
+            [512,  557,  768  ],   // 24
+            [512,  558,  768  ],   // 25
+            [640,  696,  960  ],   // 26
+            [640,  697,  960  ],   // 27
+            [768,  835,  1152 ],   // 28
+            [768,  836,  1152 ],   // 29
+            [896,  975,  1344 ],   // 30
+            [896,  976,  1344 ],   // 31
+            [1024, 1114, 1536 ],   // 32
+            [1024, 1115, 1536 ],   // 33
+            [1152, 1253, 1728 ],   // 34
+            [1152, 1254, 1728 ],   // 35
+            [1280, 1393, 1920 ],   // 36
+            [1280, 1394, 1920 ]    // 37
+        ];
+
+    var ac3BitrateTab = [
+        32, 40, 48, 56, 64, 80, 96, 112, 128, 160,
+        192, 224, 256, 320, 384, 448, 512, 576, 640
+    ];
+
+    var samplingRateTab = [48000, 44100, 32000, 0];
+
+    if (!fb || fb.length === undefined || fb.length < 7) {
+      return null;
+    }
+
+    // 1. Check sync word
+    if (fb[0] !== 0x0B || fb[1] !== 0x77) {
+        return null;
+    }
+
+    bsid = (fb[5] >> 3) & 0x1F; // bsid is 5 bits at 5th byte
+    numBlocks = 6; // default
+
+    // Check if E-AC3 (E-AC3 (Enhanced AC-3 or Dolby Digital Plus))
+    if (bsid <= 10) {
+      // Regular AC3
+      srCode = readBitsMSBFirst(fb[4], 0, 2); // two bits
+      samplingRate = [48000, 44100, 32000][srCode] || 0;
+
+      code= (fb[6] >> 5) & 0x07;
+      numChannels = [2, 1, 2, 3, 3, 4, 4, 5][code] || 0;
+      LFEchannels = ((fb[6] >> 3) & 0x01)? 1 : 0;
+        
+      frameSizeCode = readBitsMSBFirst(fb[4], 2, 6);
+      if (frameSizeCode > 37) { return null; }
+
+      frameSize = ac3FrameSizeTab[frameSizeCode][srCode] || 0;
+
+      bitrateCode = frameSizeCode >> 1;
+      srShift = Math.max(bsid, 8) - 8;
+      bitrate = (ac3BitrateTab[bitrateCode] * 1000) >> srShift;
+
+      return {
+        isEAC3: false,
+        samplingRate: samplingRate,
+        numChannels: numChannels + LFEchannels,
+        hasLFE: LFEchannels,
+        bitRate: bitrate
+      };
+
+    } else {
+      // E-AC3
+      // Read the first 3 bits (bits 5-7 of byte 4) and 8 bits (all of byte 5)
+      // and calculate the frame size:
+      frameSize = (((readBitsMSBFirst(fb[4], 5, 3) << 8) | readBitsMSBFirst(fb[5], 0, 8)) + 1) * 2;
+
+      srCode = readBitsMSBFirst(fb[6], 6, 2); // rightmost two bits
+      if (srCode === 3) {
+        srCode2 = readBitsMSBFirst(fb[6], 4, 2);
+        if (srCode2 === 3) { return null; }
+        samplingRate = (samplingRateTab[srCode2] || 0) / 2;
+      }
+      else {
+        numBlocks = [1, 2, 3, 6][readBitsMSBFirst(fb[6], 4, 2)];
+        if (numBlocks === undefined) { return null; }
+        samplingRate = samplingRateTab[srCode] || 0;
+      }
+
+      code = readBitsMSBFirst(fb[6], 1, 3);
+      numChannels = [2, 1, 2, 3, 3, 4, 4, 5][code] || 0;
+      LFEchannels = readBitsMSBFirst(fb[6], 0, 1);
+      bitrate = 8 * frameSize * samplingRate / (numBlocks * 256);
+
+      //console.log ({frameSize, srCode, srCode2, code});
+
+      return {
+        isEAC3: true,
+        samplingRate: samplingRate,
+        numChannels: numChannels + LFEchannels,
+        hasLFE: LFEchannels,
+        bitRate: bitrate
+      };
+    }
   }
 
   /**
