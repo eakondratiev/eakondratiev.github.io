@@ -5,13 +5,14 @@
  * 2025-03-14 toggle the Expected box placeholer.
  * 2025-03-20 process the Expected url parameter.
  * 2025-04-10 some fixes and improvements.
+ * 2026-02-17 global keys navigation (F, E), functions optimization.
  */
 
 /**
  * Initialization, event handlers etc.
  * @param {*} options some options {wasmUrl, fileDropElement, inputElement, expectedElement, expectedPlaceholder,
  *                                  resultElement, compareElement, statElement, progressElement, messageElement,
- *                                  dropReadyCss, dropDisabledCss, dropZoneText, resultCss, flashCss, compareMatchCss, compareNoMatchCss,
+ *                                  dropReadyCss, dropDisabledCss, resultCss, flashCss, compareMatchCss, compareNoMatchCss,
  *                                  textMatch, textNoMatch}
  */
 async function sha256page (options) {
@@ -45,7 +46,6 @@ async function sha256page (options) {
   let statElement = document.getElementById (options.statElement);
   let messageElement = document.getElementById (options.messageElement);
 
-  let dropZoneText = options.dropZoneText;
   let dropReadyCss = options.dropReadyCss;
   let dropDisabledCss = options.dropDisabledCss;
   let resultCss = options.resultCss; // adds border and background
@@ -104,7 +104,6 @@ async function sha256page (options) {
     return;
   }
 
-  fileDropElement.innerHTML = dropZoneText;
   fileInputElement.disabled = false;
 
 
@@ -152,6 +151,10 @@ async function sha256page (options) {
 
   });
 
+  fileDropElement.addEventListener ('click', function(e) {
+    fileInputElement.click();
+  });
+
   /**
    * Handles input into the expected value
    */
@@ -161,6 +164,41 @@ async function sha256page (options) {
     setExpectedPlaceholderState ();
 
     compareSha256Values();
+  });
+
+  // handle keyboard, pressing a shortcut keys
+  document.addEventListener ('keydown', function(e) {
+
+    var isInputField = (
+      e.target.tagName === 'INPUT' || 
+      e.target.tagName === 'TEXTAREA' || 
+      e.target.tagName === 'SELECT'
+    );
+
+    // Skip shortcut handling when typing in input fields
+    if (isInputField) {
+      return;
+    }
+
+    if (e.altKey || e.ctrlKey) {
+      return; // leave to the browser
+    }
+
+    switch (e.key) {
+      case 'f':
+      case 'F':
+        document.getElementById('input-file').click();
+        e.preventDefault();
+        break;
+
+      case 'e':
+      case 'E':
+        expectedInputElement.focus();
+        e.preventDefault();
+        break;
+
+    }
+
   });
 
   /**
@@ -188,9 +226,6 @@ async function sha256page (options) {
     try {
 
       wm.sha256init();
-  
-      let offset = 0;
-      let progressTotalBytes = file.size; // bytes
   
       // process the file sequentially
       await wasmProcessChunks (file, CHUNK_SIZE, handlers);
@@ -229,7 +264,6 @@ async function sha256page (options) {
     let offset = 0;
     let codeLine = 0;
 
-
     while (offset < file.size) {
 
       const end = Math.min(offset + chunkSize, file.size); // Calculate the end position of the current chunk
@@ -253,36 +287,41 @@ async function sha256page (options) {
         // Call the update function
         codeLine = 4;
         wm.sha256update(WASM_MEM_START, chunkLength);
+        offset += chunkSize; // Advance the offset by the chunk size read
         handlers.progress (offset);
 
       } catch (error) {
-        handlers.error ('Something went wrong. Error processing the file chunk.');
+        handlers.error ('Something went wrong. Error processing the file chunk.' + error);
         T.log (`WASM Chunk (${codeLine})`);
         break;
       }
 
-      // Advance the offset by the chunk size read
-      offset += chunkSize;
     }
   }
+
+  /**
+   * Returns string with the estimated time left for large files or empty string for small files or when estimation is not possible.
+   * @param {number} bytesDone
+   * @param {number} totalBytes
+   * @returns {string}
+   */
+  function estimatedTime (bytesDone, totalBytes, timerStart){
+    // returns string, estimated time left for large files
+    if (totalBytes < LARGE_FILE_BYTES) { return ''; }
+    var bytesLeft = totalBytes - bytesDone;
+    var duration = performance.now() - timerStart; // ms
+    if (duration < 1) { return ''; }
+    var bytesPerMs = bytesDone / duration; // done part performance, bytes per ms
+    if (bytesPerMs < 1) { return ''; }
+    return `, approximate wait time: ${(0.001 * bytesLeft / bytesPerMs ).toFixed(1)} sec.`;
+  }
+  
 
   /** Calculates and shows the progress of processing a file */
   function getProgress (done, total, timerStart) {
 
     let progressPercent = (done / total) * 100;
-  
-    let estimatedTime = function(bytesDone, totalBytes){
-      // returns string, estimated time left for large files
-      if (totalBytes < LARGE_FILE_BYTES) { return ''; }
-      var bytesLeft = totalBytes - done;
-      var duration = performance.now() - timerStart; // ms
-      if (duration < 1) { return ''; }
-      var bytesPerMs = bytesDone / duration; // done part performance, bytes per ms
-      if (bytesPerMs < 1) { return ''; }
-      return `, approximate wait time: ${(0.001 * bytesLeft / bytesPerMs ).toFixed(1)} sec.`;
-    }
-  
-    return `${progressPercent.toFixed (2)}%${estimatedTime (done, total)}`;
+    return `${progressPercent.toFixed (2)}%${estimatedTime (done, total, timerStart)}`;
   }
   
   /**
@@ -384,7 +423,6 @@ async function sha256page (options) {
 
       resultElement.innerText = '';
       compareElement.innerText = '';
-      compareElement.innerText = '';
       progressElement.innerText = '0%';
       statElement.innerText = '';
 
@@ -445,7 +483,7 @@ async function sha256page (options) {
      */
     function onError(text) {
       var element = document.createElement('div');
-      element.textContent = 'Something went wrong. ' + text;
+      element.textContent = text;
       element.classList.add('page-message');
       element.classList.add('page-message--error');
       messageElement.textContent = '';

@@ -5,6 +5,19 @@
     <title>SHA-256 File Integrity Checker -- Free Online Tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "SHA-256 File Integrity Checker - Free Online Tool",
+      "description": "Online tool to check a file's integrity with a SHA‑256 checksum, or create hashes for any files.",
+      "url": "https://eakondratiev.github.io/sha256.htm",
+      "applicationCategory": "Utility",
+      "operatingSystem": "Web",
+      "creationDate": "2025-03-07",
+      "dateModified": "2026-02-17"
+    }
+    </script>
 
     <meta name="apple-mobile-web-app-title" content="SHA-256 File Integrity Checker" />
     <meta name="application-name" content="SHA-256 File Integrity Checker" />
@@ -68,6 +81,16 @@
         35% {background-color: #fad963; background-color: rgb(255, 216, 0, 0.5);}
         100% {background-color: inherit;}
       }
+
+      .key-normal {color: #555; background: #f5f5f5; border: solid 1px #ddd; border-radius: 2px;
+                   padding: 0 4pt; margin: 0 8pt; font-size: 0.8rem;}
+      @media (prefers-color-scheme: dark) {
+        .key-normal {color: #aaa; background: #555; border-color: #555;}
+      }
+      @media only screen and (max-width: 500px) {
+        /* Styles for screens with a width <= 500px */
+        .key-normal {display: none;}
+      }
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></script>
@@ -128,16 +151,16 @@
           </p>
 
           <div style="margin: 16pt 0;">
-            <input type="file" accept="" id="input-file" accesskey="F"
+            <input type="file" accept="" id="input-file"
                    placeholder="Select a file" value="" aria-label="Select a file"
                    style="display:none" disabled>
-            <div class="file-selector-container" id="file-target" onclick="document.getElementById('input-file').click();">
-              ...
+            <div class="file-selector-container" id="file-target">
+              Click, tap or drag and drop a file here. <kbd class="key-normal">F</kbd>
             </div>
           </div>
           <div class="expected-box-wrapper">
-            <input id="expectedSHA256" type="text" accesskey="E" />
-            <div id="expectedPlaceholder" class="expected-box-placeholder"><u>E</u>xpected SHA-256 checksum, optional</div>
+            <input id="expectedSHA256" type="text" />
+            <div id="expectedPlaceholder" class="expected-box-placeholder">Expected SHA-256 checksum, optional <kbd class="key-normal">E</kbd></div>
           </div>
           <div id="message"></div>
           <div id="progressSHA256"></div>
@@ -297,7 +320,7 @@
     </div>
     <script>
       var script = document.createElement('script');
-      script.src = '/assets/sha256.min.js?20250410';
+      script.src = '/assets/sha256.min.js?20260217';
       script.async = true;
 
       script.onerror = function() {
@@ -334,7 +357,6 @@
             resultCss: 'code',
             dropReadyCss: 'drop-ready',
             dropDisabledCss: 'drop-disabled',
-            dropZoneText: 'Click, tap or drag and drop a <u>f</u>ile here.',
             flashCss: 'flash',
             compareMatchCss: 'compare-match',
             compareNoMatchCss: 'compare-nomatch',
