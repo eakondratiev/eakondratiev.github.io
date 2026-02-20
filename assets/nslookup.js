@@ -3,6 +3,7 @@
  * 2025-09-26
  * 2025-09-28 keyboard events handler updated.
  * 2025-09-29 MX record format.
+ * 2026-02-20 sort MX records by priority.
  */
 
 /**
@@ -49,6 +50,8 @@ function nslookupPage(options, texts) {
      */
     function testDOH (options) {
 
+      const ANSWER_TEMPLATE = '<div class="doh-data-row">TTL {TTL} s, {value}</div>';
+
       const btn = options.btn;
       const serverSelector = options.srv;
       const recTypeSelector = options.types;
@@ -84,6 +87,7 @@ function nslookupPage(options, texts) {
 
           if (punycodeName  !== null) {
             // converted to Punycode, make the resolver url again
+            // URL example: https://cloudflare-dns.com/dns-query?name=example.com&type=MX 
             resolverUrl = (serverSelector.options[serverSelector.selectedIndex])
                     .dataset.url
                     .replace ('{domain}', punycodeName )
@@ -114,6 +118,7 @@ function nslookupPage(options, texts) {
       .then(response => response.json())
       .then(data => {
 
+          // data scheme: {status:number, ..., Question:[{name:string, type:number}], Answer:[{name:string, type:number, TTL: number, data:string}, ...]}
           let text = '';
           let reMX = /^(\d+)\s+(.+)/;
 
@@ -126,19 +131,48 @@ function nslookupPage(options, texts) {
             text = formatMessage (texts.msgNotExists.replace('{domain}', domain), 'warning');
           }
           else if (data.Status === 0 && typeof data.Answer !== 'undefined' && data.Answer.length > 0) {
-            for (let i = 0; i < data.Answer.length; i++) {
 
-              let value = sanitizeText(data.Answer[i].data);
+            // NOTE: in some cases Question.type can be NOT equal to Answer.type
+            let answers = data.Answer; // ref to data.Answer
+            let sorted = [];
+
+            for (let i = 0; i < answers.length; i++) {
+
+              let value = sanitizeText(answers[i].data);
               
-              switch (data.Answer[i].type) {
+              switch (answers[i].type) {
                 case 15: // MX, format like 10 mail.com
-                  value = value.replace (reMX, 'Priority $1, $2');
+                  // create array to be sorted by priority
+                  const m = reMX.exec (value);
+
+                  if (m) {
+                    value = 'Priority ' + m[1] + ', ' + m[2];
+                    sorted.push ({
+                      num: parseInt (m[1]),
+                      TTL: answers[i].TTL,
+                      value: value});
+                  }
                   break;
+
+                default:
+                  // type=1 (A, IPv4) and type=28 (AAAA, IPv6)
+                  text += ANSWER_TEMPLATE
+                            .replace('{TTL}', answers[i].TTL)
+                            .replace('{value}', value);
               }
 
-              // type=1 (A, IPv4) and type=28 (AAAA, IPv6)
-              text += `<div class="doh-data-row">TTL ${data.Answer[i].TTL} s, ${value}</div>`;
             }
+
+            // in-place sort additional array by the .num
+            sorted.sort((a, b) => a.num - b.num);
+
+            // append sorted array
+            for (let i = 0; i < sorted.length; i++) {
+              text += ANSWER_TEMPLATE
+                        .replace('{TTL}', sorted[i].TTL)
+                        .replace('{value}', (i === 0)? `<b>${sorted[i].value}</b>` : sorted[i].value);
+            }
+
           }
           else {
             text = formatMessage (texts.msgNoRecord, 'warning');
