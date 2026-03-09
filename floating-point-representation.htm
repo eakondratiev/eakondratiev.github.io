@@ -5,13 +5,26 @@
     <title>Floating-Point Numbers Representation -- Free Online Tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Floating-Point Numbers Representation - Free Online Tool",
+      "description": "Representation of floating-point numbers in computer systems, bits explained.",
+      "url": "https://eakondratiev.github.io/floating-point-representation.htm",
+      "applicationCategory": "Utility",
+      "operatingSystem": "Web",
+      "creationDate": "2021-12-06",
+      "dateModified": "2026-03-09"
+    }
+    </script>
 
     <meta name="apple-mobile-web-app-title" content="Floating-Point Numbers Representation" />
     <meta name="application-name" content="Floating-Point Numbers Representation" />
 
     <meta property="og:title" content="Floating-Point Numbers Representation">
-    <meta name="description" content="Understand floating-point representation in computer systems. Learn about precision, rounding errors, and how numbers are stored and processed.">
-    <meta property="og:description" content="Understand floating-point representation in computer systems. Learn about precision, rounding errors, and how numbers are stored and processed.">
+    <meta name="description" content="Representation of floating-point numbers in computer systems, bits explained: precision, rounding errors, and how numbers are stored and processed.">
+    <meta property="og:description" content="Representation of floating-point numbers in computer systems, bits explained: precision, rounding errors, and how numbers are stored and processed.">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eakondratiev.github.io/floating-point-representation.htm">
@@ -34,8 +47,9 @@
       .fp-bit {font-family: 'Cascadia Mono', Consolas, 'Lucida Console', Courier New, Courier, monospace;
         padding: 0 1pt; white-space: nowrap;}
       .fp-sign {background-color: #fd0;}
-      .fp-exp {background-color: #9e0;}
-      .fp-fraction {background-color: #7cf;}
+      .fp-exp {background-color: #af3; text-decoration: underline;}
+      .fp-fraction {background-color: #9df;}
+      .fp-byte {font-weight: bold; margin: 0 1pt;}
       .note {color: #000; font-size: 0.9rem;}
       .fp-form {margin-top: 16pt;}
       .fp-form input, .fp-form button {padding: 2pt 4pt; height: 20pt; box-sizing: border-box;}
@@ -93,8 +107,7 @@
           <div id="incompatible-browser">Please, update your browser.</div>
           <h1>Floating-Point Numbers Representation</h1>
           <p>
-          Understand floating-point representation in computer systems. Learn about precision, rounding errors, and how numbers are stored and processed.
-          See how floating-point numbers represented in binary formats.
+          Representation of floating-point numbers in computer systems, bits explained: precision, rounding errors, and how numbers are stored and processed.
           </p>
 
           <div class="fp-form">
@@ -117,7 +130,7 @@
             </p>
             <p>
               The first bit is a <i>sign</i> followed by the <i>exponent</i> bits. Other bits are for <i>significand</i> (<i>mantissa</i>).
-              Implementations of the floating-point arithmetics are described in the IEE 754 standard.
+              Implementations of the floating-point arithmetics are described in the IEEE 754 standard.
             </p>
             <p>
               The <i>single-precision</i> (<i>float</i> data type in C language) values are stored as 4 bytes or 32 bits: 1 sign bit, 8-bit exponent, 23-bit significand.
@@ -172,7 +185,7 @@ if (Math.abs(x - 0.3) <= DELTA) ...</pre>
           </template>
 
           <div class="page-tags">
-            <b>#CS</b> <b>#Computer science</b> <b>#FP</b> <b>#Float32</b> <b>#Float64</b> <b>#Decimal</b> <b>#Binary</b> <b>#IEE754</b> <b>#Calculator</b>
+            <b>#CS</b> <b>#Computer science</b> <b>#FP</b> <b>#Float32</b> <b>#Float64</b> <b>#Decimal</b> <b>#Binary</b> <b>#IEEE754</b> <b>#Calculator</b>
           </div>
         </div>
       </div>
@@ -196,7 +209,7 @@ if (Math.abs(x - 0.3) <= DELTA) ...</pre>
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/fprep.min.js?20230407"></script>
+    <script src="/assets/fprep.min.js?20260309"></script>
     <script>
       // check for compatibility
       if (document.getElementsByClassName === undefined ||

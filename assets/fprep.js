@@ -13,6 +13,7 @@
  * 2021-12-18 32- and 64-bit representation is shown.
  * 2021-12-19 long bits formatting.
  * 2023-04-07 js representation using html template.
+ * 2026-03-09 hex bytes (big- and little-endian) representations added.
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -35,6 +36,8 @@ function processFloatingPointValue(inputElement, resultElement) {
   var inputText = inputElement.value;
   var number = T.getNumber(inputText);
   var jsRepTemplate = document.getElementById('tpl-js-representaion');
+  var BIG_ENDIAN = true;
+  var LITTLE_ENDIAN = false;
 
   resultElement.innerHTML = '';
 
@@ -111,10 +114,13 @@ function processFloatingPointValue(inputElement, resultElement) {
       return text;
     }
 
+    text += '<p>' + formatBytes (array, BIG_ENDIAN) + '&mdash; big-endian, as bits (most significant byte first)</p>';
+    text += '<p>' + formatBytes (array, LITTLE_ENDIAN) + '&mdash; little-endian (least significant byte first)</p>';
+
     // bits description
     // the sign bit
     var fpSign;
-    var description = 'The sign bit <span class="fp-bit fp-sign">' +
+    var description = 'The sign bit = <span class="fp-bit fp-sign">' +
       array[0] + '</span>: the number is ';
 
     if (array[0] === 0) {
@@ -186,7 +192,7 @@ function processFloatingPointValue(inputElement, resultElement) {
   /**
    * Returns html code for the bits.
    * @param {[number]} bits the array of bits.
-   * @param {number} exponentBits the number of bits for exponent, deafult is 8.
+   * @param {number} exponentBits the number of bits for exponent, default is 8.
    * @returns {string}
    */
   function formatBits(bits, exponentBits) {
@@ -217,7 +223,7 @@ function processFloatingPointValue(inputElement, resultElement) {
    * Returns formatted bit.
    * @param {number} value the bit value.
    * @param {number} index the bit index in array.
-   * @param {number} exponentBits the number of bits for exponent, deafult is 8.
+   * @param {number} exponentBits the number of bits for exponent, default is 8.
    */
   function formatBit(value, index, exponentBits) {
 
@@ -236,6 +242,67 @@ function processFloatingPointValue(inputElement, resultElement) {
     }
 
     return '<span class="fp-bit ' + css + '">' + value + '</span>';
+  }
+
+  /**
+   * Returns bytes from the bits array
+   * @param {Int32Array} bits the bits array
+   * @param {boolean} isBigEndian read bytes from the start or from the end
+   * @returns {string}
+   */
+  function formatBytes (bits, isBigEndian) {
+
+    var i; // byte start index
+    var byteString = '0x';
+    var getByteString = function (bits, i) {
+      return '<span class="fp-byte">' + toHex(byteFromBitArray (bits, i)) + '</span>';
+    }
+
+    if (isBigEndian) {
+      // from start
+      for (i = 0; i < bits.length; i += 8) {
+        byteString += getByteString (bits, i);
+      }
+    }
+    else {
+      // from end
+      for (i = bits.length - 8; i >= 0; i -= 8) {
+        byteString += getByteString (bits, i);
+      }
+    }
+
+    return byteString;
+  }
+
+  /**
+   * Returns a byte value from the bit array starting from specified position.
+   * @param {Int32Array} bits the bits array
+   * @param {number} i the starting index of the byte
+   * @returns {number}
+   */
+  function byteFromBitArray (bits, i) {
+
+    return (bits[i]     << 7) +
+           (bits[i + 1] << 6) +
+           (bits[i + 2] << 5) +
+           (bits[i + 3] << 4) +
+           (bits[i + 4] << 3) +
+           (bits[i + 5] << 2) +
+           (bits[i + 6] << 1) +
+            bits[i + 7];
+
+  }
+
+  /**
+   * Returns the hexademical representation of a number.
+   * @param {number} n the number
+   * @returns {string}
+   */
+  function toHex (n) {
+    if (n < 10) {
+      return '0' + n.toString(16);
+    }
+    return n.toString(16);
   }
 
 }
