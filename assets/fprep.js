@@ -114,8 +114,8 @@ function processFloatingPointValue(inputElement, resultElement) {
       return text;
     }
 
-    text += '<p>' + formatBytes (array, BIG_ENDIAN) + '&mdash; big-endian, as bits (most significant byte first)</p>';
-    text += '<p>' + formatBytes (array, LITTLE_ENDIAN) + '&mdash; little-endian (least significant byte first)</p>';
+    text += '<p>' + formatBytes (array, BIG_ENDIAN) + '</p>';
+    text += '<p>The big-endian byte order is shown. For little-endian, simply read the bytes in reverse order: ' + formatBytes (array, LITTLE_ENDIAN) + '</p>';
 
     // bits description
     // the sign bit
