@@ -480,6 +480,13 @@ function fileTypePage(options) {
         }
 
       }
+/*      else if (resultText === 'ebml-matroska') {
+
+        info = getInfo_MKV(fileBytes);
+
+        console.log ('MKV', info);
+
+      }  */
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
@@ -708,6 +715,113 @@ function fileTypePage(options) {
   }
 
   /**
+   * Reads VINT from the byte array, return the value and the number of processed bytes.
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @returns {{value: number, consumed: number} | null} The VINT value and bytes consumed, or null on error
+   */
+  function ebml_readVINT(bytes, startPos = 0) {
+      if (startPos >= bytes.length) {
+        return null;
+    }
+    
+    const firstByte = bytes[startPos];
+    
+    // Determine VINT length from the first byte
+    let vintLength = 0;
+    let mask = 0x80; // 10000000 in binary
+    
+    for (let i = 0; i < 8; i++) {
+        if (firstByte & (mask >> i)) {
+            vintLength = i + 1;
+            break;
+        }
+    }
+    
+    if (vintLength === 0) {
+        return null;
+    }
+    
+    if (startPos + vintLength > bytes.length) {
+        return null;
+    }
+    
+    // Extract the value
+    let value = 0;
+    
+    for (let i = 0; i < vintLength; i++) {
+        const byte = bytes[startPos + i];
+        if (i === 0) {
+            // Mask out the leading bits for the first byte
+            const dataMask = (1 << (8 - vintLength)) - 1;
+            value = byte & dataMask;
+        } else {
+            // Take all bits for subsequent bytes
+            value = (value << 8) | byte;
+        }
+    }
+    
+    return {
+        value: value,
+        consumed: vintLength
+    };
+  }
+
+  /**
+   * Reads unsigned integer from the byte array (big-endian).
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @param {number} length - Number of bytes to read (1-8)
+   * @returns {{value: number, consumed: number} | null} The uint value and bytes consumed, or null on error
+   */
+  function ebml_readUint(bytes, startPos = 0, length = 1) {
+
+    if (startPos + length > bytes.length) {
+        return null;
+    }
+    
+    if (length < 1 || length > 8) {
+        return null;
+    }
+    
+    let value = 0;
+    
+    for (let i = 0; i < length; i++) {
+        value = (value << 8) | bytes[startPos + i];
+    }
+    
+    return {
+        value: value,
+        consumed: length
+    };
+  }
+
+  /**
+   * Reads 64-bit float (double) from the byte array (IEEE 754, big-endian).
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @returns {{value: number, consumed: number} | null} The float value and bytes consumed (8), or null on error
+   */
+  function ebml_readFloat(bytes, startPos = 0) {
+
+    const FLOAT_SIZE = 8;
+    
+    if (startPos + FLOAT_SIZE > bytes.length) {
+        return null;
+    }
+    
+    // Create a DataView to properly read 64-bit float
+    const buffer = bytes.buffer.slice(startPos, startPos + FLOAT_SIZE);
+    const view = new DataView(buffer);
+    const value = view.getFloat64(0, false); // false = big-endian
+    
+    return {
+        value: value,
+        consumed: FLOAT_SIZE
+    };
+  }
+
+  /**
    * Returns true if the bytes does not contains binary data
    * or false otherwise.
    * @param {ArrayBuffer} bytes
@@ -922,6 +1036,165 @@ function fileTypePage(options) {
         bitRate: bitrate
       };
     }
+  }
+
+  /**
+   * Returns additional info parsed from the file data.
+   * @param {Uint8Array} bytes file bytes, the valid Uint8Array with AC3 data.
+   */
+  function getInfo_MKV(bytes) {
+
+    let pos = 0;
+    
+    // 1. Read EBML ID (0x1A45DFA3)
+    let result = ebml_readVINT(bytes, pos);
+    if (!result) return null;
+    if (result.value !== 0x1A45DFA3) return null; // Should be EBML ID
+    pos += result.consumed;
+    
+    // 2. Read EBML size
+    result = ebml_readVINT(bytes, pos);
+    if (!result) return null;
+    const ebmlSize = result.value;
+    pos += result.consumed;
+    
+    // 3. Find DocType (0x4282) inside EBML to verify it's matroska
+    const ebmlEnd = pos + ebmlSize;
+    let foundMatroska = false;
+    
+    while (pos < ebmlEnd && pos < bytes.length) {
+        const idResult = ebml_readVINT(bytes, pos);
+        if (!idResult) break;
+        pos += idResult.consumed;
+        
+        const sizeResult = ebml_readVINT(bytes, pos);
+        if (!sizeResult) break;
+        const elementSize = sizeResult.value;
+        pos += sizeResult.consumed;
+        
+        // Check if this is DocType element (0x4282)
+        if (idResult.value === 0x4282) {
+            // Read string data
+            if (pos + elementSize <= bytes.length) {
+                const decoder = new TextDecoder('utf-8');
+                const docType = decoder.decode(bytes.slice(pos, pos + elementSize));
+                if (docType === 'matroska') {
+                    foundMatroska = true;
+                }
+            }
+            break;
+        }
+        
+        // Skip this element if not DocType
+        pos += elementSize;
+    }
+    
+    if (!foundMatroska) return null;
+    
+    // 4. Find Segment ID (0x18538067)
+    // Reset position to after EBML header, then search for Segment
+    pos = 0;
+    // Skip EBML ID and size to start from EBML data
+    let tempPos = 0;
+    let segResult = ebml_readVINT(bytes, tempPos);
+    if (!segResult) return null;
+    tempPos += segResult.consumed;
+    segResult = ebml_readVINT(bytes, tempPos);
+    if (!segResult) return null;
+    tempPos += segResult.consumed;
+    pos = tempPos;
+    
+    // Search for Segment within remaining bytes
+    let segmentStart = -1;
+    let segmentSize = 0;
+    
+    while (pos < bytes.length) {
+        const idResult = ebml_readVINT(bytes, pos);
+        if (!idResult) break;
+        pos += idResult.consumed;
+        
+        const sizeResult = ebml_readVINT(bytes, pos);
+        if (!sizeResult) break;
+        const elementSize = sizeResult.value;
+        pos += sizeResult.consumed;
+        
+        if (idResult.value === 0x18538067) { // Segment ID
+            segmentStart = pos;
+            segmentSize = elementSize;
+            break;
+        }
+        
+        // Skip unknown elements
+        pos += elementSize;
+    }
+    
+    if (segmentStart === -1) return null;
+    
+    // 5. Find Info (0x1549A966) inside Segment
+    pos = segmentStart;
+    const segmentEnd = segmentSize === 0xFFFFFFFFFFFFFFF ? bytes.length : segmentStart + segmentSize;
+    let infoStart = -1;
+    let infoSize = 0;
+    
+    while (pos < segmentEnd && pos < bytes.length) {
+        const idResult = ebml_readVINT(bytes, pos);
+        if (!idResult) break;
+        pos += idResult.consumed;
+        
+        const sizeResult = ebml_readVINT(bytes, pos);
+        if (!sizeResult) break;
+        const elementSize = sizeResult.value;
+        pos += sizeResult.consumed;
+        
+        if (idResult.value === 0x1549A966) { // Info ID
+            infoStart = pos;
+            infoSize = elementSize;
+            break;
+        }
+        
+        // Skip this element
+        pos += elementSize;
+    }
+    
+    if (infoStart === -1) return null;
+    
+    // 6. Find Duration (0x4489) inside Info
+    pos = infoStart;
+    const infoEnd = infoSize === 0xFFFFFFFFFFFFFFF ? segmentEnd : infoStart + infoSize;
+    let duration = null;
+    let durationConsumed = 0;
+    
+    while (pos < infoEnd && pos < bytes.length) {
+        const idResult = ebml_readVINT(bytes, pos);
+        if (!idResult) break;
+        pos += idResult.consumed;
+        
+        const sizeResult = ebml_readVINT(bytes, pos);
+        if (!sizeResult) break;
+        const elementSize = sizeResult.value;
+        pos += sizeResult.consumed;
+        
+        if (idResult.value === 0x4489) { // Duration ID
+            const floatResult = ebml_readFloat(bytes, pos);
+            if (floatResult) {
+                duration = floatResult.value;
+                durationConsumed = pos + floatResult.consumed;
+            }
+            break;
+        }
+        
+        // Skip this element
+        pos += elementSize;
+    }
+    
+    if (duration === null) return null;
+    
+    return {
+        duration: duration,
+        consumed: durationConsumed
+    };
+
+
   }
 
   /**
