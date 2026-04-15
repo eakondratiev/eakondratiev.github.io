@@ -388,9 +388,9 @@ function fileTypePage(options) {
         var slice = file.slice(0, HEAD_BYTES);  // blob with the first bytes of the file
         await reader.readAsArrayBuffer (slice); // read this blob
 
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
 
-          var rtype = getSignatue (e.target.result, file, resultElement);
+          var rtype = await getSignatue (e.target.result, file, resultElement);
           loader.hide();
           T.log ('File processed' + (rtype? ' ' + rtype : ''));
         };
