@@ -27,7 +27,6 @@
  * 2026-01-14 parsing the AC3 header.
  * 2026-02-11, 2026-02-16 parsing the AC3 header, fixes.
  * 2026-04-15 parsing mkv, extracting the title, duration and tracks.
- * TODO: turn back Google Analytics and monitor.
  */
 
 /**
@@ -391,9 +390,9 @@ function fileTypePage(options) {
 
         reader.onload = function (e) {
 
-          getSignatue (e.target.result, file, resultElement);
+          var rtype = getSignatue (e.target.result, file, resultElement);
           loader.hide();
-          T.log ('File processed');
+          T.log ('File processed' + (rtype? ' ' + rtype : ''));
         };
 
         reader.onerror = function (e) {
@@ -426,6 +425,7 @@ function fileTypePage(options) {
     var DESCR_TITLE = '<b>Description</b>';
     var message = '';
     var offset = 0;
+    var returnFileType = '';
 
     if (fileData.byteLength === 0) {
       resultElement.innerHTML += getResultProperty (DESCR_TITLE, 'Empty file');
@@ -479,14 +479,15 @@ function fileTypePage(options) {
             getResultProperty ('Channels', info.numChannels) +
             getResultProperty ('LFE', info.hasLFE? 'present' : 'no') +
             getResultProperty ('Bit rate', `${info.bitRate/1000} kbps`);
+          returnFileType = 'ac3';
         }
 
       }
       else if (resultText === 'ebml-matroska') {
 
         const MKV_HEADER_SIZE = 0x10000; // 64KiB
-
         parsedInfo = await getInfo_MKV (file, MKV_HEADER_SIZE);
+        returnFileType = 'mkv';
 
       }
       else if (IMG_TYPES.has (resultText)) {
@@ -508,7 +509,7 @@ function fileTypePage(options) {
         '</div>';
     }
 
-    return;
+    return returnFileType;
 
   }
 
