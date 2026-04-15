@@ -15,7 +15,7 @@
       "applicationCategory": "Utility",
       "operatingSystem": "Web",
       "creationDate": "2022-08-06",
-      "dateModified": "2026-03-24"
+      "dateModified": "2026-04-15"
     }
     </script>
 
@@ -171,7 +171,7 @@
             <a href="#description_AVIF">AVIF</a>,
             <a href="#description_HDF4">HDF4</a>,
             <a href="#description_HDF5">HDF5</a>, 
-            Matroska, WebM and EBML, iCalendar, vCard, VCF (Varaint Call Format).
+            Matroska (title, video resolution, audio and subtitle languages extracted), WebM and EBML, iCalendar, vCard, VCF (Varaint Call Format).
           </p>
 
           <div class="supported-types">
@@ -350,33 +350,45 @@
       </div>
       imperfect <b>tools</b>
     </div>
-    <script src="/assets/filetype.min.js?20260324"></script>
     <script>
       'use strict';
 
-      // check for compatibility
-      if (document.getElementsByClassName === undefined ||
-          window.fetch === undefined ||
-          typeof WebAssembly !== "object" ||
-          typeof WebAssembly.instantiate !== "function" ||
-          !Element.prototype.addEventListener ||
-          !Array.prototype.map ||
-          !Array.prototype.reduce) {
+      var script = document.createElement('script');
+      script.src = '/assets/filetype.min.js?20260415';
+      script.async = true;
 
+      script.onerror = function() {
         document.getElementById('incompatible-browser').style.display = 'block';
+      };
 
+      // Handle successful loading
+      script.onload = function() {
+
+        // check for compatibility
+        if (document.getElementsByClassName === undefined ||
+            window.fetch === undefined ||
+            typeof WebAssembly !== "object" ||
+            typeof WebAssembly.instantiate !== "function" ||
+            !Element.prototype.addEventListener ||
+            !Array.prototype.map ||
+            !Array.prototype.reduce) {
+
+          document.getElementById('incompatible-browser').style.display = 'block';
+
+        }
+        else {
+
+          fileTypePage ({
+            wasmUrl: '/assets/filetype.wasm',
+            dropReadyCss: 'drop-ready',
+            loaderCss: 'loader-linear',
+            flashCss: 'flash',
+            textLnkSize: 'This LNK file is either too small or too large; it is advisable to check it with an antivirus, or just don\'t use it.'
+            });
+
+        }
       }
-      else {
-
-        fileTypePage ({
-          wasmUrl: '/assets/filetype.wasm',
-          dropReadyCss: 'drop-ready',
-          loaderCss: 'loader-linear',
-          flashCss: 'flash',
-          textLnkSize: 'This LNK file is either too small or too large; it is advisable to check it with an antivirus, or just don\'t use it.'
-          });
-
-      }
+      document.head.appendChild(script);
     </script>
   </body>
 </html>

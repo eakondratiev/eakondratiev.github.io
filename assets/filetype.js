@@ -26,6 +26,8 @@
  * 2026-01-12 AC3 added.
  * 2026-01-14 parsing the AC3 header.
  * 2026-02-11, 2026-02-16 parsing the AC3 header, fixes.
+ * 2026-04-15 parsing mkv, extracting the title, duration and tracks.
+ * TODO: turn back Google Analytics and monitor.
  */
 
 /**
@@ -414,7 +416,7 @@ function fileTypePage(options) {
     * @param {FILE} file
     * @param {*} resultElement
     */
-  function getSignatue(fileData, file, resultElement) {
+  async function getSignatue(fileData, file, resultElement) {
 
     // create input and output arrays
     // input
@@ -480,13 +482,13 @@ function fileTypePage(options) {
         }
 
       }
-/*      else if (resultText === 'ebml-matroska') {
+      else if (resultText === 'ebml-matroska') {
 
-        info = getInfo_MKV(fileBytes);
+        const MKV_HEADER_SIZE = 0x10000; // 64KiB
 
-        console.log ('MKV', info);
+        parsedInfo = await getInfo_MKV (file, MKV_HEADER_SIZE);
 
-      }  */
+      }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
@@ -693,6 +695,18 @@ function fileTypePage(options) {
   }
 
   /**
+   * Return formatted time from seconds value
+   * @param {number} seconds
+   * @returns {string} as hh:mm:ss
+   */
+  function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  /**
    * Extracts bits from a byte using most significant bit first numbering (MSB).
    * 
    * @param {number} byte - The byte to extract bits from (0-255)
@@ -712,113 +726,6 @@ function fileTypePage(options) {
       const mask = (1 << numBits) - 1;
     
       return (byte >> shiftRight) & mask;
-  }
-
-  /**
-   * Reads VINT from the byte array, return the value and the number of processed bytes.
-   * @param {Uint8Array} bytes - The byte array to read from
-   * @param {number} startPos - The starting position in the byte array
-   * @returns {{value: number, consumed: number} | null} The VINT value and bytes consumed, or null on error
-   */
-  function ebml_readVINT(bytes, startPos = 0) {
-      if (startPos >= bytes.length) {
-        return null;
-    }
-    
-    const firstByte = bytes[startPos];
-    
-    // Determine VINT length from the first byte
-    let vintLength = 0;
-    let mask = 0x80; // 10000000 in binary
-    
-    for (let i = 0; i < 8; i++) {
-        if (firstByte & (mask >> i)) {
-            vintLength = i + 1;
-            break;
-        }
-    }
-    
-    if (vintLength === 0) {
-        return null;
-    }
-    
-    if (startPos + vintLength > bytes.length) {
-        return null;
-    }
-    
-    // Extract the value
-    let value = 0;
-    
-    for (let i = 0; i < vintLength; i++) {
-        const byte = bytes[startPos + i];
-        if (i === 0) {
-            // Mask out the leading bits for the first byte
-            const dataMask = (1 << (8 - vintLength)) - 1;
-            value = byte & dataMask;
-        } else {
-            // Take all bits for subsequent bytes
-            value = (value << 8) | byte;
-        }
-    }
-    
-    return {
-        value: value,
-        consumed: vintLength
-    };
-  }
-
-  /**
-   * Reads unsigned integer from the byte array (big-endian).
-   * @param {Uint8Array} bytes - The byte array to read from
-   * @param {number} startPos - The starting position in the byte array
-   * @param {number} length - Number of bytes to read (1-8)
-   * @returns {{value: number, consumed: number} | null} The uint value and bytes consumed, or null on error
-   */
-  function ebml_readUint(bytes, startPos = 0, length = 1) {
-
-    if (startPos + length > bytes.length) {
-        return null;
-    }
-    
-    if (length < 1 || length > 8) {
-        return null;
-    }
-    
-    let value = 0;
-    
-    for (let i = 0; i < length; i++) {
-        value = (value << 8) | bytes[startPos + i];
-    }
-    
-    return {
-        value: value,
-        consumed: length
-    };
-  }
-
-  /**
-   * Reads 64-bit float (double) from the byte array (IEEE 754, big-endian).
-   * @param {Uint8Array} bytes - The byte array to read from
-   * @param {number} startPos - The starting position in the byte array
-   * @returns {{value: number, consumed: number} | null} The float value and bytes consumed (8), or null on error
-   */
-  function ebml_readFloat(bytes, startPos = 0) {
-
-    const FLOAT_SIZE = 8;
-    
-    if (startPos + FLOAT_SIZE > bytes.length) {
-        return null;
-    }
-    
-    // Create a DataView to properly read 64-bit float
-    const buffer = bytes.buffer.slice(startPos, startPos + FLOAT_SIZE);
-    const view = new DataView(buffer);
-    const value = view.getFloat64(0, false); // false = big-endian
-    
-    return {
-        value: value,
-        consumed: FLOAT_SIZE
-    };
   }
 
   /**
@@ -1039,161 +946,97 @@ function fileTypePage(options) {
   }
 
   /**
-   * Returns additional info parsed from the file data.
-   * @param {Uint8Array} bytes file bytes, the valid Uint8Array with AC3 data.
+   * Returns additional info parsed from the MKV file data.
+   * @param {Uint8Array} bytes file bytes, the valid Uint8Array with MKV data.
    */
-  function getInfo_MKV(bytes) {
+  async function getInfo_MKV(file, headerSize) {
 
-    let pos = 0;
-    
-    // 1. Read EBML ID (0x1A45DFA3)
-    let result = ebml_readVINT(bytes, pos);
-    if (!result) return null;
-    if (result.value !== 0x1A45DFA3) return null; // Should be EBML ID
-    pos += result.consumed;
-    
-    // 2. Read EBML size
-    result = ebml_readVINT(bytes, pos);
-    if (!result) return null;
-    const ebmlSize = result.value;
-    pos += result.consumed;
-    
-    // 3. Find DocType (0x4282) inside EBML to verify it's matroska
-    const ebmlEnd = pos + ebmlSize;
-    let foundMatroska = false;
-    
-    while (pos < ebmlEnd && pos < bytes.length) {
-        const idResult = ebml_readVINT(bytes, pos);
-        if (!idResult) break;
-        pos += idResult.consumed;
-        
-        const sizeResult = ebml_readVINT(bytes, pos);
-        if (!sizeResult) break;
-        const elementSize = sizeResult.value;
-        pos += sizeResult.consumed;
-        
-        // Check if this is DocType element (0x4282)
-        if (idResult.value === 0x4282) {
-            // Read string data
-            if (pos + elementSize <= bytes.length) {
-                const decoder = new TextDecoder('utf-8');
-                const docType = decoder.decode(bytes.slice(pos, pos + elementSize));
-                if (docType === 'matroska') {
-                    foundMatroska = true;
-                }
-            }
-            break;
+    let html = '';
+
+    let mkvf = async function(){
+
+      const getLanguage = function (track) {
+        let s = track.language? track.language : 'eng';
+        if (track.name) {
+          s += ` - ${track.name}`;
         }
-        
-        // Skip this element if not DocType
-        pos += elementSize;
-    }
-    
-    if (!foundMatroska) return null;
-    
-    // 4. Find Segment ID (0x18538067)
-    // Reset position to after EBML header, then search for Segment
-    pos = 0;
-    // Skip EBML ID and size to start from EBML data
-    let tempPos = 0;
-    let segResult = ebml_readVINT(bytes, tempPos);
-    if (!segResult) return null;
-    tempPos += segResult.consumed;
-    segResult = ebml_readVINT(bytes, tempPos);
-    if (!segResult) return null;
-    tempPos += segResult.consumed;
-    pos = tempPos;
-    
-    // Search for Segment within remaining bytes
-    let segmentStart = -1;
-    let segmentSize = 0;
-    
-    while (pos < bytes.length) {
-        const idResult = ebml_readVINT(bytes, pos);
-        if (!idResult) break;
-        pos += idResult.consumed;
-        
-        const sizeResult = ebml_readVINT(bytes, pos);
-        if (!sizeResult) break;
-        const elementSize = sizeResult.value;
-        pos += sizeResult.consumed;
-        
-        if (idResult.value === 0x18538067) { // Segment ID
-            segmentStart = pos;
-            segmentSize = elementSize;
-            break;
+        return s;
+      };
+
+      let slice;
+      let arrayBuffer;
+      let mkvBytes;
+      let info;
+
+      try {
+        slice = file.slice(0, headerSize);
+        arrayBuffer = await slice.arrayBuffer();
+        mkvBytes = new Uint8Array(arrayBuffer);
+        info = EBMLparser(mkvBytes); // parse
+      }
+      catch(e) {
+        T.log('Caught MKV error');
+        return '';
+      }
+      finally {
+        slice = null;
+        arrayBuffer = null;
+        mkvBytes = null;
+      }
+
+      if (info.error) {
+        T.log('MKV parsing error ' + info.error);
+        return '';
+      }
+
+      if (info.title && info.title.length > 0) {
+        html += getResultProperty ('Title', info.title);
+      }
+
+      if (info.duration) {
+        html += getResultProperty ('Duration', formatTime (info.duration));
+      }
+
+      let videoInfo = '';
+      let audioLanguages = [];
+      let subtitleLanguages = [];
+
+      if (info.Tracks) {
+        for (let i = 0; i < info.Tracks.length; i++) {
+          switch (info.Tracks[i].trackType) {
+            case 'video':
+              videoInfo = '';
+              if (info.Tracks[i].width && info.Tracks[i].height) {
+                videoInfo = `${info.Tracks[i].width} x ${info.Tracks[i].height}`;
+              }
+              break;
+            case 'audio':
+              audioLanguages.push (getLanguage (info.Tracks[i]));
+              break;
+            case 'subtitle':
+              subtitleLanguages.push (getLanguage (info.Tracks[i]));
+              break;
+          }
         }
-        
-        // Skip unknown elements
-        pos += elementSize;
-    }
-    
-    if (segmentStart === -1) return null;
-    
-    // 5. Find Info (0x1549A966) inside Segment
-    pos = segmentStart;
-    const segmentEnd = segmentSize === 0xFFFFFFFFFFFFFFF ? bytes.length : segmentStart + segmentSize;
-    let infoStart = -1;
-    let infoSize = 0;
-    
-    while (pos < segmentEnd && pos < bytes.length) {
-        const idResult = ebml_readVINT(bytes, pos);
-        if (!idResult) break;
-        pos += idResult.consumed;
-        
-        const sizeResult = ebml_readVINT(bytes, pos);
-        if (!sizeResult) break;
-        const elementSize = sizeResult.value;
-        pos += sizeResult.consumed;
-        
-        if (idResult.value === 0x1549A966) { // Info ID
-            infoStart = pos;
-            infoSize = elementSize;
-            break;
-        }
-        
-        // Skip this element
-        pos += elementSize;
-    }
-    
-    if (infoStart === -1) return null;
-    
-    // 6. Find Duration (0x4489) inside Info
-    pos = infoStart;
-    const infoEnd = infoSize === 0xFFFFFFFFFFFFFFF ? segmentEnd : infoStart + infoSize;
-    let duration = null;
-    let durationConsumed = 0;
-    
-    while (pos < infoEnd && pos < bytes.length) {
-        const idResult = ebml_readVINT(bytes, pos);
-        if (!idResult) break;
-        pos += idResult.consumed;
-        
-        const sizeResult = ebml_readVINT(bytes, pos);
-        if (!sizeResult) break;
-        const elementSize = sizeResult.value;
-        pos += sizeResult.consumed;
-        
-        if (idResult.value === 0x4489) { // Duration ID
-            const floatResult = ebml_readFloat(bytes, pos);
-            if (floatResult) {
-                duration = floatResult.value;
-                durationConsumed = pos + floatResult.consumed;
-            }
-            break;
-        }
-        
-        // Skip this element
-        pos += elementSize;
-    }
-    
-    if (duration === null) return null;
-    
-    return {
-        duration: duration,
-        consumed: durationConsumed
+      }
+      
+      if (videoInfo.length > 0) {
+        html += getResultProperty ('Video', videoInfo);
+      }
+      
+      if (audioLanguages.length > 0) {
+        html += getResultProperty ('Audio', audioLanguages.join ('<br>'));
+      }
+      
+      if (subtitleLanguages.length > 0) {
+        html += getResultProperty ('Subtitles', subtitleLanguages.join ('<br>'));
+      }
+
     };
 
+    await mkvf();
+
+    return html;
 
   }
 
@@ -1219,5 +1062,843 @@ function fileTypePage(options) {
 
     }
   }
+
+}
+
+/**
+  * Parses the EBML document from the bytes and returns some of the data.
+  * If the parsing succeed then the return value contains error = '',
+  * or a string with the error code otherwise.
+  * @param {Uint8Array} bytes file bytes, the valid Uint8Array with MKV data.
+  * @returns {error: string, duration: string?, tracks: []?}
+  */
+function EBMLparser (bytes) {
+
+  const EBML_SEGMENT = 0x18538067;
+  const EBML_INFO = 0x1549A966;
+  const EBML_INFO_TITLE = 0x7BA9;
+  const EBML_SEEKHEAD =0x114D9B74;
+  const EBML_SEEK = 0x4DBB;
+  const EBML_SEEKID = 0x53AB;
+  const EBML_SEEKPOSITION = 0x53AC;
+  const EBML_TIMESTAMPSCALE = 0X2AD7B1; // Scale factor for timestamps (default 1,000,000 = 1ms)
+  const EBML_DURATION = 0x4489; // Duration in scaled units
+  const EBML_TRACKS = 0x1654AE6B;
+  const EBML_TRACKENTRY = 0xAE;
+  const EBML_TRACKNUMBER = 0xD7;
+  const EBML_TRACKTYPE = 0x83;
+  const EBML_TRACKNAME = 0x536E;
+  const EBML_TRACKLANGUAGE = 0x22b59c; // 3-letter code
+  const EBML_PIXELWIDTH = 0xB0;
+  const EBML_PIXELHEIGHT = 0xBA;
+  const EBML_CLUSTER = 0x1F43B675;
+  const EBML_CUES = 0x1C53BB6B;
+
+  const EBML_SCHEME = {
+    // EBML elements
+  0x4286: 'uinteger',  // EBMLVersion - unsigned integer
+  0x42F7: 'uinteger',  // EBMLReadVersion - unsigned integer
+  0x42F2: 'uinteger',  // EBMLMaxIDLength - unsigned integer
+  0x42F3: 'uinteger',  // EBMLMaxSizeLength - unsigned integer
+  0x4282: 'string',    // DocType - ASCII string (printable ASCII, zero-padded)
+  0x4287: 'uinteger',  // DocTypeVersion - unsigned integer
+  0x4285: 'uinteger',  // DocTypeReadVersion - unsigned integer
+
+  0xEC: 'void',  // padding
+  0xBF: 'crc32', // checksumm data
+
+  0x1A45DFA3: 'master', // Matroska magic number
+
+    // Matroska elements
+  0x42F2: 'uinteger',  // EBMLMaxIDLength
+  0x42F3: 'uinteger',  // EBMLMaxSizeLength
+  0x18538067: 'master',  // Segment
+  0x114D9B74: 'master',  // SeekHead
+  0x4DBB: 'master',  // Seek
+  0x53AB: 'binary',  // SeekID
+  0x53AC: 'uinteger',  // SeekPosition
+  0x1549A966: 'master',  // Info
+  0x73A4: 'binary',  // SegmentUUID
+  0x7384: 'utf-8',  // SegmentFilename
+  0x3CB923: 'binary',  // PrevUUID
+  0x3C83AB: 'utf-8',  // PrevFilename
+  0x3EB923: 'binary',  // NextUUID
+  0x3E83BB: 'utf-8',  // NextFilename
+  0x4444: 'binary',  // SegmentFamily
+  0x6924: 'master',  // ChapterTranslate
+  0x69A5: 'binary',  // ChapterTranslateID
+  0x69BF: 'uinteger',  // ChapterTranslateCodec
+  0x69FC: 'uinteger',  // ChapterTranslateEditionUID
+  0x2AD7B1: 'uinteger',  // TimestampScale
+  0x4489: 'float',  // Duration
+  0x4461: 'date',  // DateUTC
+  0x7BA9: 'utf-8',  // Title
+  0x4D80: 'utf-8',  // MuxingApp
+  0x5741: 'utf-8',  // WritingApp
+  0x1F43B675: 'master',  // Cluster
+  0xE7: 'uinteger',  // Timestamp
+  0x5854: 'master',  // SilentTracks
+  0x58D7: 'uinteger',  // SilentTrackNumber
+  0xA7: 'uinteger',  // Position
+  0xAB: 'uinteger',  // PrevSize
+  0xA3: 'binary',  // SimpleBlock
+  0xA0: 'master',  // BlockGroup
+  0xA1: 'binary',  // Block
+  0xA2: 'binary',  // BlockVirtual
+  0x75A1: 'master',  // BlockAdditions
+  0xA6: 'master',  // BlockMore
+  0xA5: 'binary',  // BlockAdditional
+  0xEE: 'uinteger',  // BlockAddID
+  0x9B: 'uinteger',  // BlockDuration
+  0xFA: 'uinteger',  // ReferencePriority
+  0xFB: 'integer',  // ReferenceBlock
+  0xFD: 'integer',  // ReferenceVirtual
+  0xA4: 'binary',  // CodecState
+  0x75A2: 'integer',  // DiscardPadding
+  0x8E: 'master',  // Slices
+  0xE8: 'master',  // TimeSlice
+  0xCC: 'uinteger',  // LaceNumber
+  0xCD: 'uinteger',  // FrameNumber
+  0xCB: 'uinteger',  // BlockAdditionID
+  0xCE: 'uinteger',  // Delay
+  0xCF: 'uinteger',  // SliceDuration
+  0xC8: 'master',  // ReferenceFrame
+  0xC9: 'uinteger',  // ReferenceOffset
+  0xCA: 'uinteger',  // ReferenceTimestamp
+  0xAF: 'binary',  // EncryptedBlock
+  0x1654AE6B: 'master',  // Tracks
+  0xAE: 'master',  // TrackEntry
+  0xD7: 'uinteger',  // TrackNumber
+  0x73C5: 'uinteger',  // TrackUID
+  0x83: 'uinteger',  // TrackType
+  0xB9: 'uinteger',  // FlagEnabled
+  0x88: 'uinteger',  // FlagDefault
+  0x55AA: 'uinteger',  // FlagForced
+  0x55AB: 'uinteger',  // FlagHearingImpaired
+  0x55AC: 'uinteger',  // FlagVisualImpaired
+  0x55AD: 'uinteger',  // FlagTextDescriptions
+  0x55AE: 'uinteger',  // FlagOriginal
+  0x55AF: 'uinteger',  // FlagCommentary
+  0x9C: 'uinteger',  // FlagLacing
+  0x6DE7: 'uinteger',  // MinCache
+  0x6DF8: 'uinteger',  // MaxCache
+  0x23E383: 'uinteger',  // DefaultDuration
+  0x234E7A: 'uinteger',  // DefaultDecodedFieldDuration
+  0x23314F: 'float',  // TrackTimestampScale
+  0x537F: 'integer',  // TrackOffset
+  0x55EE: 'uinteger',  // MaxBlockAdditionID
+  0x41E4: 'master',  // BlockAdditionMapping
+  0x41F0: 'uinteger',  // BlockAddIDValue
+  0x41A4: 'string',  // BlockAddIDName
+  0x41E7: 'uinteger',  // BlockAddIDType
+  0x41ED: 'binary',  // BlockAddIDExtraData
+  0x536E: 'utf-8',  // Name
+  0x22B59C: 'string',  // Language
+  0x22B59D: 'string',  // LanguageBCP47
+  0x86: 'string',  // CodecID
+  0x63A2: 'binary',  // CodecPrivate
+  0x258688: 'utf-8',  // CodecName
+  0x7446: 'uinteger',  // AttachmentLink
+  0x3A9697: 'utf-8',  // CodecSettings
+  0x3B4040: 'string',  // CodecInfoURL
+  0x26B240: 'string',  // CodecDownloadURL
+  0xAA: 'uinteger',  // CodecDecodeAll
+  0x6FAB: 'uinteger',  // TrackOverlay
+  0x56AA: 'uinteger',  // CodecDelay
+  0x56BB: 'uinteger',  // SeekPreRoll
+  0x6624: 'master',  // TrackTranslate
+  0x66A5: 'binary',  // TrackTranslateTrackID
+  0x66BF: 'uinteger',  // TrackTranslateCodec
+  0x66FC: 'uinteger',  // TrackTranslateEditionUID
+  0xE0: 'master',  // Video
+  0x9A: 'uinteger',  // FlagInterlaced
+  0x9D: 'uinteger',  // FieldOrder
+  0x53B8: 'uinteger',  // StereoMode
+  0x53C0: 'uinteger',  // AlphaMode
+  0x53B9: 'uinteger',  // OldStereoMode
+  0xB0: 'uinteger',  // PixelWidth
+  0xBA: 'uinteger',  // PixelHeight
+  0x54AA: 'uinteger',  // PixelCropBottom
+  0x54BB: 'uinteger',  // PixelCropTop
+  0x54CC: 'uinteger',  // PixelCropLeft
+  0x54DD: 'uinteger',  // PixelCropRight
+  0x54B0: 'uinteger',  // DisplayWidth
+  0x54BA: 'uinteger',  // DisplayHeight
+  0x54B2: 'uinteger',  // DisplayUnit
+  0x54B3: 'uinteger',  // AspectRatioType
+  0x2EB524: 'binary',  // UncompressedFourCC
+  0x2FB523: 'float',  // GammaValue
+  0x2383E3: 'float',  // FrameRate
+  0x55B0: 'master',  // Colour
+  0x55B1: 'uinteger',  // MatrixCoefficients
+  0x55B2: 'uinteger',  // BitsPerChannel
+  0x55B3: 'uinteger',  // ChromaSubsamplingHorz
+  0x55B4: 'uinteger',  // ChromaSubsamplingVert
+  0x55B5: 'uinteger',  // CbSubsamplingHorz
+  0x55B6: 'uinteger',  // CbSubsamplingVert
+  0x55B7: 'uinteger',  // ChromaSitingHorz
+  0x55B8: 'uinteger',  // ChromaSitingVert
+  0x55B9: 'uinteger',  // Range
+  0x55BA: 'uinteger',  // TransferCharacteristics
+  0x55BB: 'uinteger',  // Primaries
+  0x55BC: 'uinteger',  // MaxCLL
+  0x55BD: 'uinteger',  // MaxFALL
+  0x55D0: 'master',  // MasteringMetadata
+  0x55D1: 'float',  // PrimaryRChromaticityX
+  0x55D2: 'float',  // PrimaryRChromaticityY
+  0x55D3: 'float',  // PrimaryGChromaticityX
+  0x55D4: 'float',  // PrimaryGChromaticityY
+  0x55D5: 'float',  // PrimaryBChromaticityX
+  0x55D6: 'float',  // PrimaryBChromaticityY
+  0x55D7: 'float',  // WhitePointChromaticityX
+  0x55D8: 'float',  // WhitePointChromaticityY
+  0x55D9: 'float',  // LuminanceMax
+  0x55DA: 'float',  // LuminanceMin
+  0x7670: 'master',  // Projection
+  0x7671: 'uinteger',  // ProjectionType
+  0x7672: 'binary',  // ProjectionPrivate
+  0x7673: 'float',  // ProjectionPoseYaw
+  0x7674: 'float',  // ProjectionPosePitch
+  0x7675: 'float',  // ProjectionPoseRoll
+  0xE1: 'master',  // Audio
+  0xB5: 'float',  // SamplingFrequency
+  0x78B5: 'float',  // OutputSamplingFrequency
+  0x9F: 'uinteger',  // Channels
+  0x7D7B: 'binary',  // ChannelPositions
+  0x6264: 'uinteger',  // BitDepth
+  0x52F1: 'uinteger',  // Emphasis
+  0xE2: 'master',  // TrackOperation
+  0xE3: 'master',  // TrackCombinePlanes
+  0xE4: 'master',  // TrackPlane
+  0xE5: 'uinteger',  // TrackPlaneUID
+  0xE6: 'uinteger',  // TrackPlaneType
+  0xE9: 'master',  // TrackJoinBlocks
+  0xED: 'uinteger',  // TrackJoinUID
+  0xC0: 'uinteger',  // TrickTrackUID
+  0xC1: 'binary',  // TrickTrackSegmentUID
+  0xC6: 'uinteger',  // TrickTrackFlag
+  0xC7: 'uinteger',  // TrickMasterTrackUID
+  0xC4: 'binary',  // TrickMasterTrackSegmentUID
+  0x6D80: 'master',  // ContentEncodings
+  0x6240: 'master',  // ContentEncoding
+  0x5031: 'uinteger',  // ContentEncodingOrder
+  0x5032: 'uinteger',  // ContentEncodingScope
+  0x5033: 'uinteger',  // ContentEncodingType
+  0x5034: 'master',  // ContentCompression
+  0x4254: 'uinteger',  // ContentCompAlgo
+  0x4255: 'binary',  // ContentCompSettings
+  0x5035: 'master',  // ContentEncryption
+  0x47E1: 'uinteger',  // ContentEncAlgo
+  0x47E2: 'binary',  // ContentEncKeyID
+  0x47E7: 'master',  // ContentEncAESSettings
+  0x47E8: 'uinteger',  // AESSettingsCipherMode
+  0x47E3: 'binary',  // ContentSignature
+  0x47E4: 'binary',  // ContentSigKeyID
+  0x47E5: 'uinteger',  // ContentSigAlgo
+  0x47E6: 'uinteger',  // ContentSigHashAlgo
+  0x1C53BB6B: 'master',  // Cues
+  0xBB: 'master',  // CuePoint
+  0xB3: 'uinteger',  // CueTime
+  0xB7: 'master',  // CueTrackPositions
+  0xF7: 'uinteger',  // CueTrack
+  0xF1: 'uinteger',  // CueClusterPosition
+  0xF0: 'uinteger',  // CueRelativePosition
+  0xB2: 'uinteger',  // CueDuration
+  0x5378: 'uinteger',  // CueBlockNumber
+  0xEA: 'uinteger',  // CueCodecState
+  0xDB: 'master',  // CueReference
+  0x96: 'uinteger',  // CueRefTime
+  0x97: 'uinteger',  // CueRefCluster
+  0x535F: 'uinteger',  // CueRefNumber
+  0xEB: 'uinteger',  // CueRefCodecState
+  0x1941A469: 'master',  // Attachments
+  0x61A7: 'master',  // AttachedFile
+  0x467E: 'utf-8',  // FileDescription
+  0x466E: 'utf-8',  // FileName
+  0x4660: 'string',  // FileMediaType
+  0x465C: 'binary',  // FileData
+  0x46AE: 'uinteger',  // FileUID
+  0x4675: 'binary',  // FileReferral
+  0x4661: 'uinteger',  // FileUsedStartTime
+  0x4662: 'uinteger',  // FileUsedEndTime
+  0x1043A770: 'master',  // Chapters
+  0x45B9: 'master',  // EditionEntry
+  0x45BC: 'uinteger',  // EditionUID
+  0x45BD: 'uinteger',  // EditionFlagHidden
+  0x45DB: 'uinteger',  // EditionFlagDefault
+  0x45DD: 'uinteger',  // EditionFlagOrdered
+  0x4520: 'master',  // EditionDisplay
+  0x4521: 'utf-8',  // EditionString
+  0x45E4: 'string',  // EditionLanguageIETF
+  0xB6: 'master',  // ChapterAtom
+  0x73C4: 'uinteger',  // ChapterUID
+  0x5654: 'utf-8',  // ChapterStringUID
+  0x91: 'uinteger',  // ChapterTimeStart
+  0x92: 'uinteger',  // ChapterTimeEnd
+  0x98: 'uinteger',  // ChapterFlagHidden
+  0x4598: 'uinteger',  // ChapterFlagEnabled
+  0x6E67: 'binary',  // ChapterSegmentUUID
+  0x4588: 'uinteger',  // ChapterSkipType
+  0x6EBC: 'uinteger',  // ChapterSegmentEditionUID
+  0x63C3: 'uinteger',  // ChapterPhysicalEquiv
+  0x8F: 'master',  // ChapterTrack
+  0x89: 'uinteger',  // ChapterTrackUID
+  0x80: 'master',  // ChapterDisplay
+  0x85: 'utf-8',  // ChapString
+  0x437C: 'string',  // ChapLanguage
+  0x437D: 'string',  // ChapLanguageBCP47
+  0x437E: 'string',  // ChapCountry
+  0x6944: 'master',  // ChapProcess
+  0x6955: 'uinteger',  // ChapProcessCodecID
+  0x450D: 'binary',  // ChapProcessPrivate
+  0x6911: 'master',  // ChapProcessCommand
+  0x6922: 'uinteger',  // ChapProcessTime
+  0x6933: 'binary',  // ChapProcessData
+  0x1254C367: 'master',  // Tags
+  0x7373: 'master',  // Tag
+  0x63C0: 'master',  // Targets
+  0x68CA: 'uinteger',  // TargetTypeValue
+  0x63CA: 'string',  // TargetType
+  0x63C5: 'uinteger',  // TagTrackUID
+  0x63C9: 'uinteger',  // TagEditionUID
+  0x63C4: 'uinteger',  // TagChapterUID
+  0x63C6: 'uinteger',  // TagAttachmentUID
+  0x63C7: 'uinteger',  // TagBlockAddIDValue
+  0x67C8: 'master',  // SimpleTag
+  0x45A3: 'utf-8',  // TagName
+  0x447A: 'string',  // TagLanguage
+  0x447B: 'string',  // TagLanguageBCP47
+  0x4484: 'uinteger',  // TagDefault
+  0x44B4: 'uinteger',  // TagDefaultBogus
+  0x4487: 'utf-8',  // TagString
+  0x4485: 'binary'  // TagBinary
+  };
+
+  let result = { error: '' };
+  let pos = 0;
+
+  // check if browser supports BigInt
+  if (typeof BigInt === 'undefined') {
+    result.error = 'bigint';
+    return result;
+  }
+
+  // validate input
+  if (!bytes || !(bytes instanceof Uint8Array) || bytes.length < 4) {
+    result.error = 'input';
+    return result;
+  }
+
+  let textDecoder = new TextDecoder('utf-8');
+    
+  // 1. Read EBML ID (0x1A45DFA3 - Master element)
+  if (bytes[0] !== 0x1a || bytes[1] !== 0x45 || bytes[2] !== 0xdf || bytes[3] !== 0xa3) {
+    result.error = 'not_ebml';
+    return result;
+  }
+
+  // 2. Read the header size
+  pos = 4;
+  let headerSize = ebml_readVINT (bytes, pos);
+  if (!headerSize) {
+    result.error = 'no_header';
+    return result;
+  }
+
+  pos += Number(headerSize.consumed);
+
+  // 3. Find DocType (0x4282) inside EBML to verify it's matroska
+  const ebmlEnd = pos + Number(headerSize.value);
+  let foundMatroska = false;
+
+  while (pos < ebmlEnd && pos < bytes.length) {
+
+    // get the element ID and size
+    let ebmlElement = ebml_readElement (bytes, pos);
+    if (!ebmlElement) {
+      result.error = 'doctype';
+      return result;
+    }
+    pos = ebmlElement.nextPosition;
+
+    // Check if this is DocType element (0x4282)
+    if (ebmlElement.id === 0x4282 && ebmlElement.value === 'matroska') {
+      foundMatroska = true;
+      break;
+    }
+  }
+    
+  if (!foundMatroska) { 
+    result.error = 'not_mkv';
+    return result;
+  }
+    
+  // 4. Parse elements
+  // Search for Segment (contains all the main data of the MKV file) within remaining bytes
+  let fileData = {
+    segmentDataStart: -1,
+    segmentSizeBigInt: 0n,
+    infoDataStart: -1,
+    infoSizeBigInt: 0n,
+    trackBytesRead: 0
+  };
+
+  while (pos < bytes.length) {
+
+    let ebmlElement = ebml_readElement (bytes, pos);
+    if (!ebmlElement) {
+      //console.log ('no element at 0x' + pos.toString(16) + ' bytes 0x' +
+      //  bytes[pos].toString(16) + bytes[pos+1].toString(16) + ' ' + bytes[pos+ 2].toString(16) + bytes[pos+3].toString(16));
+      break;
+    }
+
+    pos = ebmlElement.nextPosition;
+
+    if (ebmlElement.id === EBML_CLUSTER ||
+        ebmlElement.id === EBML_CUES) {
+      // done with the header
+      break;
+    }
+
+    switch (ebmlElement.id) {
+
+      case EBML_SEGMENT:
+        fileData.segmentDataStart = ebmlElement.nextPosition;
+        fileData.segmentSizeBigInt = ebmlElement.size; // the size of the payload
+        break;
+
+      case EBML_INFO:
+        fileData.infoDataStart = ebmlElement.nextPosition;
+        fileData.infoSizeBigInt = ebmlElement.size; // the size of the payload
+        break;
+
+      case EBML_TIMESTAMPSCALE:
+        fileData.timestampScale = Number(ebmlElement.value);
+        break;
+      case EBML_DURATION:
+        // Duration in scaled units -> convert to seconds
+        if (!result.duration) {
+          result.duration = (Number(ebmlElement.value) * fileData.timestampScale) / 1e9;
+        }
+        break;
+      case EBML_INFO_TITLE:
+        if (!result.title) {
+          result.title = ebmlElement.value;
+        }
+        break;
+
+      case EBML_TRACKS:
+        fileData.tracksSize = Number(ebmlElement.size);
+        break;
+      case EBML_TRACKENTRY:
+        if (!result.Tracks) {
+          result.Tracks = [];
+        }
+        result.Tracks.push({});
+        fileData.trackBytesRead += Number(ebmlElement.size);
+        break;
+      case EBML_TRACKNUMBER:
+        if (result.Tracks) {
+          result.Tracks[result.Tracks.length - 1].number = Number(ebmlElement.value);
+        }
+        break;
+      case EBML_TRACKTYPE:
+        if (result.Tracks) {
+          result.Tracks[result.Tracks.length - 1].trackType = (function(t){
+            switch(t){
+              case 1: return 'video';
+              case 2: return 'audio';
+              case 17: return 'subtitle';
+              default: return t.toString();
+            }
+          })(Number(ebmlElement.value)); // others: 3=complex, 16=logo, 18=buttons, 32=control, 33=metadata etc
+        }
+        break;
+      case EBML_PIXELWIDTH:
+        if (result.Tracks) {
+          result.Tracks[result.Tracks.length - 1].width = Number(ebmlElement.value);
+        }
+        break;
+      case EBML_PIXELHEIGHT:
+        if (result.Tracks) {
+          result.Tracks[result.Tracks.length - 1].height = Number(ebmlElement.value);
+        }
+        break;
+
+      case EBML_TRACKLANGUAGE:
+        if (result.Tracks) {
+          let lang = (function(s){
+            if (typeof s === 'string' && s !== 'und') {
+              return s;
+            }
+            return null;
+          })(ebmlElement.value);
+
+          if (lang) {
+            result.Tracks[result.Tracks.length - 1].language = lang;
+          }
+        }
+        break;
+      case EBML_TRACKNAME:
+        if (result.Tracks) {
+          if (ebmlElement.value) {
+            result.Tracks[result.Tracks.length - 1].name = ebmlElement.value;
+          }
+        }
+        break;
+
+    }
+
+  }
+    
+  if (fileData.segmentDataStart === -1) {
+    result.error = 'no_segment';
+    return result;
+  }
+
+  return result;
+
+  /**
+   * Reads the EBML element: id, size and value if any.
+   * @param {Uint8Array} bytes
+   * @param {number} pos
+   * @returns
+   */
+  function ebml_readElement (bytes, pos) {
+
+    // [ID VINT] [DataSize VINT] [Data]
+
+    let startPos = pos;
+    let result;
+
+    const idResult = ebml_readID(bytes, pos);
+    if (!idResult) {
+      return null;
+    }
+    pos += idResult.consumed;
+    
+    const sizeResult = ebml_readVINT(bytes, pos);
+    if (!sizeResult) {
+      return null;
+    }
+    pos += sizeResult.consumed;
+    const dataSize = Number(sizeResult.value);
+
+    // get the type and read data
+    const dataType = EBML_SCHEME[idResult.value];
+    let value;
+
+    if (typeof dataType === 'undefined') {
+      return null;
+    }
+
+    switch (dataType) {
+      case 'uinteger':
+        let v = ebml_readUint (bytes, pos, dataSize);
+        if (!v) return null;
+        pos += v.consumed;
+        value = v.value;
+        break;
+
+      case 'utf-8':
+      case 'string':
+        // Read string data
+        value = '';
+        let lastIndex = pos + dataSize;
+        if (lastIndex <= bytes.length) {
+          value = textDecoder.decode(bytes.slice(pos, lastIndex));
+          pos = lastIndex;
+        }
+        else {
+          value = '';
+          pos = bytes.length;
+        }
+        break;
+
+      case 'float':
+        const floatResult = ebml_readFloat(bytes, pos, dataSize);
+        if (!floatResult) return null;
+        value = floatResult.value;
+        pos += floatResult.consumed;
+        break;
+
+      case 'date':
+        // EBML spec: Date MUST be 0 or 8 bytes
+        if (dataSize !== 0 && dataSize !== 8) {
+            return null; // Invalid date element
+        }
+    
+        // Handle zero-length date (represents the epoch)
+        if (dataSize === 0) {
+            const epochDateUtc = Date.UTC(2001, 0, 1, 0, 0, 0, 0);
+            value = new Date(epochDateUtc);
+            pos += 0; // No data to consume
+            break;
+        }
+    
+        // Normal 8-byte date
+        const dateRaw = ebml_readInt(bytes, pos, 8);
+        if (!dateRaw) return null;
+        pos += dateRaw.consumed;
+    
+        const nanoseconds = Number(dateRaw.value);
+        const epochDateUtc = Date.UTC(2001, 0, 1, 0, 0, 0, 0);
+        const millisecondsSinceEpoch = epochDateUtc + (nanoseconds / 1000000);
+    
+        value = new Date(millisecondsSinceEpoch);
+        break;
+
+      case 'integer':
+        let iv = ebml_readInt (bytes, pos, dataSize);
+        if (!iv) return null;
+        pos += iv.consumed;
+        value = iv.value;
+        break;
+
+      case 'binary':
+        // skip size bytes (or save them)
+        value = bytes.slice(pos, pos + dataSize); // new Uint8Array copy
+        pos += dataSize;
+        break;
+
+      case 'master':
+        // next after the element goes payload (next element)
+        break;
+
+      case 'void':
+      case 'crc32':
+        // Just skip the data, no value needed
+        pos += Number(sizeResult.value);
+        value = null;
+        break;
+
+      default: // do nothing
+    }
+
+    return {
+      id: idResult.value,
+      size: sizeResult.value,
+      dataType: dataType,
+      value: value,
+      startPosition: startPos,
+      nextPosition: pos
+    };
+
+  }
+
+  /**
+   * Reads EBML ID from the byte array (raw VINT without masking the leading bits, 1-4 bytes).
+   * Unlike ebml_readVINT, this preserves the leading bits that indicate the length.
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @returns {{value: number, consumed: number} | null} The raw EBML ID value and bytes consumed, or null on error
+   */
+  function ebml_readID(bytes, startPos = 0) {
+
+    if (startPos >= bytes.length) {
+      return null;
+    }
+    
+    const firstByte = bytes[startPos];
+    
+    // Determine VINT length from the first byte (count leading 0s)
+    const vintLength = Math.clz32(firstByte<< 24) + 1;
+
+    if (vintLength === 0) {
+      return null;
+    }
+    
+    if (startPos + vintLength > bytes.length) {
+      return null;
+    }
+
+    // Extract the raw value WITHOUT masking the first byte
+    let value = 0;
+    
+    for (let i = 0; i < vintLength; i++) {
+        const byte = bytes[startPos + i];
+        value = (value << 8) | byte;
+    }
+
+    return {
+        value: value,
+        consumed: vintLength
+    };
+  }
+
+  /**
+   * Reads VINT from the byte array, return the value and the number of processed bytes.
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @returns {{value: bigint, consumed: number} | null} The VINT value (BigInt) and bytes consumed, or null on error
+   */
+  function ebml_readVINT(bytes, startPos = 0) {
+
+    if (startPos >= bytes.length) {
+      return null;
+    }
+    
+    const firstByte = bytes[startPos];
+
+    // Determine VINT length from the first byte (count first 0s)
+    const vintLength = Math.clz32(firstByte << 24) + 1;
+    
+    if (vintLength === 0) {
+      return null;
+    }
+    
+    if (startPos + vintLength > bytes.length) {
+      return null;
+    }
+
+    // Extract the value using BigInt for safe handling of large numbers (up to 8 bytes)
+    let value = 0n;
+    
+    for (let i = 0; i < vintLength; i++) {
+      const byte = bytes[startPos + i];
+      if (i === 0) {
+        // Mask out the leading bits for the first byte
+        const dataMask = (1 << (8 - vintLength)) - 1;
+        value = BigInt(byte & dataMask);
+      } else {
+        // Take all bits for subsequent bytes
+        value = (value << 8n) | BigInt(byte);
+      }
+    }
+    
+    return {
+      value: value,
+      consumed: vintLength
+    };
+  }
+
+  /**
+   * Reads unsigned integer from the byte array (big-endian).
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @param {number} length - Number of bytes to read (1-8)
+   * @returns {{value: bigint, consumed: number} | null} The uint value (BigInt) and bytes consumed, or null on error
+   */
+  function ebml_readUint(bytes, startPos = 0, length = 1) {
+
+    if (startPos + length > bytes.length) {
+        return null;
+    }
+    
+    if (length < 1 || length > 8) {
+        return null;
+    }
+    
+    let value = 0n;
+    
+    for (let i = 0; i < length; i++) {
+        value = (value << 8n) | BigInt(bytes[startPos + i]);
+    }
+    
+    return {
+        value: value,
+        consumed: length
+    };
+  }
+
+  /**
+   * Reads signed integer from the byte array (big-endian, two's complement).
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @param {number} length - Number of bytes to read (1-8)
+   * @returns {{value: bigint, consumed: number} | null} The signed int value (BigInt) and bytes consumed, or null on error
+   */
+  function ebml_readInt(bytes, startPos = 0, length = 1) {
+
+    if (startPos + length > bytes.length) {
+        return null;
+    }
+    
+    if (length < 1 || length > 8) {
+        return null;
+    }
+    
+    // First read as unsigned
+    let value = 0n;
+    for (let i = 0; i < length; i++) {
+        value = (value << 8n) | BigInt(bytes[startPos + i]);
+    }
+    
+    // Convert from two's complement to signed
+    // Check if the most significant bit is 1 (negative)
+    const msbMask = 1n << (BigInt(length * 8) - 1n);
+    
+    if (value & msbMask) {
+        // Negative number: sign extend by subtracting 2^(bits)
+        const bits = BigInt(length * 8);
+        const modulus = 1n << bits;
+        value = value - modulus;
+    }
+    
+    return {
+        value: value,
+        consumed: length
+    };
+  }
+
+  /**
+   * Reads 64-bit float (double) from the byte array (IEEE 754, big-endian).
+   * @param {Uint8Array} bytes - The byte array to read from
+   * @param {number} startPos - The starting position in the byte array
+   * @returns {{value: number, consumed: number} | null} The float value and bytes consumed (8), or null on error
+   */
+  function ebml_readFloat(bytes, startPos, size) {
+
+    // EBML float can be 4 bytes (32-bit) or 8 bytes (64-bit)
+    if (size !== 4 && size !== 8) {
+      return null;
+    }
+    
+    if (startPos + size > bytes.length) {
+      return null;
+    }
+    // Copy the relevant bytes to a new ArrayBuffer
+    const temp = new Uint8Array(size);
+    for (let i = 0; i < size; i++) {
+        temp[i] = bytes[startPos + i];
+    }
+    const view = new DataView(temp.buffer);
+    let value;
+    if (size === 4) {
+      value = view.getFloat32(0, false); // 32-bit float, false = big-endian
+    } else {
+      value = view.getFloat64(0, false); // 64-bit float, false = big-endian
+    }    
+    return {
+        value: value,
+        consumed: size
+    };
+  }
+
+
+  // TODO: remove next functions
+  /**
+   * TEMP - Returns the byte with padded zeroes
+   * @param {any} byte
+   * @returns
+   */
+  function showByteBits (byte) {
+    var res = byte.toString (2);
+    return res.padStart(8, '0');
+  }
+
+  function showElement (ebmlElement) {
+    if(!ebmlElement) {
+      return 'NULL';
+    }
+    return '' +
+      `    ID:    0x${ebmlElement.id.toString(16)}\n` +
+      `    type:  ${ebmlElement.dataType}\n` +
+      `    size:  ${ebmlElement.size}\n` +
+      `    value: ${ebmlElement.value}\n` +
+      `    startPosition: 0x${ebmlElement.startPosition.toString(16)} (${ebmlElement.startPosition})\n` +
+      `    nextPosition:  0x${ebmlElement.nextPosition.toString(16)} (${ebmlElement.nextPosition})\n`;
+  }
+
 
 }
