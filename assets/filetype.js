@@ -956,12 +956,26 @@ function fileTypePage(options) {
 
     let mkvf = async function(){
 
+      // appends string s2 to string s1 with the delimiter
+      const sapp = function (s1, s2, d) {
+        if (s1 === '' && s2 === '') { return ''; }
+        if (s1 === '') { return s2; }
+        if (s2 === '') { return s1; }
+        return s1 + d + s2;
+      };
+
       const getLanguage = function (track) {
         let s = track.language? track.language : 'eng';
         if (track.name) {
           s += ` - ${track.name}`;
         }
         return s;
+      };
+
+      const getTrackInfo = function (track) {
+        let r = track.codecid? track.codecid : '';
+        r = sapp (r, track.audioSamplingFreq? `${track.audioSamplingFreq}kHz` : '', ', ');
+        return sapp (r, track.audioChannels? `channels: ${track.audioChannels}` : '', ', ');
       };
 
       let slice;
@@ -974,6 +988,7 @@ function fileTypePage(options) {
         arrayBuffer = await slice.arrayBuffer();
         mkvBytes = new Uint8Array(arrayBuffer);
         info = EBMLparser(mkvBytes); // parse
+        console.log (info);
       }
       catch(e) {
         T.log('Caught MKV error');
@@ -1004,18 +1019,22 @@ function fileTypePage(options) {
 
       if (info.Tracks) {
         for (let i = 0; i < info.Tracks.length; i++) {
+
+          
+
           switch (info.Tracks[i].trackType) {
             case 'video':
               videoInfo = '';
               if (info.Tracks[i].width && info.Tracks[i].height) {
-                videoInfo = `${info.Tracks[i].width} x ${info.Tracks[i].height}`;
+                videoInfo = sapp (`${info.Tracks[i].width} x ${info.Tracks[i].height}`,
+                                  getTrackInfo (info.Tracks[i]), ' ');
               }
               break;
             case 'audio':
-              audioLanguages.push (getLanguage (info.Tracks[i]));
+              audioLanguages.push (sapp (getLanguage (info.Tracks[i]), getTrackInfo (info.Tracks[i]), ' - '));
               break;
             case 'subtitle':
-              subtitleLanguages.push (getLanguage (info.Tracks[i]));
+              subtitleLanguages.push (sapp (getLanguage (info.Tracks[i]), getTrackInfo (info.Tracks[i]), ' - '));
               break;
           }
         }
@@ -1088,8 +1107,11 @@ function EBMLparser (bytes) {
   const EBML_TRACKENTRY = 0xAE;
   const EBML_TRACKNUMBER = 0xD7;
   const EBML_TRACKTYPE = 0x83;
+  const EBML_TRACKCODECID = 0x86;
   const EBML_TRACKNAME = 0x536E;
   const EBML_TRACKLANGUAGE = 0x22b59c; // 3-letter code
+  const EBML_AUDIO_SAMPLINGFREQ = 0xB5;
+  const EBML_AUDIO_CHANNELS = 0x9F;
   const EBML_PIXELWIDTH = 0xB0;
   const EBML_PIXELHEIGHT = 0xBA;
   const EBML_CLUSTER = 0x1F43B675;
@@ -1503,6 +1525,11 @@ function EBMLparser (bytes) {
           result.Tracks[result.Tracks.length - 1].number = Number(ebmlElement.value);
         }
         break;
+      case EBML_TRACKCODECID:
+        if (result.Tracks && ebmlElement.value && ebmlElement.value !== '') {
+          result.Tracks[result.Tracks.length - 1].codecid = ebmlElement.value;
+        }
+        break;
       case EBML_TRACKTYPE:
         if (result.Tracks) {
           result.Tracks[result.Tracks.length - 1].trackType = (function(t){
@@ -1544,6 +1571,20 @@ function EBMLparser (bytes) {
         if (result.Tracks) {
           if (ebmlElement.value) {
             result.Tracks[result.Tracks.length - 1].name = ebmlElement.value;
+          }
+        }
+        break;
+      case EBML_AUDIO_SAMPLINGFREQ:
+        if (result.Tracks) {
+          if (ebmlElement.value) {
+            result.Tracks[result.Tracks.length - 1].audioSamplingFreq = Number(ebmlElement.value);
+          }
+        }
+        break;
+      case EBML_AUDIO_CHANNELS:
+        if (result.Tracks) {
+          if (ebmlElement.value) {
+            result.Tracks[result.Tracks.length - 1].audioChannels = Number(ebmlElement.value);
           }
         }
         break;
