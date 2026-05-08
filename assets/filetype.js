@@ -109,6 +109,7 @@ function fileTypePage(options) {
     'woff2': {description: 'WOFF File Format 2.0'},
     'icm': {description: 'icm, ICC profile, color correction'},
     'SWF': {description: 'swf, Adobe Flash'},
+    'TGA': {description: 'tga: Truevision TGA, TARGA - a raster graphics file'},
 
     // audio
     'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
@@ -421,6 +422,7 @@ function fileTypePage(options) {
     // input
     var FILE_ARRAY_SIZE = 300; // some signatures uses an offset
     var RESULT_ARRAY_SIZE = 45;
+    var AUX_ARRAY_SIZE = 10; // auxiliary buffer size
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = '<b>Description</b>';
     var message = '';
@@ -441,8 +443,13 @@ function fileTypePage(options) {
     var resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
     memAllZeroes (resultBytes);
 
+    // aux result
+    offset += RESULT_ARRAY_SIZE * Uint32Array.BYTES_PER_ELEMENT;
+    var auxBytes = new Uint32Array (_wasmModule.memory.buffer, offset, AUX_ARRAY_SIZE);
+    memAllZeroes (auxBytes);
+
     // call WASM function
-    _wasmModule.getFileSignature (fileBytes.byteOffset, resultBytes.byteOffset, fileData.byteLength);
+    _wasmModule.getFileSignature (fileBytes.byteOffset, fileData.byteLength, resultBytes.byteOffset, RESULT_ARRAY_SIZE, auxBytes.byteOffset, AUX_ARRAY_SIZE);
 
     var resultText = getStringFromBuffer(resultBytes, RESULT_ARRAY_SIZE);
     var description = '';
@@ -488,6 +495,15 @@ function fileTypePage(options) {
         const MKV_HEADER_SIZE = 0x10000; // 64KiB
         parsedInfo = await getInfo_MKV (file, MKV_HEADER_SIZE);
         returnFileType = 'mkv';
+
+      }
+      else if (resultText === 'TGA') {
+
+        parsedInfo = getResultProperty ('Image type', getInfo_TGA_ImageType (auxBytes[0])) +
+          getResultProperty ('Color map', auxBytes[1]? 'present' : 'no') +
+          getResultProperty ('Width', auxBytes[2]) +
+          getResultProperty ('Height', auxBytes[3]) +
+          getResultProperty ('Bits per pixel', auxBytes[4]);
 
       }
       else if (IMG_TYPES.has (resultText)) {
@@ -944,6 +960,29 @@ function fileTypePage(options) {
         bitRate: bitrate
       };
     }
+  }
+
+  /**
+   * Return TGA image type description or an empty string.
+   * @param {number} imageType the TGA image type
+   * @returns {string}
+   */
+  function getInfo_TGA_ImageType (imageType) {
+
+    switch (imageType) {
+       case 0: return 'no image data is present';
+       case 1: return 'uncompressed color-mapped image';
+       case 2: return 'uncompressed true-color image';
+       case 3: return 'uncompressed grayscale image';
+       case 9: return 'run-length encoded color-mapped image';
+      case 10: return 'run-length encoded true-color image';
+      case 11: return 'run-length encoded grayscale image';
+      case 32: return 'huffman-delta-run-length encoded color-mapped image';
+      case 33: return 'huffman-delta-run-length-4-pass-quadtree-type process encoded color-mapped image';
+      }
+
+    return '';
+
   }
 
   /**
