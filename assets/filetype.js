@@ -27,6 +27,8 @@
  * 2026-01-14 parsing the AC3 header.
  * 2026-02-11, 2026-02-16 parsing the AC3 header, fixes.
  * 2026-04-15 parsing mkv, extracting the title, duration and tracks.
+ * 2026-05-08 TGA added
+ * 2026-05-08 AI added
  */
 
 /**
@@ -41,7 +43,7 @@ function fileTypePage(options) {
   // NOTES:
   // * longest signature is 39 bytes
   // * the TAR signatue is 7 bytes at offset 257
-  var HEAD_BYTES = 1024;
+  var FILE_READ_BYTES = 2048; // for AI detection, was 1024
 
   var UNKNOWN = ''; // value returned by the WASM function if the type was not determined.
 
@@ -98,6 +100,7 @@ function fileTypePage(options) {
     'BPG': {description: 'Better Portable Graphics format'},
     'Cineon': {description: 'Kodak Cineon image'},
     'FLIF': {description: 'Free Lossless Image Format'},
+    'AI': {description: 'ai: Adobe Illustrator vector graphics'},
     'FH8': {description: 'FreeHand 8 document'},
     'FH9': {description: 'FreeHand 9 document'},
     'EPS3.0': {description: 'Encapsulated PostScript file version 3.0'},
@@ -384,9 +387,9 @@ function fileTypePage(options) {
         r +=
           getResultProperty ('File name', file.name) +
           getResultProperty ('File size', formatFileSize (file.size)) +
-          getResultProperty ('File MIME type', (file.type || 'unknown') + '<div style="font-style:normal; opacity:0.7;">* as reported by the browser</div>');
+          getResultProperty ('File MIME type', (file.type || 'unknown') + '<div style="font-style:normal; opacity:0.7;">* as detected by the browser</div>');
 
-        var slice = file.slice(0, HEAD_BYTES);  // blob with the first bytes of the file
+        var slice = file.slice(0, FILE_READ_BYTES);  // blob with the first bytes of the file
         await reader.readAsArrayBuffer (slice); // read this blob
 
         reader.onload = async function (e) {
@@ -420,13 +423,12 @@ function fileTypePage(options) {
 
     // create input and output arrays
     // input
-    var FILE_ARRAY_SIZE = 300; // some signatures uses an offset
-    var RESULT_ARRAY_SIZE = 45;
-    var AUX_ARRAY_SIZE = 10; // auxiliary buffer size
+    var RESULT_ARRAY_SIZE = 48; // multiples of 4
+    var AUX_ARRAY_SIZE = 32; // auxiliary buffer size, multiples of 4
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = '<b>Description</b>';
     var message = '';
-    var offset = 0;
+    var offset = ((0x2806 + 15) & ~15); // the Data end hex value from the wasm-objdump -h output
     var returnFileType = '';
 
     if (fileData.byteLength === 0) {
@@ -434,22 +436,30 @@ function fileTypePage(options) {
       return;
     }
 
-    var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, FILE_ARRAY_SIZE);
+    // NOTE:
+    // fileData.byteLength - the size of loaded bytes of the file
+    // fileBytes.byteLenght - the size of array for the file bytes, can be more than fileData.byteLength
+
+    // allocate memory, multiples of 4
+    var fileBufferSize = fileData.byteLength + (4 - (fileData.byteLength % 4)) % 4;
+    var fileBytes = new Uint8Array (_wasmModule.memory.buffer, offset, fileBufferSize);
     memAllZeroes (fileBytes);
-    fileBytes.set(new Uint8Array (fileData, 0, Math.min(fileData.byteLength, FILE_ARRAY_SIZE)));
+    fileBytes.set(new Uint8Array (fileData, 0, fileData.byteLength));
 
     // result
-    offset += FILE_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT;
+    offset += fileBufferSize * Uint8Array.BYTES_PER_ELEMENT + 4;
     var resultBytes = new Uint8Array (_wasmModule.memory.buffer, offset, RESULT_ARRAY_SIZE);
     memAllZeroes (resultBytes);
 
     // aux result
-    offset += RESULT_ARRAY_SIZE * Uint32Array.BYTES_PER_ELEMENT;
+    offset += RESULT_ARRAY_SIZE * Uint8Array.BYTES_PER_ELEMENT + 4;
     var auxBytes = new Uint32Array (_wasmModule.memory.buffer, offset, AUX_ARRAY_SIZE);
     memAllZeroes (auxBytes);
 
     // call WASM function
-    _wasmModule.getFileSignature (fileBytes.byteOffset, fileData.byteLength, resultBytes.byteOffset, RESULT_ARRAY_SIZE, auxBytes.byteOffset, AUX_ARRAY_SIZE);
+    var wasmRet = _wasmModule.getFileSignature (fileBytes.byteOffset, fileData.byteLength,
+                                  resultBytes.byteOffset, resultBytes.length,
+                                  auxBytes.byteOffset, auxBytes.length);
 
     var resultText = getStringFromBuffer(resultBytes, RESULT_ARRAY_SIZE);
     var description = '';
@@ -506,6 +516,12 @@ function fileTypePage(options) {
           getResultProperty ('Bits per pixel', auxBytes[4]);
 
       }
+      else if (resultText === 'AI') {
+        let version = (getStringFromBuffer(auxBytes, auxBytes.length)).trim();
+        if (version.length > 0) {
+          parsedInfo = getResultProperty ('Version', version);
+        }
+      }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
@@ -521,7 +537,7 @@ function fileTypePage(options) {
       // for unknown binary files show its first bytes
       resultElement.innerHTML += '<div style="margin: 8pt 0;">' +
         '<div>First bytes</div>' +
-        getFirstBytesHex(fileBytes, Math.min(MAX_SHOWN_BYTES, file.size, FILE_ARRAY_SIZE)) +
+        getFirstBytesHex(fileBytes, Math.min(MAX_SHOWN_BYTES, fileData.byteLength)) +
         '</div>';
     }
 
@@ -598,7 +614,7 @@ function fileTypePage(options) {
       }
     }
 
-    return '';
+    return s; // was ''
   }
 
   /**
@@ -1027,7 +1043,6 @@ function fileTypePage(options) {
         arrayBuffer = await slice.arrayBuffer();
         mkvBytes = new Uint8Array(arrayBuffer);
         info = EBMLparser(mkvBytes); // parse
-        console.log (info);
       }
       catch(e) {
         T.log('Caught MKV error');
