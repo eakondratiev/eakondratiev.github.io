@@ -29,6 +29,7 @@
  * 2026-04-15 parsing mkv, extracting the title, duration and tracks.
  * 2026-05-08 TGA added
  * 2026-05-08 AI added
+ * 2026-05-13 EPS with Preview added
  */
 
 /**
@@ -515,6 +516,13 @@ function fileTypePage(options) {
           getResultProperty ('Height', auxBytes[3]) +
           getResultProperty ('Bits per pixel', auxBytes[4]);
 
+      }
+      else if (resultText === 'PostScript' ||
+               resultText === 'EPS3.0' ||
+               resultText === 'EPS3.1') {
+        if (auxBytes[0] === 1) {
+          parsedInfo = getResultProperty ('', 'With TIFF/WMF preview');
+        }
       }
       else if (resultText === 'AI') {
         let version = (getStringFromBuffer(auxBytes, auxBytes.length)).trim();
