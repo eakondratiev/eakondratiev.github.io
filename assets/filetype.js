@@ -62,6 +62,7 @@ function fileTypePage(options) {
   var LNK_SIZE_MIN = 500; // bytes
   var LNK_SIZE_MAX = 100 * 1024; // bytes
   var LNK_SIZE_MESSAGE = options.textLnkSize;
+  var TEXT_ZIP_VERSION = options.textZipVersion;
 
   var _wasmModule = {};
 
@@ -153,7 +154,7 @@ function fileTypePage(options) {
                         ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
 
     //other
-    'OPC': {description: 'a ZIP‑based package using the Open Packaging Conventions (OPC)'},
+    'OPC': {description: 'a ZIP-based package using the Open Packaging Conventions (OPC), such as Office Open XML (OOXML)'},
     'EPUB': {description: 'EPUB, e-book, electronic publication'},
     'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document'},
     'XSLX': {description: 'XSLX, Microsoft Excel 2007 and later document'},
@@ -538,7 +539,8 @@ function fileTypePage(options) {
       }
       else if (resultText === 'ZIP') {
         if (auxBytes[0] > 0) {
-          parsedInfo = getResultProperty ('', `at least ${(auxBytes[0]/10).toFixed(1)} to extract`);
+          let version = (auxBytes[0]/10).toFixed(1);
+          parsedInfo = getResultProperty ('', TEXT_ZIP_VERSION.replace('{0}', version));
         }
       }
       else if (IMG_TYPES.has (resultText)) {

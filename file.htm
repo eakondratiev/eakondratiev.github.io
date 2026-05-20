@@ -143,8 +143,7 @@
           <h1>File Type Detection Online</h1>
           <p class="description">
             This <b>fast</b> online app inspects a file's signature and identifies the file type from its content.
-            Shows file description, size, and MIME type. Instant response, even for very large files.
-            <b>Extracts</b> data from MKV files.
+            Shows file description, size, and MIME type, metadata from MKV and some other files. Instant response, even for very large files.
             More than one hundred file types are supported.
             Files processed on your device, not uploaded. 
             If multiple files are selected, only the first one will be analyzed.
@@ -247,7 +246,7 @@
 <li>flv, a Flash Video file</li>
 <li>PIC (IBM Storyboard bitmap file) or PIF (Windows Program Information File) or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)</li>
 
-<li>A ZIP‑based files using the Open Packaging Conventions (OPC)</li>
+<li>a ZIP-based files using the Open Packaging Conventions (OPC), such as Office Open XML (OOXML)</li>
 <li>EPUB, e-book, electronic publication</li>
 <li>DOCX, Microsoft Word 2007 and later document</li>
 <li>XSLX, Microsoft Excel 2007 and later document</li>
@@ -394,7 +393,8 @@
             dropReadyCss: 'drop-ready',
             loaderCss: 'loader-linear',
             flashCss: 'flash',
-            textLnkSize: 'This LNK file is either too small or too large; it is advisable to check it with an antivirus, or just don\'t use it.'
+            textLnkSize: 'This LNK file is either too small or too large; it is advisable to check it with an antivirus, or just don\'t use it.',
+            textZipVersion: 'Use ZIP specification version {0} or later to extract files'
             });
 
         }
