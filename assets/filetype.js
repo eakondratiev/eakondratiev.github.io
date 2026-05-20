@@ -30,6 +30,7 @@
  * 2026-05-08 TGA added
  * 2026-05-08 AI added
  * 2026-05-13 EPS with Preview added
+ * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  */
 
 /**
@@ -152,6 +153,11 @@ function fileTypePage(options) {
                         ' or SEA (Mac Stuffit Self-Extracting Archive) or YTR (IRIS OCR data file)'},
 
     //other
+    'OPC': {description: 'a ZIP‑based package using the Open Packaging Conventions (OPC)'},
+    'EPUB': {description: 'EPUB, e-book, electronic publication'},
+    'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document'},
+    'XSLX': {description: 'XSLX, Microsoft Excel 2007 and later document'},
+    'PPTX': {description: 'PPTX, Microsoft Power Point 2007 and later document'},
     'PDF': {description: 'PDF document'},
     'DJVU': {description: 'DjVu document'},
     'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
@@ -528,6 +534,11 @@ function fileTypePage(options) {
         let version = (getStringFromBuffer(auxBytes, auxBytes.length)).trim();
         if (version.length > 0) {
           parsedInfo = getResultProperty ('Version', version);
+        }
+      }
+      else if (resultText === 'ZIP') {
+        if (auxBytes[0] > 0) {
+          parsedInfo = getResultProperty ('', `at least ${(auxBytes[0]/10).toFixed(1)} to extract`);
         }
       }
       else if (IMG_TYPES.has (resultText)) {
