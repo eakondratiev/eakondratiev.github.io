@@ -157,13 +157,17 @@ function fileTypePage(options) {
     'OPC': {description: 'a ZIP-based package using the Open Packaging Conventions (OPC), such as Office Open XML (OOXML)'},
     'EPUB': {description: 'EPUB, e-book, electronic publication'},
     'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document'},
-    'XSLX': {description: 'XSLX, Microsoft Excel 2007 and later document'},
+    'XLSX': {description: 'XLSX, Microsoft Excel 2007 and later document'},
     'PPTX': {description: 'PPTX, Microsoft Power Point 2007 and later document'},
-    'PDF': {description: 'PDF document'},
-    'DJVU': {description: 'DjVu document'},
     'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
               ' It can contain the equivalent of files and directories.' +
               ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
+    'MS-WORD': {description: 'DOC, Microsoft Word 97–2003 document'},
+    'MS-EXCEL': {description: 'XLS, Microsoft Excel 97-2003 document'},
+    'MS-PPOINT': {description: 'PPT, Microsoft Power Point 97-2003 document'},
+
+    'PDF': {description: 'PDF document'},
+    'DJVU': {description: 'DjVu document'},
     'MDB': {description: 'Microsoft Access MDB, Jet DB'},
     'AppleWorks5': {description: 'AppleWorks 5 document'},
     'AppleWorks6': {description: 'AppleWorks 6 document'},
