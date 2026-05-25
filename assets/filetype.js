@@ -162,9 +162,10 @@ function fileTypePage(options) {
     'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
               ' It can contain the equivalent of files and directories.' +
               ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
-    'MS-WORD': {description: 'DOC, Microsoft Word 97–2003 document'},
-    'MS-EXCEL': {description: 'XLS, Microsoft Excel 97-2003 document'},
+    'MS-WORD': {description: 'DOC, Microsoft Word 97–2003 document or template'},
+    'MS-EXCEL': {description: 'XLS, Microsoft Excel 97-2003 document or template'},
     'MS-PPOINT': {description: 'PPT, Microsoft Power Point 97-2003 document'},
+    'MSI': {description: 'MSI, Microsoft Windows Installer package'},
 
     'PDF': {description: 'PDF document'},
     'DJVU': {description: 'DjVu document'},
