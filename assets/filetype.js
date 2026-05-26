@@ -31,6 +31,7 @@
  * 2026-05-08 AI added
  * 2026-05-13 EPS with Preview added
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
+ * 2026-05-26 MSP, MST added
  */
 
 /**
@@ -159,13 +160,16 @@ function fileTypePage(options) {
     'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document'},
     'XLSX': {description: 'XLSX, Microsoft Excel 2007 and later document'},
     'PPTX': {description: 'PPTX, Microsoft Power Point 2007 and later document'},
-    'OfficeOld': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
+    'CFB': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
               ' It can contain the equivalent of files and directories.' +
               ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
     'MS-WORD': {description: 'DOC, Microsoft Word 97–2003 document or template'},
     'MS-EXCEL': {description: 'XLS, Microsoft Excel 97-2003 document or template'},
     'MS-PPOINT': {description: 'PPT, Microsoft Power Point 97-2003 document'},
-    'MSI': {description: 'MSI, Microsoft Windows Installer package'},
+    'MSI': {description: 'MSI, Microsoft Windows Installer Package'},
+    // *** these TWO type detected in this file, not wasm ***
+    'MSP': {description: 'MSP, Microsoft Windows Installer Patch, delta changes'},
+    'MST': {description: 'MST, Microsoft Windows Installer Transform, transform that customizes an MSI at install time'},
 
     'PDF': {description: 'PDF document'},
     'DJVU': {description: 'DjVu document'},
@@ -492,7 +496,6 @@ function fileTypePage(options) {
       }
     }
     else {
-      description = getDescription (resultText);
 
       // the resultText is a string returned by the wasm function, contains the file signature
       if (resultText === 'LNK' &&
@@ -548,12 +551,27 @@ function fileTypePage(options) {
           parsedInfo = getResultProperty ('', TEXT_ZIP_VERSION.replace('{0}', version));
         }
       }
+      else if (resultText === 'CFB') {
+        let rootEntryOffset = auxBytes[1];
+        if (rootEntryOffset > 0) {
+
+          const CFB_ROOT_SIZE = 1024;
+          let fileSubType = await getInfo_CFB (file, rootEntryOffset, CFB_ROOT_SIZE);
+          if (fileSubType !== '') {
+            resultText = fileSubType;
+          }
+        }
+
+      }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
       }
 
     }
+
+    // the resultText value can change in the if/else ifs before
+    description = getDescription (resultText);
 
     resultElement.classList.add(flashCss);
 
@@ -1025,6 +1043,65 @@ function fileTypePage(options) {
 
     return '';
 
+  }
+
+  /**
+   * Reads the Root Entry of the given size and returns the CFB file sub type.
+   * @param {any} file
+   * @param {number} offset
+   * @param {number} bytesToRead
+   * @returns {string} the file type extension or empty string
+   */
+  async function getInfo_CFB(file, offset, bytesToRead) {
+
+    const MSP_MARK = [0x86, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
+    const MST_MARK = [0x82, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
+
+    let slice;
+    let arrayBuffer;
+    let bytes;
+    let fileSubType = '';
+
+    let findBytes = function (hay, needle, from = 0) {
+      if (needle.length === 0) return from <= hay.length ? from : -1;
+      if (needle.length > hay.length) {
+        return -1;
+        }
+      const end = hay.length - needle.length;
+      for (let i = from; i <= end; i++) {
+        let j = 0;
+        for (; j < needle.length; j++) 
+          if (hay[i + j] !== needle[j]) break;
+        if (j === needle.length) return i;
+      }
+      return -1;
+    };
+
+    try {
+      // load bytes starting ar Root Entry
+      slice = file.slice(offset, offset + bytesToRead); // slice(start, end)
+      arrayBuffer = await slice.arrayBuffer();
+      bytes = new Uint8Array(arrayBuffer);
+
+      // find makrs
+      if (findBytes (bytes, MSP_MARK, 0) >= 0) {
+        fileSubType = 'MSP';
+      }
+      else if (findBytes (bytes, MST_MARK, 0) >= 0) {
+        fileSubType = 'MST';
+      }
+
+    }
+    catch(e) {
+      T.log('Caught CFB error');
+    }
+    finally {
+      slice = null;
+      arrayBuffer = null;
+      bytes = null;
+    }
+
+    return fileSubType;
   }
 
   /**
@@ -2021,6 +2098,5 @@ function EBMLparser (bytes) {
       `    startPosition: 0x${ebmlElement.startPosition.toString(16)} (${ebmlElement.startPosition})\n` +
       `    nextPosition:  0x${ebmlElement.nextPosition.toString(16)} (${ebmlElement.nextPosition})\n`;
   }
-
 
 }
