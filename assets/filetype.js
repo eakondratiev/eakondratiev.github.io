@@ -32,6 +32,7 @@
  * 2026-05-13 EPS with Preview added
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  * 2026-05-26 MSP, MST added
+ * 2026-05-27 VSDX, VIS, PUB
  */
 
 /**
@@ -157,9 +158,10 @@ function fileTypePage(options) {
     //other
     'OPC': {description: 'a ZIP-based package using the Open Packaging Conventions (OPC), such as Office Open XML (OOXML)'},
     'EPUB': {description: 'EPUB, e-book, electronic publication'},
-    'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document'},
-    'XLSX': {description: 'XLSX, Microsoft Excel 2007 and later document'},
-    'PPTX': {description: 'PPTX, Microsoft Power Point 2007 and later document'},
+    'DOCX': {description: 'DOCX, Microsoft Word 2007 and later document or template'},
+    'XLSX': {description: 'XLSX, Microsoft Excel 2007 and later document or template'},
+    'PPTX': {description: 'PPTX, Microsoft Power Point 2007 and later document or template'},
+    'VSDX': {description: 'VSDX, Microsoft Visio 2007 and later document or template'},
     'CFB': {description: 'Compound File Binary Format, a container format defined by Microsoft COM.' +
               ' It can contain the equivalent of files and directories.' +
               ' It is used by <b>Windows Installer</b> and for documents in <b>older versions of Microsoft Office</b>.'},
@@ -167,9 +169,13 @@ function fileTypePage(options) {
     'MS-EXCEL': {description: 'XLS, Microsoft Excel 97-2003 document or template'},
     'MS-PPOINT': {description: 'PPT, Microsoft Power Point 97-2003 document'},
     'MSI': {description: 'MSI, Microsoft Windows Installer Package'},
-    // *** these TWO type detected in this file, not wasm ***
+    // *** these SIX type detected in this file, not wasm ***
     'MSP': {description: 'MSP, Microsoft Windows Installer Patch, delta changes'},
     'MST': {description: 'MST, Microsoft Windows Installer Transform, transform that customizes an MSI at install time'},
+    'VIS1': {description: 'VIS, Microsoft Visio 2000–2002 document or template'},
+    'VIS2': {description: 'VIS, Microsoft Visio 2003–2010 document or template'},
+    'PUB1': {description: 'Pub, Microsoft Publisher 95 (2.0) document or template'},
+    'PUB2': {description: 'Pub, Microsoft Publisher 97 – 2013 (3.0 - 11.0) document or template'},
 
     'PDF': {description: 'PDF document'},
     'DJVU': {description: 'DjVu document'},
@@ -1054,8 +1060,12 @@ function fileTypePage(options) {
    */
   async function getInfo_CFB(file, offset, bytesToRead) {
 
-    const MSP_MARK = [0x86, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
-    const MST_MARK = [0x82, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
+    const MSP_MARK  = [0x86, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
+    const MST_MARK  = [0x82, 0x10, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46];
+    const VIS1_MARK = [0x13, 0x1A, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46]; // 2000-2002
+    const VIS2_MARK = [0x14, 0x1A, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46]; // 2003-2010
+    const PUB1_MARK = [0x00, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46]; // Publisher 95 (2.0)
+    const PUB2_MARK = [0x01, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46]; // Publisher 97-2013 (3.0-11.0)
 
     let slice;
     let arrayBuffer;
@@ -1089,6 +1099,18 @@ function fileTypePage(options) {
       }
       else if (findBytes (bytes, MST_MARK, 0) >= 0) {
         fileSubType = 'MST';
+      }
+      else if (findBytes (bytes, VIS1_MARK, 0) >= 0) {
+        fileSubType = 'VIS1';
+      }
+      else if (findBytes (bytes, VIS2_MARK, 0) >= 0) {
+        fileSubType = 'VIS2';
+      }
+      else if (findBytes (bytes, PUB1_MARK, 0) >= 0) {
+        fileSubType = 'PUB1';
+      }
+      else if (findBytes (bytes, PUB2_MARK, 0) >= 0) {
+        fileSubType = 'PUB2';
       }
 
     }
