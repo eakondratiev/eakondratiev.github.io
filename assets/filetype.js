@@ -33,6 +33,7 @@
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  * 2026-05-26 MSP, MST added
  * 2026-05-27 VSDX, VIS, PUB
+ * 2026-05-28 ICC fixed
  */
 
 /**
@@ -569,6 +570,11 @@ function fileTypePage(options) {
         }
 
       }
+      else if (resultText === 'icm') {
+        let iccData = getInfo_ICC (auxBytes);
+        parsedInfo = getResultProperty ('CMM Type', iccData.cmmType) +
+                     getResultProperty ('Primary Platform', iccData.platform);
+      }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
         showAdditionalImageInfo (fileInfoElement, file);
@@ -1049,6 +1055,42 @@ function fileTypePage(options) {
 
     return '';
 
+  }
+
+  /**
+   * Returns additional ICC color profile data from auxiliary bytes.
+   * @param {Uint8Array} auxBytes
+   * @returns {{cmmType: string, platform: string}} Object containing CMM type and platform signatures
+   */
+  function getInfo_ICC (auxBytes) {
+
+    // Major names
+    const ICC_NAMES = {
+      'KCMS' : 'Kodak Color Management System',
+      'ADBE' : 'Adobe Systems',
+      'APPL' : 'Apple Computer',
+      'MSFT' : 'Microsoft Corporation',
+      'SGI'  :  'Silicon Graphics',
+      'SUNW' : 'Sun Microsystems',
+      'TGNT' : 'Taligent',
+      'lcms' : 'Little CMS',
+      ''     : 'None' // Empty string
+    };
+
+    let getICCString = function (bytes) {
+      // Convert bytes to string and strip trailing spaces and zeroes
+      // all zeros means NONE by the standart
+      return String.fromCharCode(...bytes).replace(/[\x00\x20]+/, '');
+    };
+
+    const cmmRaw = getICCString(auxBytes.slice(0, 4));
+    const platformRaw = getICCString(auxBytes.slice(4, 8));
+    
+    const cmmType = ICC_NAMES[cmmRaw];
+    const platform = ICC_NAMES[platformRaw];
+
+    return {cmmType: cmmType? cmmType : cmmRaw,
+            platform: platform? platform: platformRaw};
   }
 
   /**
