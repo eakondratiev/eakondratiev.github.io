@@ -33,7 +33,7 @@
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  * 2026-05-26 MSP, MST added
  * 2026-05-27 VSDX, VIS, PUB
- * 2026-05-28 ICC fixed, RIF added
+ * 2026-05-28 ICC fixed, Corel CDR and RIF added
  */
 
 /**
@@ -119,7 +119,8 @@ function fileTypePage(options) {
     'icm': {description: 'icm, ICC profile, color correction'},
     'SWF': {description: 'swf, Adobe Flash'},
     'TGA': {description: 'tga, Truevision TGA, TARGA - a raster graphics file'},
-    'RIF': {description: 'rif, Corel Painter - a raster image'},
+    'RIF': {description: 'rif, Corel Painter - a raster image file'},
+    'cdr': {description: 'cdr, Corel Draw - a vector graphics file'},
 
     // audio
     'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
@@ -575,6 +576,12 @@ function fileTypePage(options) {
         let iccData = getInfo_ICC (auxBytes);
         parsedInfo = getResultProperty ('CMM Type', iccData.cmmType) +
                      getResultProperty ('Primary Platform', iccData.platform);
+      }
+      else if (resultText === 'cdr') {
+        let ver = getInfo_CDR(auxBytes[0]);
+        if (ver !== '') {
+          parsedInfo = getResultProperty ('Version', ver);
+        }
       }
       else if (IMG_TYPES.has (resultText)) {
         // show thumbnail and additional info for images
@@ -1092,6 +1099,20 @@ function fileTypePage(options) {
 
     return {cmmType: cmmType? cmmType : cmmRaw,
             platform: platform? platform: platformRaw};
+  }
+
+  /**
+   * Returns the Corel Draw version.
+   * @param {number} n encoded version
+   * @returns {string}
+   */
+  function getInfo_CDR (n) {
+    // version encoded: 0x34 (4) - 4, 0x4A (J) - 19+
+    if (n >= 0x34 && n <= 0x39) return (n - 0x30).toString(); //  4... 9
+    if (n >= 0x41 && n <= 0x43) return (n - 55).toString();   // 10...12
+    if (n >= 0x44 && n <= 0x49) return `X${n-65} (${n-55})`;  // X3 (13)...X8 (18)
+    if (n === 0x4A) return '2019+';
+    return '';
   }
 
   /**
