@@ -33,7 +33,7 @@
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  * 2026-05-26 MSP, MST added
  * 2026-05-27 VSDX, VIS, PUB
- * 2026-05-28 ICC fixed
+ * 2026-05-28 ICC fixed, RIF added
  */
 
 /**
@@ -118,7 +118,8 @@ function fileTypePage(options) {
     'woff2': {description: 'WOFF File Format 2.0'},
     'icm': {description: 'icm, ICC profile, color correction'},
     'SWF': {description: 'swf, Adobe Flash'},
-    'TGA': {description: 'tga: Truevision TGA, TARGA - a raster graphics file'},
+    'TGA': {description: 'tga, Truevision TGA, TARGA - a raster graphics file'},
+    'RIF': {description: 'rif, Corel Painter - a raster image'},
 
     // audio
     'mp3ID3v2': {description: 'MP3 file with an ID3v2 container'},
