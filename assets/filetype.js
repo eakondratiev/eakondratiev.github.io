@@ -33,7 +33,7 @@
  * 2026-05-20 EPUB, DOCX, XLSX, PPTX added
  * 2026-05-26 MSP, MST added
  * 2026-05-27 VSDX, VIS, PUB
- * 2026-05-28 ICC fixed, Corel CDR and RIF added
+ * 2026-05-28, 2-26-05-29 ICC fixed, Corel CDR and RIF added
  */
 
 /**
@@ -454,7 +454,7 @@ function fileTypePage(options) {
     var MAX_SHOWN_BYTES = 32;
     var DESCR_TITLE = '<b>Description</b>';
     var message = '';
-    var offset = ((0x2806 + 15) & ~15); // the Data end hex value from the wasm-objdump -h output
+    var offset = 0x3100; // the Data end hex value from the wasm-objdump -h output, next hex ending with zero
     var returnFileType = '';
 
     if (fileData.byteLength === 0) {
@@ -578,7 +578,7 @@ function fileTypePage(options) {
                      getResultProperty ('Primary Platform', iccData.platform);
       }
       else if (resultText === 'cdr') {
-        let ver = getInfo_CDR(auxBytes[0]);
+        let ver = getInfo_CDR(auxBytes[1]);
         if (ver !== '') {
           parsedInfo = getResultProperty ('Version', ver);
         }
@@ -1107,6 +1107,10 @@ function fileTypePage(options) {
    * @returns {string}
    */
   function getInfo_CDR (n) {
+    // special cases from wasm
+    if (n === 1) return '1, 2 or 3';
+    if (n === 2) return '14 (X4), 15 (X5) or 16 (X6)';
+    if (n === 3) return '17+ (X7+)';
     // version encoded: 0x34 (4) - 4, 0x4A (J) - 19+
     if (n >= 0x34 && n <= 0x39) return (n - 0x30).toString(); //  4... 9
     if (n >= 0x41 && n <= 0x43) return (n - 55).toString();   // 10...12
