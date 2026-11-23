@@ -47,9 +47,6 @@ function batteryPage(options, texts) {
 
         let color = getColor(GRADIENT, data.level);
 
-        text = `<div>Charging Time: <b>${formatDuration(data.chargingTime)}</b></div>` +
-          `<div>Estimated Time to Discharge: <b>${formatDuration(data.dischargingTime)}</b></div>`;
-
         widgetPercentElement.textContent = `${(data.level * 100).toFixed(0)}% ${data.charging ? ', charging' : ''}`;
 
         widgetBatteryElement.innerHTML = `<div class="batt-widget-wrap" style="border-color: ${color};">` +
