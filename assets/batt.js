@@ -20,12 +20,16 @@ function batteryPage(options, texts) {
   ];
 
   var statusTextElement = document.getElementById(options.textElement);
-  var statusWidgetElement = document.getElementById(options.widgetElement);
+  var widgetPercentElement = document.getElementById(options.widgetPercentElement);
+  var widgetBatteryElement = document.getElementById(options.widgetBatteryElement);
 
 
   getBatteryData().then(data => {
 
     var text = '';
+
+    widgetPercentElement.textContent = '';
+    widgetBatteryElement.textContent = '';
 
     if (data.errCode) {
       // errors handling
@@ -40,10 +44,19 @@ function batteryPage(options, texts) {
     }
     else {
       if (data.level) {
+
+        let color = getColor(GRADIENT, data.level);
+
         text = `<div>Level <b>${(data.level * 100).toFixed(0)}%</b></div>` +
-          `<div><b>${data.charging ? 'Charging' : 'Not charging'}</b></div>` +
+          `<div>Discharging Time: ${data.dischargingTime} s</div>` +
           `<div>Charging Time: <b>${formatDuration(data.chargingTime)}</b></div>` +
           `<div>Estimated Time to Discharge: <b>${formatDuration(data.dischargingTime)}</b></div>`;
+
+        widgetPercentElement.textContent = `${(data.level * 100).toFixed(0)}% ${data.charging ? ', charging' : ''}`;
+
+        widgetBatteryElement.innerHTML = `<div style="height: 30px; width: 150px; border-radius: 5px; border: 5px solid ${color}; padding: 3pt; margin: 0 auto;">` +
+          `<b style="display: block; height: 100%; width: ${(data.level * 100).toFixed(0)}%; background-color: ${color};"></b>` +
+          `</div>`
       }
     }
 
@@ -106,22 +119,63 @@ function batteryPage(options, texts) {
 
     totalSeconds = Math.floor(totalSeconds);
 
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    const dayLabel = days === 1 ? "day" : "days";
-
     if (totalSeconds < 60) {
       return `${totalSeconds} seconds`;
     }
 
-    return `${days} ${dayLabel} ` +
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    let daysText;
+
+    switch (days) {
+      case 0:
+        daysText = '';
+        break;
+      case 1:
+        daysText = '1 day ';
+        break;
+      default:
+        daysText = `${days} days `;
+    }
+
+    return `${daysText}` +
       `${String(hours).padStart(2, "0")}:` +
       `${String(minutes).padStart(2, "0")}:` +
       `${String(seconds).padStart(2, "0")}`;
 
   }
+
+  /**
+   * Returns rgb() string with the color specific to the percent in the gradient data.
+   * @param {[*]} gradient array of stop values like { v: 0,   rgb: [255, 0, 0] }
+   * @param {number} percent the percent value from 0.0 to 1.0
+   * @return {string} rgb(...) string
+   */
+  function getColor(gradient, percent) {
+    // Sort by position in case the stops aren't in order
+    const stops = [...gradient].sort((a, b) => a.v - b.v);
+
+    // Clamp to the first and last stop
+    if (percent <= stops[0].v) return `rgb(${stops[0].rgb.join(", ")})`;
+    const last = stops[stops.length - 1];
+    if (percent >= last.v) return `rgb(${last.rgb.join(", ")})`;
+
+    // Find the two stops that surround the percentage
+    let i = 0;
+    while (percent > stops[i + 1].v) i++;
+    const from = stops[i];
+    const to = stops[i + 1];
+
+    // Position between the two stops, from 0 to 1
+    const t = (percent - from.v) / (to.v - from.v);
+
+    // Interpolate each channel and round to whole numbers
+    const [r, g, b] = from.rgb.map((c, idx) => Math.round(c + (to.rgb[idx] - c) * t));
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
 
 }

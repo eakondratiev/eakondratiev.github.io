@@ -43,7 +43,7 @@
     <script src="/assets/menu.min.js?20250926"></script>
     <script src="/assets/web-app.js"></script>
     <style>
-
+      .batt-centered {text-align:center; max-width:250px;}
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></script>
@@ -95,7 +95,10 @@
           </p>
 
           <div id="batt-status-text"></div>
-          <div id="batt-status-widget"></div>
+          <div>
+            <div id="widget-percent" class="batt-centered" style="font-size: 14pt; font-weight: bold; margin: 12pt 0 8pt 0;"></div>
+            <div id="widget-battery" class="batt-centered"></div>
+          </div>
 
           <div class="page-tags">
             <b>#Battery</b> <b>#Mobile</b> <b>#Online</b> <b>#Charge</b>
@@ -125,7 +128,7 @@
     </div>
     <script>
       var script = document.createElement('script');
-      script.src = '/assets/batt.js';
+      script.src = '/assets/batt.min.js';
       script.async = true;
 
       script.onerror = function() {
@@ -145,7 +148,8 @@
 
           batteryPage ({
             textElement: 'batt-status-text',
-            widgetElement: 'batt-status-widget'
+            widgetPercentElement: 'widget-percent',
+            widgetBatteryElement: 'widget-battery'
             });
         }
 
