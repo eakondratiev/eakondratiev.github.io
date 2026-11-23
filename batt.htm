@@ -131,7 +131,7 @@
     </div>
     <script>
       var script = document.createElement('script');
-      script.src = '/assets/batt.min.js';
+      script.src = '/assets/batt.min.js?20261123';
       script.async = true;
 
       script.onerror = function() {
@@ -152,8 +152,8 @@
           batteryPage ({
             textElement: 'batt-status-text',
             widgetPercentElement: 'widget-percent',
-            widgetBatteryElement: 'widget-battery'
-          }, {
+            widgetBatteryElement: 'widget-battery'},
+          {
             error: 'Sorry, an error occurred on this page.',
             errNotSupported: 'Your browser doesn\'t provide the Battery Status API. It only works on Chromium browsers (Chrome, Edge, Samsung Internet, etc).'
           });
