@@ -43,7 +43,10 @@
     <script src="/assets/menu.min.js?20250926"></script>
     <script src="/assets/web-app.js"></script>
     <style>
-      .batt-centered {text-align:center; max-width:250px;}
+      .batt-centered {text-align:center; margin:12pt 0;}
+      .batt-level-pc {font-size: 14pt; font-weight: bold; margin: 8pt 0;}
+      .batt-widget-wrap {height: 30px; width: 150px; border-radius: 5px; border: 5px solid transparent; padding: 3pt; margin: 0 auto;}
+      .batt-widget-wrap b {display: block; height: 100%;}
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTBT00LYFH"></script>
@@ -94,11 +97,11 @@
             Battery charge percentage and charging status
           </p>
 
-          <div id="batt-status-text"></div>
-          <div>
-            <div id="widget-percent" class="batt-centered" style="font-size: 14pt; font-weight: bold; margin: 12pt 0 8pt 0;"></div>
-            <div id="widget-battery" class="batt-centered"></div>
+          <div class="batt-centered">
+            <div id="widget-percent" class="batt-level-pc"></div>
+            <div id="widget-battery"></div>
           </div>
+          <div id="batt-status-text"></div>
 
           <div class="page-tags">
             <b>#Battery</b> <b>#Mobile</b> <b>#Online</b> <b>#Charge</b>
@@ -150,7 +153,10 @@
             textElement: 'batt-status-text',
             widgetPercentElement: 'widget-percent',
             widgetBatteryElement: 'widget-battery'
-            });
+          }, {
+            error: 'Sorry, an error occurred on this page.',
+            errNotSupported: 'Your browser doesn\'t provide the Battery Status API. It only works on Chromium browsers (Chrome, Edge, Samsung Internet, etc).'
+          });
         }
 
       };

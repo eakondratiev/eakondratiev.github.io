@@ -35,10 +35,10 @@ function batteryPage(options, texts) {
       // errors handling
       switch (data.errCode) {
         case 1:
-          text = 'Your browser doesn\'t provide the Battery Status API.';
+          text = texts.errNotSupported;
           break;
         case 2:
-          text = 'Sorry, an error occurred on this page.';
+          text = texts.error;
           break;
       }
     }
@@ -47,15 +47,13 @@ function batteryPage(options, texts) {
 
         let color = getColor(GRADIENT, data.level);
 
-        text = `<div>Level <b>${(data.level * 100).toFixed(0)}%</b></div>` +
-          `<div>Discharging Time: ${data.dischargingTime} s</div>` +
-          `<div>Charging Time: <b>${formatDuration(data.chargingTime)}</b></div>` +
+        text = `<div>Charging Time: <b>${formatDuration(data.chargingTime)}</b></div>` +
           `<div>Estimated Time to Discharge: <b>${formatDuration(data.dischargingTime)}</b></div>`;
 
         widgetPercentElement.textContent = `${(data.level * 100).toFixed(0)}% ${data.charging ? ', charging' : ''}`;
 
-        widgetBatteryElement.innerHTML = `<div style="height: 30px; width: 150px; border-radius: 5px; border: 5px solid ${color}; padding: 3pt; margin: 0 auto;">` +
-          `<b style="display: block; height: 100%; width: ${(data.level * 100).toFixed(0)}%; background-color: ${color};"></b>` +
+        widgetBatteryElement.innerHTML = `<div class="batt-widget-wrap" style="border-color: ${color};">` +
+          `<b style="width: ${(data.level * 100).toFixed(0)}%; background-color: ${color};"></b>` +
           `</div>`
       }
     }
