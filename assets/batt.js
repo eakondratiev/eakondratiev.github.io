@@ -1,6 +1,6 @@
 /*
  * Code for the battery status page.
- * 2026-11-23
+ * 2026-11-24
  */
 
 /**
@@ -11,6 +11,8 @@
 function batteryPage(options, texts) {
 
   'use strict';
+
+  var UPDATE_INTERVAL_MS = 10000;
 
   var GRADIENT = [
     { v: 0, rgb: [195, 0, 0] },
@@ -23,41 +25,59 @@ function batteryPage(options, texts) {
   var widgetPercentElement = document.getElementById(options.widgetPercentElement);
   var widgetBatteryElement = document.getElementById(options.widgetBatteryElement);
 
+  // first update immediately
+  update();
 
-  getBatteryData().then(data => {
+  // then update every n seconds
+  var intervalId = setInterval(update, UPDATE_INTERVAL_MS);
 
-    var text = '';
+  /**
+   * Request fresh data and update the page.
+   */
+  function update() {
+  
+    /* Call async function */
+    getBatteryData().then(data => {
 
-    widgetPercentElement.textContent = '';
-    widgetBatteryElement.textContent = '';
+      var text = '';
+      var color;
+      var levelText;
 
-    if (data.errCode) {
-      // errors handling
-      switch (data.errCode) {
-        case 1:
-          text = texts.errNotSupported;
-          break;
-        case 2:
-          text = texts.error;
-          break;
+      widgetPercentElement.textContent = '';
+      widgetBatteryElement.textContent = '';
+
+      if (data.errCode) {
+        // errors handling
+        switch (data.errCode) {
+          case 1:
+            text = texts.errNotSupported;
+            T.log('Not supported');
+            break;
+          case 2:
+            text = texts.error;
+            T.log('Error caugh');
+            break;
+        }
       }
-    }
-    else {
-      if (data.level) {
+      else {
+        if (data.level) {
 
-        let color = getColor(GRADIENT, data.level);
+          color = getColor(GRADIENT, data.level);
+          levelText = (data.level * 100).toFixed(0);
 
-        widgetPercentElement.textContent = `${(data.level * 100).toFixed(0)}% ${data.charging ? ', charging' : ''}`;
+          widgetPercentElement.textContent = levelText + '% ' + (data.charging ? ', charging' : '');
 
-        widgetBatteryElement.innerHTML = `<div class="batt-widget-wrap" style="border-color: ${color};">` +
-          `<b style="width: ${(data.level * 100).toFixed(0)}%; background-color: ${color};"></b>` +
-          `</div>`
+          widgetBatteryElement.innerHTML = '<div class="batt-widget-wrap" style="border-color: ' + color + ';">' +
+            '<b style="width: ' + levelText + '%; background-color: ' + color + ';"></b>' +
+            '</div>';
+        }
       }
-    }
 
-    statusTextElement.innerHTML = text;
+      statusTextElement.innerHTML = text;
 
-  });
+    });
+
+  }
 
   /**
    * Returs the battery status.
@@ -65,12 +85,13 @@ function batteryPage(options, texts) {
    */
   async function getBatteryData() {
 
-    const DEFAULT = {
+    var DEFAULT = {
       level: null,
       charging: 'n/a',
       chargingTime: 'n/a',
       dischargingTime: 'n/a'
     };
+    var battery;
 
     if (!navigator.getBattery ||
       typeof navigator.getBattery !== 'function') {
@@ -79,7 +100,7 @@ function batteryPage(options, texts) {
     }
 
     try {
-      const battery = await navigator.getBattery();
+      battery = await navigator.getBattery();
 
       return {
         level: Number.isFinite(battery.level)
@@ -101,11 +122,49 @@ function batteryPage(options, texts) {
   }
 
   /**
+   * Returns rgb() string with the color specific to the percent in the gradient data.
+   * @param {[*]} gradient array of stop values like { v: 0,   rgb: [255, 0, 0] }
+   * @param {number} percent the percent value from 0.0 to 1.0
+   * @return {string} rgb(...) string
+   */
+  function getColor(gradient, percent) {
+
+    // Sort by position in case the stops aren't in order
+    var stops = gradient.slice().sort(function (a, b) {
+      return a.v - b.v;
+    });
+
+    var makeRetVal = function (arr) { return 'rgb(' + arr.join(', ') + ')'; }
+
+    // Clamp to the first and last stop
+    if (percent <= stops[0].v) return makeRetVal (stops[0].rgb);
+    var last = stops[stops.length - 1];
+    if (percent >= last.v) return makeRetVal (last.rgb);
+
+    // Find the two stops that surround the percentage
+    var i = 0;
+    while (percent > stops[i + 1].v) i++;
+    var from = stops[i];
+    var to = stops[i + 1];
+
+    // Position between the two stops, from 0 to 1
+    var t = (percent - from.v) / (to.v - from.v);
+
+    // Interpolate each channel and round to whole numbers
+    var rgb = from.rgb.map(function (c, idx) {
+      return Math.round(c + (to.rgb[idx] - c) * t);
+    });
+
+    return makeRetVal (rgb);
+  }
+
+  // TODO: unused
+  /**
    * Returns formatted duration from seconds.
    */
   function formatDuration(totalSeconds) {
     if (
-      typeof totalSeconds !== "number" ||
+      typeof totalSeconds !== 'number' ||
       !Number.isFinite(totalSeconds) ||
       totalSeconds < 0
     ) {
@@ -141,36 +200,5 @@ function batteryPage(options, texts) {
       `${String(seconds).padStart(2, "0")}`;
 
   }
-
-  /**
-   * Returns rgb() string with the color specific to the percent in the gradient data.
-   * @param {[*]} gradient array of stop values like { v: 0,   rgb: [255, 0, 0] }
-   * @param {number} percent the percent value from 0.0 to 1.0
-   * @return {string} rgb(...) string
-   */
-  function getColor(gradient, percent) {
-    // Sort by position in case the stops aren't in order
-    const stops = [...gradient].sort((a, b) => a.v - b.v);
-
-    // Clamp to the first and last stop
-    if (percent <= stops[0].v) return `rgb(${stops[0].rgb.join(", ")})`;
-    const last = stops[stops.length - 1];
-    if (percent >= last.v) return `rgb(${last.rgb.join(", ")})`;
-
-    // Find the two stops that surround the percentage
-    let i = 0;
-    while (percent > stops[i + 1].v) i++;
-    const from = stops[i];
-    const to = stops[i + 1];
-
-    // Position between the two stops, from 0 to 1
-    const t = (percent - from.v) / (to.v - from.v);
-
-    // Interpolate each channel and round to whole numbers
-    const [r, g, b] = from.rgb.map((c, idx) => Math.round(c + (to.rgb[idx] - c) * t));
-
-    return `rgb(${r}, ${g}, ${b})`;
-  }
-
 
 }
