@@ -21,6 +21,7 @@
  * 2025-03-22 sha256.htm added to menu
  * 2025-04-27 T.log() truncates long query strings.
  * 2025-09-26 nslookup.htm added to menu
+ * 2026-11-24 batt.htm added to menu
  */
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
@@ -36,6 +37,7 @@
       items: [
         {url: 'file.htm', name: 'File Type by Content'},
         {url: 'sha256.htm', name: 'File SHA-256 Checksum'},
+        {url: 'barr.htm', name: 'Battery Status'},
         {url: 'mouse-events.htm', name: 'Mouse Events Tracker'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'nslookup.htm', name: 'DNS over HTTPS'},
