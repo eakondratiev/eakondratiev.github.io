@@ -37,7 +37,7 @@
       items: [
         {url: 'file.htm', name: 'File Type by Content'},
         {url: 'sha256.htm', name: 'File SHA-256 Checksum'},
-        {url: 'barr.htm', name: 'Battery Status'},
+        {url: 'batt.htm', name: 'Battery Status'},
         {url: 'mouse-events.htm', name: 'Mouse Events Tracker'},
         {url: 'iprange.htm', name: 'IPv4 Ranges'},
         {url: 'nslookup.htm', name: 'DNS over HTTPS'},
